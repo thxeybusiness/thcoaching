@@ -38,8 +38,7 @@ function Header() {
       <div className="container header-inner">
         <Link href="/" className="brand" aria-label="Accueil TH Coaching">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="" className="brand-logo" width={40} height={40} />
-          <span>TH Coaching</span>
+          <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
         </Link>
         <nav className="nav" aria-label="Navigation principale">
           <a href="#offre">Programme</a>
@@ -60,8 +59,7 @@ function Footer() {
       <div className="container footer-inner">
         <Link href="/" className="brand" aria-label="Accueil TH Coaching">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="" className="brand-logo" width={40} height={40} />
-          <span>TH Coaching</span>
+          <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
         </Link>
         <div className="footer-links">
           <a href="#offre">Programme</a>
