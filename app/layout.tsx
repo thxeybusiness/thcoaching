@@ -7,11 +7,11 @@ const CONTACT_EMAIL = "contact@thcoaching.business";
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
   title: {
-    default: "TH Coaching — Accompagnement & coaching professionnel",
+    default: "TH Coaching — Coach professionnel & de vie",
     template: "%s · TH Coaching",
   },
   description:
-    "TH Coaching accompagne particuliers et dirigeants vers plus de clarté, de confiance et de résultats. Coaching individuel, coaching professionnel et ateliers.",
+    "TH Coaching accompagne particuliers, dirigeants et équipes vers plus de clarté, de confiance et de résultats concrets. Coaching individuel, professionnel et ateliers.",
   keywords: [
     "coaching",
     "coach professionnel",
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
     "coaching dirigeant",
   ],
   openGraph: {
-    title: "TH Coaching — Accompagnement & coaching professionnel",
+    title: "TH Coaching — Coach professionnel & de vie",
     description:
-      "Coaching individuel et professionnel pour révéler votre potentiel et atteindre vos objectifs.",
+      "Un accompagnement humain, structuré et orienté action pour atteindre vos objectifs.",
     url: "https://thcoaching.business",
     siteName: "TH Coaching",
     locale: "fr_FR",
@@ -38,13 +38,11 @@ function Header() {
       <div className="container header-inner">
         <Link href="/" className="brand" aria-label="Accueil TH Coaching">
           <span className="brand-mark">TH</span>
-          <span className="brand-name">Coaching</span>
+          <span>Coaching</span>
         </Link>
         <nav className="nav" aria-label="Navigation principale">
-          <a href="#services">Services</a>
-          <a href="#methode">Méthode</a>
+          <a href="#offres">Offres</a>
           <a href="#apropos">À propos</a>
-          <a href="#temoignages">Témoignages</a>
           <a href="#contact" className="nav-cta">
             Réserver un appel
           </a>
@@ -59,20 +57,14 @@ function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
-        <div>
-          <div className="brand brand--footer">
-            <span className="brand-mark">TH</span>
-            <span className="brand-name">Coaching</span>
-          </div>
-          <p className="footer-tagline">
-            Accompagnement humain, orienté résultats.
-          </p>
-        </div>
+        <Link href="/" className="brand" aria-label="Accueil TH Coaching">
+          <span className="brand-mark">TH</span>
+          <span>Coaching</span>
+        </Link>
         <div className="footer-links">
-          <a href="#services">Services</a>
-          <a href="#methode">Méthode</a>
-          <a href="#contact">Contact</a>
-          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <a href="#offres">Offres</a>
+          <a href="#apropos">À propos</a>
+          <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
         </div>
         <p className="footer-legal">© {year} TH Coaching · thcoaching.business</p>
       </div>
