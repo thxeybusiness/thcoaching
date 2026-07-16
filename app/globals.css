@@ -230,49 +230,121 @@ h3 {
 
 .section-title {
   font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+  max-width: 660px;
+}
+
+.section-intro {
+  margin: 20px 0 0;
+  font-size: 1.1rem;
+  color: var(--muted);
   max-width: 620px;
 }
 
-/* Offres — liste épurée */
-.offers {
-  margin-top: 52px;
-  border-top: 1px solid var(--line);
-}
-
-.offer {
+/* Piliers du programme */
+.pillars {
   display: grid;
-  grid-template-columns: 90px 1fr auto;
+  grid-template-columns: 1fr 1fr;
   gap: 28px;
-  align-items: baseline;
-  padding: 34px 0;
-  border-bottom: 1px solid var(--line);
+  margin-top: 48px;
 }
 
-.offer-n {
-  font-size: 1.15rem;
-  font-weight: 800;
+.pillar {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 30px 32px;
+}
+
+.pillar-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--orange);
+  margin-bottom: 20px;
 }
 
-.offer-body h3 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
-
-.offer-body p {
+.pillar-list {
+  list-style: none;
   margin: 0;
-  color: var(--muted);
-  max-width: 520px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
 }
 
-.offer-tag {
-  font-size: 0.8rem;
-  font-weight: 700;
+.pillar-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pillar-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 12px;
+  height: 2px;
+  background: var(--orange);
+}
+
+/* Bonus */
+.bonus {
+  margin-top: 28px;
+  background: var(--black);
+  color: #fff;
+  border-radius: 20px;
+  padding: 40px;
+}
+
+.bonus-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.bonus-head h3 {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.bonus-value {
+  background: var(--orange);
   color: #0d0d0d;
-  background: rgba(255, 90, 31, 0.14);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 8px 16px;
   border-radius: 999px;
-  padding: 6px 14px;
   white-space: nowrap;
+}
+
+.bonus-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.bonus-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 2px solid var(--orange);
+}
+
+.bonus-list strong {
+  font-size: 1.08rem;
+}
+
+.bonus-list span {
+  font-size: 0.94rem;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* À propos */
@@ -392,13 +464,15 @@ h3 {
   .nav a:not(.nav-cta) {
     display: none;
   }
-  .offer {
+  .pillars {
     grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 28px 0;
   }
-  .offer-tag {
-    justify-self: start;
+  .bonus-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .bonus {
+    padding: 30px 24px;
   }
   .about-grid {
     grid-template-columns: 1fr;

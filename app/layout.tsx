@@ -41,7 +41,7 @@ function Header() {
           <span>Coaching</span>
         </Link>
         <nav className="nav" aria-label="Navigation principale">
-          <a href="#offres">Offres</a>
+          <a href="#offre">Programme</a>
           <a href="#apropos">À propos</a>
           <a href="#contact" className="nav-cta">
             Réserver un appel
@@ -62,7 +62,7 @@ function Footer() {
           <span>Coaching</span>
         </Link>
         <div className="footer-links">
-          <a href="#offres">Offres</a>
+          <a href="#offre">Programme</a>
           <a href="#apropos">À propos</a>
           <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
         </div>
