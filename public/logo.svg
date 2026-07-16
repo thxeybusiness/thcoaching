@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="TH Coaching">
+  <defs>
+    <linearGradient id="thWave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f5610a" />
+      <stop offset="0.45" stop-color="#ff8c1a" />
+      <stop offset="0.8" stop-color="#ffb347" />
+      <stop offset="1" stop-color="#ffd9a0" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <g fill="url(#thWave)">
+    <path d="M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z" />
+    <path d="M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z" />
+    <path d="M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z" />
+  </g>
+</svg>
