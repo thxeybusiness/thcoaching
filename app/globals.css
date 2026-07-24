@@ -764,6 +764,7 @@ main {
 .site-footer {
   position: relative;
   z-index: 1;
+  background: var(--bg); /* opaque : le logo 3D disparaît derrière = fin de page */
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding: 40px 0 44px;
   overflow: hidden;
