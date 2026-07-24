@@ -67,11 +67,10 @@ h3 {
 /* ---------- Grain ---------- */
 .grain {
   position: fixed;
-  inset: -50%;
+  inset: 0;
   z-index: 9990;
   pointer-events: none;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
+  opacity: 0.045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -103,8 +102,7 @@ html.has-cursor button {
   width: 38px;
   height: 38px;
   margin: -19px 0 0 -19px;
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  mix-blend-mode: difference;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   transition: width 0.3s ease, height 0.3s ease, margin 0.3s ease,
     border-color 0.3s ease;
 }
@@ -130,9 +128,9 @@ html.has-cursor button {
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(10, 10, 10, 0.5);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background: rgba(10, 10, 10, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -244,7 +242,6 @@ html.has-cursor button {
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  filter: blur(90px);
 }
 
 .hero-glow--a {
@@ -319,7 +316,6 @@ main {
 
 .hero-line-inner .char {
   display: inline-block;
-  will-change: transform;
 }
 
 .hero-ghost {
@@ -370,7 +366,6 @@ main {
 
 .hero-line-inner {
   display: block;
-  will-change: transform;
 }
 
 .hero-sub {
@@ -487,16 +482,10 @@ main {
   overflow: hidden;
 }
 
-.section .container {
-  transform: skewY(calc(var(--skew, 0) * 0.55deg));
-  will-change: transform;
-}
-
 .section-glow {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(110px);
 }
 
 .section-glow--left {
@@ -780,7 +769,6 @@ main {
     rgba(255, 90, 31, 0.17),
     transparent 60%
   );
-  filter: blur(80px);
   pointer-events: none;
 }
 
@@ -917,8 +905,5 @@ main {
   .hero-glow,
   .hero-scroll i::after {
     animation: none !important;
-  }
-  .section .container {
-    transform: none;
   }
 }

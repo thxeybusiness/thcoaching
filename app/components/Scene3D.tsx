@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 /**
  * Monde 3D continu (canvas fixe plein écran) :
@@ -62,21 +61,8 @@ export default function Scene3D() {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     mount.appendChild(renderer.domElement);
-
-    // Éclairage studio (reflets) + lumières orange
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-
-    const keyLight = new THREE.PointLight(0xff5a1f, 60, 30);
-    keyLight.position.set(3.5, 2.5, 2.5);
-    scene.add(keyLight);
-    const fillLight = new THREE.PointLight(0xff8c1a, 30, 30);
-    fillLight.position.set(-3.5, -1.5, 2);
-    scene.add(fillLight);
 
     const uniforms = {
       uTime: { value: 0 },
@@ -87,7 +73,7 @@ export default function Scene3D() {
     };
 
     // ---- Vague de particules (chapitre hero) ----
-    const geometry = new THREE.PlaneGeometry(18, 10, 170, 95);
+    const geometry = new THREE.PlaneGeometry(18, 10, 128, 72);
     const material = new THREE.ShaderMaterial({
       uniforms,
       transparent: true,
@@ -335,9 +321,10 @@ export default function Scene3D() {
       uniforms.uMouse.value.lerp(targetMouse, 0.06);
       uniforms.uScroll.value += (targetScroll - uniforms.uScroll.value) * 0.06;
 
-      // Fondu de la vague après le hero
+      // Fondu de la vague après le hero (et on cesse de la dessiner à 0)
       const fadeTarget = Math.max(0, 1 - (window.scrollY / height) * 1.15);
       uniforms.uFade.value += (fadeTarget - uniforms.uFade.value) * 0.08;
+      points.visible = uniforms.uFade.value > 0.02;
 
       // Progression 0→1 sur la hauteur totale de la page
       const docH = document.documentElement.scrollHeight - height;
@@ -383,7 +370,6 @@ export default function Scene3D() {
       discMat.dispose();
       haloTex.dispose();
       haloMat.dispose();
-      pmrem.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);

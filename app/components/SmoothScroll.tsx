@@ -22,22 +22,10 @@ export default function SmoothScroll() {
       touchMultiplier: 1.6,
     });
 
-    // Vélocité du scroll → déformation cinétique des sections (var CSS --skew)
-    let skewTarget = 0;
-    let skewCur = 0;
-    lenis.on("scroll", (e: { velocity: number }) => {
-      ScrollTrigger.update();
-      skewTarget = Math.max(-5, Math.min(5, e.velocity * 0.35));
-    });
+    lenis.on("scroll", ScrollTrigger.update);
 
     const raf = (time: number) => {
       lenis.raf(time * 1000);
-      skewTarget *= 0.9;
-      skewCur += (skewTarget - skewCur) * 0.1;
-      document.documentElement.style.setProperty(
-        "--skew",
-        skewCur.toFixed(3)
-      );
     };
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
