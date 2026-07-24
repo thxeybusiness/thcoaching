@@ -7,7 +7,6 @@ import "@fontsource/syne/700.css";
 import "@fontsource/syne/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
-import Cursor from "./components/Cursor";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -96,7 +95,6 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <SmoothScroll />
-        <Cursor />
         <Header />
         <main>{children}</main>
         <Footer />
