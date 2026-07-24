@@ -289,6 +289,18 @@ html.has-cursor button {
   pointer-events: none;
 }
 
+.spline-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.spline-scene canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .world-canvas canvas {
   display: block;
   width: 100% !important;
