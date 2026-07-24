@@ -104,8 +104,6 @@ export default function Hero() {
 
   return (
     <section className="hero" ref={root}>
-      <div className="hero-glow hero-glow--a" aria-hidden="true" />
-      <div className="hero-glow hero-glow--b" aria-hidden="true" />
       <span className="hero-ghost" aria-hidden="true">
         Performance
       </span>

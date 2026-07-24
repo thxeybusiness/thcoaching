@@ -197,47 +197,28 @@ h3 {
   color: #fff;
 }
 
-.hero-glow {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
+/* ---------- Fond vagues (écho du logo, animation subtile) ---------- */
+.waves-bg {
+  position: fixed;
+  inset: -5% -7%;
   z-index: 0;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201440%20900'%3E%3Cpath%20d%3D'M0%20220%20C360%20120%20720%20320%201080%20200%20C1260%20145%201380%20190%201440%20170%20L1440%20340%20C1200%20400%20900%20260%20600%20340%20C360%20400%20120%20330%200%20380%20Z'%20fill%3D'rgba(255%2C90%2C31%2C0.055)'%2F%3E%3Cpath%20d%3D'M0%20520%20C360%20420%20720%20620%201080%20500%20C1260%20445%201380%20490%201440%20470%20L1440%20640%20C1200%20700%20900%20560%20600%20640%20C360%20700%20120%20630%200%20680%20Z'%20fill%3D'rgba(255%2C140%2C26%2C0.04)'%2F%3E%3Cpath%20d%3D'M0%20800%20C360%20700%20720%20900%201080%20780%20C1260%20725%201380%20770%201440%20750%20L1440%20900%20L0%20900%20Z'%20fill%3D'rgba(255%2C90%2C31%2C0.045)'%2F%3E%3C%2Fsvg%3E") center top / 148% auto no-repeat,
+    radial-gradient(70vw 50vh at 80% 8%, rgba(255, 90, 31, 0.07), transparent 60%);
+  animation: waves-sway 26s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.hero-glow--a {
-  width: 55vw;
-  height: 55vw;
-  top: -22%;
-  right: -14%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 90, 31, 0.22),
-    transparent 62%
-  );
-  animation: glow-drift 16s ease-in-out infinite alternate;
-}
-
-.hero-glow--b {
-  width: 46vw;
-  height: 46vw;
-  bottom: -18%;
-  left: -12%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 140, 26, 0.13),
-    transparent 60%
-  );
-  animation: glow-drift 20s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes glow-drift {
+@keyframes waves-sway {
   from {
-    transform: translate(0, 0) scale(1);
+    transform: translate3d(-1.2%, 0, 0);
   }
   to {
-    transform: translate(-6%, 5%) scale(1.12);
+    transform: translate3d(1.2%, 0.8%, 0);
   }
 }
+
 
 .world-canvas {
   position: fixed;
@@ -864,7 +845,7 @@ main {
     scroll-behavior: auto;
   }
   .marquee-track,
-  .hero-glow,
+  .waves-bg,
   .hero-scroll i::after {
     animation: none !important;
   }

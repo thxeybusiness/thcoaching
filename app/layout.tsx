@@ -95,6 +95,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
+        <div className="waves-bg" aria-hidden="true" />
         <SmoothScroll />
         <Header />
         <main>{children}</main>
