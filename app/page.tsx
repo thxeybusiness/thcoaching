@@ -1,4 +1,4 @@
-const CONTACT_EMAIL = "contact@thcoaching.business";
+const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const pillars = [
   {

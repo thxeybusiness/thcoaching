@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 
-const CONTACT_EMAIL = "contact@thcoaching.business";
+const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
