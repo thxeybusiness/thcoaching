@@ -108,7 +108,7 @@ export default function Scene3D() {
           vEl = w;
 
           vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-          gl_PointSize = (30.0 / -mv.z) * (0.45 + uProgress * 0.75);
+          gl_PointSize = min((30.0 / -mv.z) * (0.45 + uProgress * 0.75), 42.0);
           gl_Position = projectionMatrix * mv;
         }
       `,
@@ -177,7 +177,7 @@ export default function Scene3D() {
           vSeed = aSeed;
 
           vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-          gl_PointSize = ((aSeed * 30.0 + 9.0) / -mv.z) * uProgress;
+          gl_PointSize = min(((aSeed * 30.0 + 9.0) / -mv.z) * uProgress, 36.0);
           gl_Position = projectionMatrix * mv;
         }
       `,
@@ -229,28 +229,36 @@ export default function Scene3D() {
     logo.scale.set(LOGO_SCALE, -LOGO_SCALE, LOGO_SCALE);
     blob.add(logo);
 
-    // Halo très doux derrière la forme
-    const haloCanvas = document.createElement("canvas");
-    haloCanvas.width = haloCanvas.height = 128;
-    const hctx = haloCanvas.getContext("2d");
-    if (hctx) {
-      const grad = hctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-      grad.addColorStop(0, "rgba(255,170,100,0.30)");
-      grad.addColorStop(0.5, "rgba(255,130,60,0.12)");
-      grad.addColorStop(1, "rgba(255,110,40,0)");
-      hctx.fillStyle = grad;
-      hctx.fillRect(0, 0, 128, 128);
-    }
-    const haloTex = new THREE.CanvasTexture(haloCanvas);
-    const haloMat = new THREE.SpriteMaterial({
-      map: haloTex,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      toneMapped: false,
+    // Halo très doux derrière le logo — dégradé 100% shader
+    // (pas de texture canvas : Safari les rend parfois comme un carré plein)
+    const glowGeo = new THREE.PlaneGeometry(4.4, 4.4);
+    const glowUniforms = { uTime: { value: 0 } };
+    const glowMat = new THREE.ShaderMaterial({
+      uniforms: glowUniforms,
       transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexShader: /* glsl */ `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uTime;
+        varying vec2 vUv;
+        void main() {
+          float d = length(vUv - 0.5) * 2.0;
+          float alpha = pow(max(0.0, 1.0 - d), 2.3);
+          vec3 col = mix(vec3(1.0, 0.67, 0.39), vec3(1.0, 0.43, 0.16), d);
+          float pulse = 0.8 + 0.15 * sin(uTime * 0.8);
+          gl_FragColor = vec4(col, alpha * 0.5 * pulse);
+        }
+      `,
     });
-    const halo = new THREE.Sprite(haloMat);
-    halo.scale.setScalar(4.4);
+    glowMat.toneMapped = false;
+    const halo = new THREE.Mesh(glowGeo, glowMat);
     halo.position.z = -0.35;
     blob.add(halo);
 
@@ -319,7 +327,7 @@ export default function Scene3D() {
 
       // Respiration douce + halo vivant
       const breathe = 1 + Math.sin(t * 0.8) * 0.045;
-      haloMat.opacity = 0.8 + Math.sin(t * 0.8) * 0.12;
+      glowUniforms.uTime.value = t;
 
       blob.position.x = kf.x * aspectScale + mx * 0.3;
       blob.position.y = kf.y + my * 0.25 + Math.sin(t * 0.45) * 0.08;
@@ -350,8 +358,8 @@ export default function Scene3D() {
       fMat.dispose();
       logoGeos.forEach((g) => g.dispose());
       logoMat.dispose();
-      haloTex.dispose();
-      haloMat.dispose();
+      glowGeo.dispose();
+      glowMat.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
