@@ -191,7 +191,8 @@ export default function Scene3D() {
           vec2 c = gl_PointCoord - 0.5;
           float d = length(c);
           if (d > 0.5) discard;
-          float glow = pow(smoothstep(0.5, 0.0, d), 1.6);
+          float g0 = smoothstep(0.5, 0.0, d);
+          float glow = g0 * g0;
           vec3 col = mix(vec3(1.0, 0.45, 0.14), vec3(1.0, 0.82, 0.5), vSeed);
           float fade = max(uFade, 0.35);
           gl_FragColor = vec4(col, glow * vTw * uProgress * fade * 0.75);
@@ -221,12 +222,13 @@ export default function Scene3D() {
           bevelEnabled: false,
         });
         geo.translate(-60, -59, -3);
+        geo.scale(1, -1, 1); // repère SVG (y vers le bas) → repère 3D
         logoGeos.push(geo);
         logo.add(new THREE.Mesh(geo, logoMat));
       });
     });
     const LOGO_SCALE = 0.019;
-    logo.scale.set(LOGO_SCALE, -LOGO_SCALE, LOGO_SCALE);
+    logo.scale.setScalar(LOGO_SCALE);
     blob.add(logo);
 
     // Halo très doux derrière le logo — dégradé 100% shader
@@ -250,8 +252,10 @@ export default function Scene3D() {
         varying vec2 vUv;
         void main() {
           float d = length(vUv - 0.5) * 2.0;
-          float alpha = pow(max(0.0, 1.0 - d), 2.3);
-          vec3 col = mix(vec3(1.0, 0.67, 0.39), vec3(1.0, 0.43, 0.16), d);
+          // Falloff polynomial : jamais de pow() sur zéro (NaN sur Metal/Safari)
+          float e = smoothstep(1.0, 0.08, d);
+          float alpha = e * e * e;
+          vec3 col = mix(vec3(1.0, 0.67, 0.39), vec3(1.0, 0.43, 0.16), min(d, 1.0));
           float pulse = 0.8 + 0.15 * sin(uTime * 0.8);
           gl_FragColor = vec4(col, alpha * 0.5 * pulse);
         }
