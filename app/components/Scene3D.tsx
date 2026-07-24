@@ -18,7 +18,7 @@ const KEYFRAMES: KF[] = [
   { p: 0.0, x: 2.4, y: 0.2, s: 1.0 },
   { p: 0.3, x: -2.5, y: 0.1, s: 0.8 },
   { p: 0.6, x: 2.5, y: 0.15, s: 0.85 },
-  { p: 0.84, x: 0.0, y: -0.25, s: 1.15 },
+  { p: 0.84, x: -2.4, y: 0.2, s: 1.0 },
   // Fin de page : le logo se couche derrière le wordmark
   { p: 1.0, x: 0.0, y: -1.95, s: 1.25 },
 ];
