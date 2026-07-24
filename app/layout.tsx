@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import SmoothScroll from "./components/SmoothScroll";
+import Intro from "./components/Intro";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -78,6 +80,8 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
+        <SmoothScroll />
+        <Intro />
         <Header />
         <main>{children}</main>
         <Footer />

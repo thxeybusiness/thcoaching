@@ -157,10 +157,80 @@ h3 {
   border-color: #fff;
 }
 
+/* Intro cinématique */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--black);
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+
+.intro-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.intro-logo {
+  width: 84px;
+  height: 84px;
+  display: block;
+}
+
+.intro-label {
+  display: flex;
+  gap: 12px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.intro-word-wrap {
+  overflow: hidden;
+  display: inline-block;
+  line-height: 1.1;
+}
+
+.intro-word {
+  display: inline-block;
+}
+
+.intro-bar {
+  width: 180px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.intro-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
 /* Hero */
 .hero {
   background: var(--black);
   color: #fff;
+}
+
+.hero-line {
+  display: block;
+  overflow: hidden;
+}
+
+.hero-line-inner {
+  display: block;
+  will-change: transform;
 }
 
 .hero-inner {

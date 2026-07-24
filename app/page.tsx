@@ -1,3 +1,6 @@
+import Hero from "./components/Hero";
+import Reveal from "./components/Reveal";
+
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const pillars = [
@@ -35,45 +38,24 @@ const bonuses = [
 export default function Home() {
   return (
     <>
-      {/* Hero */}
-      <section className="hero">
-        <div className="container hero-inner">
-          <span className="eyebrow">Coaching Business &amp; Performance</span>
-          <h1 className="hero-title">
-            Développez votre business.
-            <br />
-            <span className="accent">Sans négliger votre santé.</span>
-          </h1>
-          <p className="hero-sub">
-            Un accompagnement à 360° : stratégie, argent, temps, clients — mais
-            aussi alimentation, sommeil et sport. Parce qu&apos;un business
-            solide repose sur un corps et un esprit en pleine forme.
-          </p>
-          <div className="hero-actions">
-            <a href="#contact" className="btn btn-orange">
-              Réserver un appel découverte
-            </a>
-            <a href="#offre" className="btn btn-outline-light">
-              Voir le programme
-            </a>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* Offre / Programme */}
       <section id="offre" className="section">
         <div className="container">
-          <p className="section-label">Le programme</p>
-          <h2 className="section-title">
-            Un Coaching Complet Business &amp; Performance
-          </h2>
-          <p className="section-intro">
-            Un accompagnement à 360° qui couvre à la fois la croissance de votre
-            business et votre équilibre personnel. On travaille l&apos;essentiel,
-            dans l&apos;ordre qui vous fait avancer.
-          </p>
+          <Reveal>
+            <p className="section-label">Le programme</p>
+            <h2 className="section-title">
+              Un Coaching Complet Business &amp; Performance
+            </h2>
+            <p className="section-intro">
+              Un accompagnement à 360° qui couvre à la fois la croissance de
+              votre business et votre équilibre personnel. On travaille
+              l&apos;essentiel, dans l&apos;ordre qui vous fait avancer.
+            </p>
+          </Reveal>
 
-          <div className="pillars">
+          <Reveal className="pillars" stagger y={50}>
             {pillars.map((p) => (
               <div key={p.group} className="pillar">
                 <h3 className="pillar-title">{p.group}</h3>
@@ -84,30 +66,31 @@ export default function Home() {
                 </ul>
               </div>
             ))}
-          </div>
+          </Reveal>
 
-          {/* Bonus */}
-          <div className="bonus">
-            <div className="bonus-head">
-              <h3>Inclus en bonus</h3>
-              <span className="bonus-value">+ de 628 € offerts</span>
+          <Reveal>
+            <div className="bonus">
+              <div className="bonus-head">
+                <h3>Inclus en bonus</h3>
+                <span className="bonus-value">+ de 628 € offerts</span>
+              </div>
+              <ul className="bonus-list">
+                {bonuses.map((b) => (
+                  <li key={b.title}>
+                    <strong>{b.title}</strong>
+                    <span>{b.text}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="bonus-list">
-              {bonuses.map((b) => (
-                <li key={b.title}>
-                  <strong>{b.title}</strong>
-                  <span>{b.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* À propos */}
       <section id="apropos" className="section about">
         <div className="container about-grid">
-          <div className="about-text">
+          <Reveal className="about-text">
             <p className="section-label">À propos</p>
             <h2>Un coach à vos côtés, pas au-dessus.</h2>
             <p>
@@ -120,8 +103,8 @@ export default function Home() {
               Chaque accompagnement est confidentiel, bienveillant et rigoureux.
               On avance à votre rythme, avec des objectifs clairs.
             </p>
-          </div>
-          <div className="stats">
+          </Reveal>
+          <Reveal className="stats" stagger y={30}>
             <div className="stat">
               <strong>360°</strong>
               <span>business & santé</span>
@@ -134,25 +117,27 @@ export default function Home() {
               <strong>95%</strong>
               <span>de recommandation</span>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Contact */}
       <section id="contact" className="section contact">
         <div className="container contact-inner">
-          <h2>Prêt·e à passer au niveau supérieur ?</h2>
-          <p>
-            Réservez votre appel découverte gratuit de 30 minutes. On fait le
-            point sur vos objectifs, sans engagement.
-          </p>
-          <a
-            href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
-            className="btn btn-dark"
-          >
-            Écrire à {CONTACT_EMAIL}
-          </a>
-          <p className="contact-note">Réponse sous 24h ouvrées.</p>
+          <Reveal>
+            <h2>Prêt·e à passer au niveau supérieur ?</h2>
+            <p>
+              Réservez votre appel découverte gratuit de 30 minutes. On fait le
+              point sur vos objectifs, sans engagement.
+            </p>
+            <a
+              href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
+              className="btn btn-dark"
+            >
+              Écrire à {CONTACT_EMAIL}
+            </a>
+            <p className="contact-note">Réponse sous 24h ouvrées.</p>
+          </Reveal>
         </div>
       </section>
     </>
