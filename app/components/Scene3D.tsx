@@ -103,6 +103,65 @@ export default function Scene3D() {
     points.position.y = -0.35;
     scene.add(points);
 
+    // Lucioles : particules lumineuses qui dérivent dans la profondeur
+    const F_COUNT = 170;
+    const fGeo = new THREE.BufferGeometry();
+    const fPos = new Float32Array(F_COUNT * 3);
+    const fSeed = new Float32Array(F_COUNT);
+    for (let i = 0; i < F_COUNT; i++) {
+      fPos[i * 3] = (Math.random() - 0.5) * 15;
+      fPos[i * 3 + 1] = Math.random() * 4.4 - 0.8;
+      fPos[i * 3 + 2] = (Math.random() - 0.5) * 7;
+      fSeed[i] = Math.random();
+    }
+    fGeo.setAttribute("position", new THREE.BufferAttribute(fPos, 3));
+    fGeo.setAttribute("aSeed", new THREE.BufferAttribute(fSeed, 1));
+
+    const fMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: uniforms.uTime,
+        uProgress: uniforms.uProgress,
+      },
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexShader: /* glsl */ `
+        uniform float uTime;
+        uniform float uProgress;
+        attribute float aSeed;
+        varying float vTw;
+        varying float vSeed;
+
+        void main() {
+          vec3 pos = position;
+          pos.y += sin(uTime * 0.35 + aSeed * 43.0) * 0.4;
+          pos.x += cos(uTime * 0.22 + aSeed * 27.0) * 0.35;
+          vTw = 0.35 + 0.65 * (0.5 + 0.5 * sin(uTime * 1.7 + aSeed * 80.0));
+          vSeed = aSeed;
+
+          vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+          gl_PointSize = ((aSeed * 30.0 + 9.0) / -mv.z) * uProgress;
+          gl_Position = projectionMatrix * mv;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uProgress;
+        varying float vTw;
+        varying float vSeed;
+
+        void main() {
+          vec2 c = gl_PointCoord - 0.5;
+          float d = length(c);
+          if (d > 0.5) discard;
+          float glow = pow(smoothstep(0.5, 0.0, d), 1.6);
+          vec3 col = mix(vec3(1.0, 0.45, 0.14), vec3(1.0, 0.82, 0.5), vSeed);
+          gl_FragColor = vec4(col, glow * vTw * uProgress * 0.75);
+        }
+      `,
+    });
+    const fireflies = new THREE.Points(fGeo, fMat);
+    scene.add(fireflies);
+
     // Interactions
     const targetMouse = new THREE.Vector2(0.5, 0.55);
     const onPointer = (e: PointerEvent) => {
@@ -169,6 +228,8 @@ export default function Scene3D() {
       window.removeEventListener("resize", onResize);
       geometry.dispose();
       material.dispose();
+      fGeo.dispose();
+      fMat.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);

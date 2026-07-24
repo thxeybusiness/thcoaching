@@ -39,7 +39,8 @@ export default function Reveal({
       gsap.from(targets, {
         opacity: 0,
         y,
-        duration: 0.95,
+        filter: "blur(10px)",
+        duration: 1.05,
         delay,
         ease: "power3.out",
         stagger: stagger ? 0.12 : 0,

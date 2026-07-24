@@ -1,10 +1,13 @@
 import Hero from "./components/Hero";
 import Reveal from "./components/Reveal";
+import CountUp from "./components/CountUp";
+import Magnetic from "./components/Magnetic";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const pillars = [
   {
+    num: "01",
     group: "Business & performance",
     items: [
       "Stratégie business",
@@ -15,6 +18,7 @@ const pillars = [
     ],
   },
   {
+    num: "02",
     group: "Corps & esprit",
     items: ["Alimentation", "Sommeil", "Sport"],
   },
@@ -35,18 +39,57 @@ const bonuses = [
   },
 ];
 
+function Marquee({
+  items,
+  ghost = false,
+  reverse = false,
+}: {
+  items: string[];
+  ghost?: boolean;
+  reverse?: boolean;
+}) {
+  const row = `${items.join("  •  ")}  •  `;
+  const cls = `marquee${ghost ? " marquee--ghost" : ""}${
+    reverse ? " marquee--reverse" : ""
+  }`;
+  return (
+    <div className={cls} aria-hidden="true">
+      <div className="marquee-track">
+        <span>{row.repeat(3)}</span>
+        <span>{row.repeat(3)}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <>
       <Hero />
 
+      <Marquee
+        items={[
+          "Stratégie",
+          "Intelligence artificielle",
+          "Temps",
+          "Clients",
+          "Argent",
+          "Alimentation",
+          "Sommeil",
+          "Sport",
+        ]}
+      />
+
       {/* Offre / Programme */}
       <section id="offre" className="section">
+        <div className="section-glow section-glow--left" aria-hidden="true" />
         <div className="container">
           <Reveal>
             <p className="section-label">Le programme</p>
             <h2 className="section-title">
-              Un Coaching Complet Business &amp; Performance
+              Un Coaching Complet
+              <br />
+              <span className="accent">Business &amp; Performance.</span>
             </h2>
             <p className="section-intro">
               Un accompagnement à 360° qui couvre à la fois la croissance de
@@ -57,7 +100,10 @@ export default function Home() {
 
           <Reveal className="pillars" stagger y={50}>
             {pillars.map((p) => (
-              <div key={p.group} className="pillar">
+              <div key={p.group} className="pillar" data-hover>
+                <span className="pillar-num" aria-hidden="true">
+                  {p.num}
+                </span>
                 <h3 className="pillar-title">{p.group}</h3>
                 <ul className="pillar-list">
                   {p.items.map((item) => (
@@ -89,10 +135,17 @@ export default function Home() {
 
       {/* À propos */}
       <section id="apropos" className="section about">
+        <span className="about-ghost" aria-hidden="true">
+          360°
+        </span>
         <div className="container about-grid">
           <Reveal className="about-text">
             <p className="section-label">À propos</p>
-            <h2>Un coach à vos côtés, pas au-dessus.</h2>
+            <h2 className="section-title">
+              Un coach à vos côtés,
+              <br />
+              pas au-dessus.
+            </h2>
             <p>
               Formé aux approches du coaching, j&apos;accompagne depuis plusieurs
               années des entrepreneurs et des dirigeants qui veulent du
@@ -106,37 +159,57 @@ export default function Home() {
           </Reveal>
           <Reveal className="stats" stagger y={30}>
             <div className="stat">
-              <strong>360°</strong>
-              <span>business & santé</span>
+              <strong>
+                <CountUp to={360} suffix="°" />
+              </strong>
+              <span>vision business &amp; santé</span>
             </div>
             <div className="stat">
-              <strong>628 €</strong>
+              <strong>
+                <CountUp to={628} suffix=" €" />
+              </strong>
               <span>de bonus offerts</span>
             </div>
             <div className="stat">
-              <strong>95%</strong>
+              <strong>
+                <CountUp to={95} suffix="%" />
+              </strong>
               <span>de recommandation</span>
             </div>
           </Reveal>
         </div>
       </section>
 
+      <Marquee items={["Business", "Performance", "Santé"]} ghost reverse />
+
       {/* Contact */}
       <section id="contact" className="section contact">
+        <div className="contact-glow" aria-hidden="true" />
         <div className="container contact-inner">
           <Reveal>
-            <h2>Prêt·e à passer au niveau supérieur ?</h2>
-            <p>
+            <p className="section-label section-label--center">Contact</p>
+            <h2 className="contact-title">
+              Prêt à passer au
+              <br />
+              <span className="accent">niveau supérieur ?</span>
+            </h2>
+            <p className="contact-sub">
               Réservez votre appel découverte gratuit de 30 minutes. On fait le
               point sur vos objectifs, sans engagement.
             </p>
-            <a
-              href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
-              className="btn btn-dark"
-            >
-              Écrire à {CONTACT_EMAIL}
-            </a>
-            <p className="contact-note">Réponse sous 24h ouvrées.</p>
+            <div className="contact-cta">
+              <Magnetic>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
+                  className="btn btn-orange btn-xl"
+                >
+                  Réserver mon appel
+                </a>
+              </Magnetic>
+            </div>
+            <p className="contact-note">
+              Réponse sous 24h ouvrées · {CONTACT_EMAIL}
+            </p>
           </Reveal>
         </div>
       </section>

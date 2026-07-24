@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import "@fontsource/space-grotesk/400.css";
+import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/700.css";
+import "@fontsource/syne/700.css";
+import "@fontsource/syne/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import Cursor from "./components/Cursor";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -57,15 +63,25 @@ function Footer() {
   const year = 2026;
   return (
     <footer className="site-footer">
-      <div className="container footer-inner">
-        <Link href="/" className="brand" aria-label="Accueil TH Coaching">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
-        </Link>
-        <div className="footer-links">
-          <a href="#offre">Programme</a>
-          <a href="#apropos">À propos</a>
-          <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
+      <p className="footer-word" aria-hidden="true">
+        TH Coaching
+      </p>
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="" className="brand-logo" width={44} height={44} />
+            <p className="footer-tagline">
+              Business &amp; Performance —
+              <br />
+              un accompagnement à 360°.
+            </p>
+          </div>
+          <div className="footer-links">
+            <a href="#offre">Programme</a>
+            <a href="#apropos">À propos</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
+          </div>
         </div>
         <p className="footer-legal">© {year} TH Coaching · thcoaching.business</p>
       </div>
@@ -80,9 +96,11 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <SmoothScroll />
+        <Cursor />
         <Header />
         <main>{children}</main>
         <Footer />
+        <div className="grain" aria-hidden="true" />
       </body>
     </html>
   );
