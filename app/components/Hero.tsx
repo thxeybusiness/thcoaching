@@ -3,12 +3,12 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Scene3D from "./Scene3D";
 import Magnetic from "./Magnetic";
 
 /**
- * Hero immersif : scène 3D en fond, halos lumineux, typographie kinetic,
- * mot géant en outline avec parallax au scroll, indicateur de scroll.
+ * Hero immersif : typographie cinétique (révélation caractère par caractère),
+ * halos lumineux, mot géant en outline avec parallax, indicateur de scroll.
+ * La scène 3D vit dans le canvas fixe global (Scene3D monté au niveau page).
  */
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -18,16 +18,40 @@ export default function Hero() {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Typo cinétique : découpe en mots (insécables) puis en caractères
+    root.current
+      ?.querySelectorAll<HTMLElement>(".hero-line-inner")
+      .forEach((el) => {
+        if (el.dataset.split) return;
+        el.dataset.split = "1";
+        const words = (el.textContent ?? "").split(" ");
+        el.textContent = "";
+        words.forEach((word, wi) => {
+          const w = document.createElement("span");
+          w.className = "word";
+          Array.from(word).forEach((ch) => {
+            const s = document.createElement("span");
+            s.className = "char";
+            s.textContent = ch;
+            w.appendChild(s);
+          });
+          el.appendChild(w);
+          if (wi < words.length - 1)
+            el.appendChild(document.createTextNode(" "));
+        });
+      });
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         delay: 0.75,
         defaults: { ease: "power4.out" },
       });
 
-      tl.from(".hero-line-inner", {
-        yPercent: 115,
-        duration: 1.05,
-        stagger: 0.12,
+      tl.from(".hero-line-inner .char", {
+        yPercent: 130,
+        rotateZ: 7,
+        duration: 0.95,
+        stagger: 0.02,
       })
         .from(
           ".hero-eyebrow",
@@ -82,7 +106,6 @@ export default function Hero() {
     <section className="hero" ref={root}>
       <div className="hero-glow hero-glow--a" aria-hidden="true" />
       <div className="hero-glow hero-glow--b" aria-hidden="true" />
-      <Scene3D />
       <span className="hero-ghost" aria-hidden="true">
         Performance
       </span>

@@ -236,7 +236,6 @@ html.has-cursor button {
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: var(--bg);
   color: #fff;
 }
 
@@ -283,17 +282,32 @@ html.has-cursor button {
   }
 }
 
-.hero-canvas {
-  position: absolute;
+.world-canvas {
+  position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
 }
 
-.hero-canvas canvas {
+.world-canvas canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-line-inner .word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-line-inner .char {
+  display: inline-block;
+  will-change: transform;
 }
 
 .hero-ghost {
@@ -459,6 +473,11 @@ html.has-cursor button {
   position: relative;
   padding: 130px 0;
   overflow: hidden;
+}
+
+.section .container {
+  transform: skewY(calc(var(--skew, 0) * 0.55deg));
+  will-change: transform;
 }
 
 .section-glow {
@@ -668,7 +687,6 @@ html.has-cursor button {
 
 /* ---------- À propos ---------- */
 .about {
-  background: var(--bg-soft);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -887,5 +905,8 @@ html.has-cursor button {
   .hero-glow,
   .hero-scroll i::after {
     animation: none !important;
+  }
+  .section .container {
+    transform: none;
   }
 }

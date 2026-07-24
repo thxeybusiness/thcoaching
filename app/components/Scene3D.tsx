@@ -2,12 +2,45 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 /**
- * Fond 3D WebGL du hero : un champ de particules orange en onde,
- * qui se construit à l'ouverture (intro), réagit au curseur et au scroll.
- * Three.js « brut » pour rester léger et compatible React 19 / Next 15.
+ * Monde 3D continu (canvas fixe plein écran) :
+ * — vague de particules + lucioles dans le hero (s'estompent au scroll)
+ * — objet « chrome liquide » éclairé studio qui voyage à travers les
+ *   chapitres de la page, piloté par le scroll (chorégraphie par keyframes),
+ *   avec inertie et parallax souris.
  */
+
+type KF = { p: number; x: number; y: number; s: number; ry: number };
+
+const KEYFRAMES: KF[] = [
+  { p: 0.0, x: 2.4, y: 0.2, s: 1.0, ry: 0.6 },
+  { p: 0.3, x: -2.5, y: 0.1, s: 0.8, ry: 2.6 },
+  { p: 0.62, x: 2.5, y: 0.15, s: 0.85, ry: 4.4 },
+  { p: 1.0, x: 0.0, y: -0.55, s: 1.05, ry: 6.2 },
+];
+
+function sampleKF(p: number): KF {
+  if (p <= KEYFRAMES[0].p) return KEYFRAMES[0];
+  for (let i = 0; i < KEYFRAMES.length - 1; i++) {
+    const a = KEYFRAMES[i];
+    const b = KEYFRAMES[i + 1];
+    if (p >= a.p && p <= b.p) {
+      let t = (p - a.p) / (b.p - a.p);
+      t = t * t * (3 - 2 * t); // smoothstep
+      return {
+        p,
+        x: a.x + (b.x - a.x) * t,
+        y: a.y + (b.y - a.y) * t,
+        s: a.s + (b.s - a.s) * t,
+        ry: a.ry + (b.ry - a.ry) * t,
+      };
+    }
+  }
+  return KEYFRAMES[KEYFRAMES.length - 1];
+}
+
 export default function Scene3D() {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -19,28 +52,42 @@ export default function Scene3D() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    let width = mount.clientWidth || window.innerWidth;
-    let height = mount.clientHeight || window.innerHeight;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 100);
-    camera.position.set(0, 1.5, 5.4);
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+    camera.position.set(0, 1.4, 5.6);
     camera.lookAt(0, 0.1, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
     mount.appendChild(renderer.domElement);
+
+    // Éclairage studio (reflets) + lumières orange
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const keyLight = new THREE.PointLight(0xff5a1f, 60, 30);
+    keyLight.position.set(3.5, 2.5, 2.5);
+    scene.add(keyLight);
+    const fillLight = new THREE.PointLight(0xff8c1a, 30, 30);
+    fillLight.position.set(-3.5, -1.5, 2);
+    scene.add(fillLight);
 
     const uniforms = {
       uTime: { value: 0 },
       uProgress: { value: reduce ? 1 : 0 },
       uMouse: { value: new THREE.Vector2(0.5, 0.55) },
       uScroll: { value: 0 },
+      uFade: { value: 1 },
     };
 
-    const geometry = new THREE.PlaneGeometry(16, 9, 150, 90);
-
+    // ---- Vague de particules (chapitre hero) ----
+    const geometry = new THREE.PlaneGeometry(18, 10, 170, 95);
     const material = new THREE.ShaderMaterial({
       uniforms,
       transparent: true,
@@ -61,8 +108,7 @@ export default function Scene3D() {
             + sin(pos.y * 1.05 + uTime * 0.7) * 0.30
             + sin((pos.x + pos.y) * 0.55 + uTime * 1.15) * 0.20;
 
-          // Onde au curseur
-          vec2 muv = (uMouse - 0.5) * vec2(16.0, 9.0);
+          vec2 muv = (uMouse - 0.5) * vec2(18.0, 10.0);
           float md = distance(pos.xy, muv);
           w += 0.7 * exp(-md * 0.45) * sin(uTime * 2.2 - md * 1.2);
 
@@ -73,13 +119,15 @@ export default function Scene3D() {
           vEl = w;
 
           vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-          gl_PointSize = (22.0 / -mv.z) * (0.45 + uProgress * 0.75);
+          gl_PointSize = (30.0 / -mv.z) * (0.45 + uProgress * 0.75);
           gl_Position = projectionMatrix * mv;
         }
       `,
       fragmentShader: /* glsl */ `
+        precision mediump float;
         varying float vEl;
         uniform float uProgress;
+        uniform float uFade;
 
         void main() {
           vec2 c = gl_PointCoord - 0.5;
@@ -91,19 +139,19 @@ export default function Scene3D() {
           vec3 amber  = vec3(1.0, 0.68, 0.26);
           float t = smoothstep(-0.25, 0.8, vEl);
           vec3 col = mix(orange, amber, t);
-          float bright = 0.30 + t * 1.0;
+          float bright = 0.42 + t * 1.1;
 
-          gl_FragColor = vec4(col * bright, glow * uProgress * 0.9);
+          gl_FragColor = vec4(col * bright, min(1.0, glow * uProgress * uFade * 1.3));
         }
       `,
     });
-
+    material.toneMapped = false;
     const points = new THREE.Points(geometry, material);
     points.rotation.x = -Math.PI / 2.25;
     points.position.y = -0.35;
     scene.add(points);
 
-    // Lucioles : particules lumineuses qui dérivent dans la profondeur
+    // ---- Lucioles (présentes sur toute la page, plus discrètes ensuite) ----
     const F_COUNT = 170;
     const fGeo = new THREE.BufferGeometry();
     const fPos = new Float32Array(F_COUNT * 3);
@@ -116,11 +164,11 @@ export default function Scene3D() {
     }
     fGeo.setAttribute("position", new THREE.BufferAttribute(fPos, 3));
     fGeo.setAttribute("aSeed", new THREE.BufferAttribute(fSeed, 1));
-
     const fMat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: uniforms.uTime,
         uProgress: uniforms.uProgress,
+        uFade: uniforms.uFade,
       },
       transparent: true,
       depthWrite: false,
@@ -146,6 +194,7 @@ export default function Scene3D() {
       `,
       fragmentShader: /* glsl */ `
         uniform float uProgress;
+        uniform float uFade;
         varying float vTw;
         varying float vSeed;
 
@@ -155,23 +204,50 @@ export default function Scene3D() {
           if (d > 0.5) discard;
           float glow = pow(smoothstep(0.5, 0.0, d), 1.6);
           vec3 col = mix(vec3(1.0, 0.45, 0.14), vec3(1.0, 0.82, 0.5), vSeed);
-          gl_FragColor = vec4(col, glow * vTw * uProgress * 0.75);
+          float fade = max(uFade, 0.35);
+          gl_FragColor = vec4(col, glow * vTw * uProgress * fade * 0.75);
         }
       `,
     });
+    fMat.toneMapped = false;
     const fireflies = new THREE.Points(fGeo, fMat);
     scene.add(fireflies);
 
-    // Interactions
-    const targetMouse = new THREE.Vector2(0.5, 0.55);
-    const onPointer = (e: PointerEvent) => {
-      const r = mount.getBoundingClientRect();
-      targetMouse.set(
-        (e.clientX - r.left) / r.width,
-        1 - (e.clientY - r.top) / r.height
+    // ---- Objet chrome liquide (voyage sur toute la page) ----
+    const knotGeo = new THREE.TorusKnotGeometry(1, 0.36, 260, 40);
+    const knotMat = new THREE.MeshPhysicalMaterial({
+      color: 0x191919,
+      metalness: 1,
+      roughness: 0.14,
+      clearcoat: 0.7,
+      clearcoatRoughness: 0.25,
+    });
+    const knotUniforms = { uTime: { value: 0 } };
+    knotMat.onBeforeCompile = (shader) => {
+      shader.uniforms.uTime = knotUniforms.uTime;
+      shader.vertexShader = `uniform float uTime;\n` + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+        float d = sin(position.x * 2.2 + uTime * 0.8) * 0.035
+                + sin(position.y * 2.8 + uTime * 1.1) * 0.035
+                + sin(position.z * 2.4 + uTime * 0.9) * 0.03;
+        transformed += normal * d;`
       );
     };
-    window.addEventListener("pointermove", onPointer);
+    const knot = new THREE.Mesh(knotGeo, knotMat);
+    knot.position.set(KEYFRAMES[0].x, KEYFRAMES[0].y, 0.6);
+    scene.add(knot);
+
+    // ---- Interactions ----
+    const targetMouse = new THREE.Vector2(0.5, 0.55);
+    const onPointer = (e: PointerEvent) => {
+      targetMouse.set(
+        e.clientX / width,
+        1 - e.clientY / height
+      );
+    };
+    window.addEventListener("pointermove", onPointer, { passive: true });
 
     let targetScroll = 0;
     const onScroll = () => {
@@ -180,40 +256,56 @@ export default function Scene3D() {
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const onResize = () => {
-      width = mount.clientWidth || window.innerWidth;
-      height = mount.clientHeight || window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
     window.addEventListener("resize", onResize);
 
-    // Boucle de rendu + montée d'intro
+    // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDuration = 2.4;
+    const introDuration = 2.2;
     let raf = 0;
+    let pageP = 0;
 
     const tick = () => {
       const t = clock.getElapsedTime();
       uniforms.uTime.value = t;
+      knotUniforms.uTime.value = t;
 
       if (!reduce && uniforms.uProgress.value < 1) {
         const p = Math.min(clock.elapsedTime / introDuration, 1);
-        // easeOutCubic
         uniforms.uProgress.value = 1 - Math.pow(1 - p, 3);
       }
 
-      // Lissage des interactions
       uniforms.uMouse.value.lerp(targetMouse, 0.06);
       uniforms.uScroll.value += (targetScroll - uniforms.uScroll.value) * 0.06;
 
-      // Dérive douce de caméra + parallax souris
-      camera.position.x += (
-        (targetMouse.x - 0.5) * 0.6 + Math.sin(t * 0.12) * 0.25 - camera.position.x
-      ) * 0.03;
-      camera.position.y += (
-        1.5 + (targetMouse.y - 0.55) * -0.4 - camera.position.y
-      ) * 0.03;
+      // Fondu de la vague après le hero
+      const fadeTarget = Math.max(0, 1 - (window.scrollY / height) * 1.15);
+      uniforms.uFade.value += (fadeTarget - uniforms.uFade.value) * 0.08;
+
+      // Progression 0→1 sur la hauteur totale de la page
+      const docH = document.documentElement.scrollHeight - height;
+      const rawP = docH > 0 ? window.scrollY / docH : 0;
+      pageP += (rawP - pageP) * 0.07; // inertie
+
+      const kf = sampleKF(pageP);
+      const aspectScale = Math.min(1, camera.aspect / 1.45);
+      const mx = uniforms.uMouse.value.x - 0.5;
+      const my = uniforms.uMouse.value.y - 0.55;
+
+      knot.position.x = kf.x * aspectScale + mx * 0.35;
+      knot.position.y = kf.y + my * 0.3 + Math.sin(t * 0.5) * 0.07;
+      knot.scale.setScalar(kf.s * uniforms.uProgress.value);
+      knot.rotation.y = kf.ry + t * 0.12 + mx * 0.5;
+      knot.rotation.x = 0.45 + my * -0.4 + Math.sin(t * 0.3) * 0.08;
+
+      // Caméra : dérive douce + parallax
+      camera.position.x += (mx * 0.5 + Math.sin(t * 0.12) * 0.2 - camera.position.x) * 0.03;
+      camera.position.y += (1.4 + my * -0.35 - camera.position.y) * 0.03;
       camera.lookAt(0, 0.1, 0);
 
       renderer.render(scene, camera);
@@ -230,6 +322,9 @@ export default function Scene3D() {
       material.dispose();
       fGeo.dispose();
       fMat.dispose();
+      knotGeo.dispose();
+      knotMat.dispose();
+      pmrem.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
@@ -237,5 +332,5 @@ export default function Scene3D() {
     };
   }, []);
 
-  return <div ref={mountRef} className="hero-canvas" aria-hidden="true" />;
+  return <div ref={mountRef} className="world-canvas" aria-hidden="true" />;
 }

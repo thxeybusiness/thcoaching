@@ -1,4 +1,5 @@
 import Hero from "./components/Hero";
+import Scene3D from "./components/Scene3D";
 import Reveal from "./components/Reveal";
 import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
@@ -65,6 +66,7 @@ function Marquee({
 export default function Home() {
   return (
     <>
+      <Scene3D />
       <Hero />
 
       <Marquee
