@@ -213,72 +213,63 @@ export default function Scene3D() {
     const fireflies = new THREE.Points(fGeo, fMat);
     scene.add(fireflies);
 
-    // ---- Orbe de verre au cœur lumineux (voyage sur toute la page) ----
-    const orb = new THREE.Group();
+    // ---- Forme signature : disque orange pastel aux bords diffus ----
+    // (reproduction de la forme Spline « Liquid Circle » de l'utilisateur)
+    const blob = new THREE.Group();
 
-    const glassGeo = new THREE.SphereGeometry(1.05, 96, 96);
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 0.07,
-      transmission: 1,
-      thickness: 1.4,
-      ior: 1.45,
-      clearcoat: 1,
-      clearcoatRoughness: 0.08,
-      attenuationColor: new THREE.Color(0xff7a33),
-      attenuationDistance: 2.2,
-      envMapIntensity: 1.2,
+    const discGeo = new THREE.CircleGeometry(1.15, 96);
+    const discUniforms = { uTime: { value: 0 } };
+    const discMat = new THREE.ShaderMaterial({
+      uniforms: discUniforms,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      vertexShader: /* glsl */ `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uTime;
+        varying vec2 vUv;
+
+        void main() {
+          vec2 c = vUv - 0.5;
+          float r = length(c) * 2.0;
+          float a = atan(c.y, c.x);
+
+          // Bord organique qui respire doucement (effet « liquid »)
+          float wob = 0.05 * sin(a * 3.0 + uTime * 0.5)
+                    + 0.035 * sin(a * 5.0 - uTime * 0.35);
+
+          // Dégradé pêche → orange doux, bord très diffus
+          vec3 centre = vec3(1.0, 0.86, 0.69);
+          vec3 bord   = vec3(0.97, 0.63, 0.35);
+          vec3 col = mix(centre, bord, smoothstep(0.15, 0.95, r));
+
+          float alpha = 1.0 - smoothstep(0.30 + wob, 0.98 + wob, r);
+          alpha = pow(alpha, 1.5);
+
+          gl_FragColor = vec4(col, alpha * 0.97);
+        }
+      `,
     });
-    const orbUniforms = { uTime: { value: 0 } };
-    glassMat.onBeforeCompile = (shader) => {
-      shader.uniforms.uTime = orbUniforms.uTime;
-      shader.vertexShader = `uniform float uTime;\n` + shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace(
-        "#include <begin_vertex>",
-        `#include <begin_vertex>
-        float d = sin(position.x * 3.0 + uTime * 0.7) * 0.02
-                + sin(position.y * 3.6 + uTime * 0.9) * 0.02
-                + sin(position.z * 3.2 + uTime * 0.8) * 0.02;
-        transformed += normal * d;`
-      );
-    };
-    orb.add(new THREE.Mesh(glassGeo, glassMat));
+    discMat.toneMapped = false;
+    const disc = new THREE.Mesh(discGeo, discMat);
+    disc.scale.set(1.0, 0.85, 1.0); // légèrement elliptique, comme la référence
+    blob.add(disc);
 
-    // Cœur lumineux + satellites d'énergie
-    const coreGeo = new THREE.SphereGeometry(0.34, 48, 48);
-    const coreMat = new THREE.MeshStandardMaterial({
-      color: 0xff5a1f,
-      emissive: 0xff5a1f,
-      emissiveIntensity: 2.4,
-      roughness: 0.4,
-    });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    orb.add(core);
-
-    const satGeo = new THREE.SphereGeometry(0.085, 24, 24);
-    const satMat = new THREE.MeshStandardMaterial({
-      color: 0xffb066,
-      emissive: 0xffb066,
-      emissiveIntensity: 3.2,
-      roughness: 0.4,
-    });
-    const sat1 = new THREE.Mesh(satGeo, satMat);
-    const sat2 = new THREE.Mesh(satGeo, satMat);
-    orb.add(sat1, sat2);
-
-    const coreLight = new THREE.PointLight(0xff6a24, 22, 9);
-    orb.add(coreLight);
-
-    // Halo doux derrière l'orbe
+    // Halo très doux derrière la forme
     const haloCanvas = document.createElement("canvas");
     haloCanvas.width = haloCanvas.height = 128;
     const hctx = haloCanvas.getContext("2d");
     if (hctx) {
       const grad = hctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-      grad.addColorStop(0, "rgba(255,110,40,0.55)");
-      grad.addColorStop(0.4, "rgba(255,90,31,0.22)");
-      grad.addColorStop(1, "rgba(255,90,31,0)");
+      grad.addColorStop(0, "rgba(255,170,100,0.30)");
+      grad.addColorStop(0.5, "rgba(255,130,60,0.12)");
+      grad.addColorStop(1, "rgba(255,110,40,0)");
       hctx.fillStyle = grad;
       hctx.fillRect(0, 0, 128, 128);
     }
@@ -291,12 +282,14 @@ export default function Scene3D() {
       transparent: true,
     });
     const halo = new THREE.Sprite(haloMat);
-    halo.scale.setScalar(4.6);
-    halo.position.z = -0.4;
-    orb.add(halo);
+    halo.scale.setScalar(3.4);
+    halo.position.z = -0.3;
+    blob.add(halo);
 
-    orb.position.set(KEYFRAMES[0].x, KEYFRAMES[0].y, 0.6);
-    scene.add(orb);
+    // Face caméra, inclinaison légère + rotation dans le plan (comme la réf.)
+    blob.rotation.set(-0.18, 0.12, 0.45);
+    blob.position.set(KEYFRAMES[0].x, KEYFRAMES[0].y, 0.6);
+    scene.add(blob);
 
     // ---- Interactions ----
     const targetMouse = new THREE.Vector2(0.5, 0.55);
@@ -332,7 +325,7 @@ export default function Scene3D() {
     const tick = () => {
       const t = clock.getElapsedTime();
       uniforms.uTime.value = t;
-      orbUniforms.uTime.value = t;
+      discUniforms.uTime.value = t;
 
       if (!reduce && uniforms.uProgress.value < 1) {
         const p = Math.min(clock.elapsedTime / introDuration, 1);
@@ -356,27 +349,16 @@ export default function Scene3D() {
       const mx = uniforms.uMouse.value.x - 0.5;
       const my = uniforms.uMouse.value.y - 0.55;
 
-      // Pulsation du cœur + orbites des satellites
-      const pulse = 1 + Math.sin(t * 1.6) * 0.12;
-      coreMat.emissiveIntensity = 2.2 * pulse;
-      coreLight.intensity = 20 * pulse;
-      core.scale.setScalar(pulse);
-      haloMat.opacity = 0.72 + Math.sin(t * 1.6) * 0.16;
-      sat1.position.set(
-        Math.cos(t * 0.9) * 0.62,
-        Math.sin(t * 1.3) * 0.3,
-        Math.sin(t * 0.9) * 0.62
-      );
-      sat2.position.set(
-        Math.cos(-t * 0.7 + 2.1) * 0.5,
-        Math.sin(t * 0.8 + 1.2) * 0.42,
-        Math.cos(t * 0.6) * 0.5
-      );
+      // Respiration douce + halo vivant
+      const breathe = 1 + Math.sin(t * 0.8) * 0.045;
+      haloMat.opacity = 0.8 + Math.sin(t * 0.8) * 0.12;
 
-      orb.position.x = kf.x * aspectScale + mx * 0.35;
-      orb.position.y = kf.y + my * 0.3 + Math.sin(t * 0.5) * 0.08;
-      orb.scale.setScalar(kf.s * 1.12 * uniforms.uProgress.value);
-      orb.rotation.y = kf.ry * 0.3 + t * 0.1 + mx * 0.4;
+      blob.position.x = kf.x * aspectScale + mx * 0.3;
+      blob.position.y = kf.y + my * 0.25 + Math.sin(t * 0.45) * 0.08;
+      blob.scale.setScalar(kf.s * 0.92 * breathe * uniforms.uProgress.value);
+      blob.rotation.z = 0.45 + t * 0.04 + mx * 0.1;
+      blob.rotation.x = -0.18 + my * -0.12;
+      blob.rotation.y = 0.12 + kf.ry * 0.03 + mx * 0.15;
 
       // Caméra : dérive douce + parallax
       camera.position.x += (mx * 0.5 + Math.sin(t * 0.12) * 0.2 - camera.position.x) * 0.03;
@@ -397,12 +379,8 @@ export default function Scene3D() {
       material.dispose();
       fGeo.dispose();
       fMat.dispose();
-      glassGeo.dispose();
-      glassMat.dispose();
-      coreGeo.dispose();
-      coreMat.dispose();
-      satGeo.dispose();
-      satMat.dispose();
+      discGeo.dispose();
+      discMat.dispose();
       haloTex.dispose();
       haloMat.dispose();
       pmrem.dispose();
