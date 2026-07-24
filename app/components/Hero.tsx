@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import Scene3D from "./Scene3D";
 
 /**
  * Hero animé : la typographie se révèle ligne par ligne (kinetic type),
@@ -15,7 +16,7 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
-        delay: 1.9,
+        delay: 0.85,
         defaults: { ease: "power4.out" },
       });
 
@@ -46,6 +47,7 @@ export default function Hero() {
 
   return (
     <section className="hero" ref={root}>
+      <Scene3D />
       <div className="container hero-inner">
         <span className="eyebrow hero-eyebrow">
           Coaching Business &amp; Performance
