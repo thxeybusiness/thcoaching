@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 
 /**
  * Monde 3D continu (canvas fixe plein écran) :
@@ -16,8 +17,10 @@ type KF = { p: number; x: number; y: number; s: number; ry: number };
 const KEYFRAMES: KF[] = [
   { p: 0.0, x: 2.4, y: 0.2, s: 1.0, ry: 0.6 },
   { p: 0.3, x: -2.5, y: 0.1, s: 0.8, ry: 2.6 },
-  { p: 0.62, x: 2.5, y: 0.15, s: 0.85, ry: 4.4 },
-  { p: 1.0, x: 0.0, y: -0.55, s: 1.05, ry: 6.2 },
+  { p: 0.6, x: 2.5, y: 0.15, s: 0.85, ry: 4.4 },
+  { p: 0.84, x: 0.0, y: -0.25, s: 1.15, ry: 6.0 },
+  // Fin de page : la lumière se couche derrière le wordmark (soleil couchant)
+  { p: 1.0, x: 0.0, y: -1.95, s: 1.25, ry: 6.2 },
 ];
 
 function sampleKF(p: number): KF {
@@ -199,53 +202,32 @@ export default function Scene3D() {
     const fireflies = new THREE.Points(fGeo, fMat);
     scene.add(fireflies);
 
-    // ---- Forme signature : disque orange pastel aux bords diffus ----
-    // (reproduction de la forme Spline « Liquid Circle » de l'utilisateur)
+    // ---- Élément signature : le logo TH Coaching en orange lumineux ----
     const blob = new THREE.Group();
 
-    const discGeo = new THREE.CircleGeometry(1.15, 96);
-    const discUniforms = { uTime: { value: 0 } };
-    const discMat = new THREE.ShaderMaterial({
-      uniforms: discUniforms,
-      transparent: true,
-      depthWrite: false,
+    const LOGO_SVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z'/><path d='M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z'/><path d='M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z'/></svg>`;
+    const svgData = new SVGLoader().parse(LOGO_SVG);
+    const logoMat = new THREE.MeshBasicMaterial({
+      color: 0xff8c2e,
       side: THREE.DoubleSide,
-      vertexShader: /* glsl */ `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: /* glsl */ `
-        uniform float uTime;
-        varying vec2 vUv;
-
-        void main() {
-          vec2 c = vUv - 0.5;
-          float r = length(c) * 2.0;
-          float a = atan(c.y, c.x);
-
-          // Bord organique qui respire doucement (effet « liquid »)
-          float wob = 0.05 * sin(a * 3.0 + uTime * 0.5)
-                    + 0.035 * sin(a * 5.0 - uTime * 0.35);
-
-          // Dégradé pêche → orange doux, bord très diffus
-          vec3 centre = vec3(1.0, 0.86, 0.69);
-          vec3 bord   = vec3(0.97, 0.63, 0.35);
-          vec3 col = mix(centre, bord, smoothstep(0.15, 0.95, r));
-
-          float alpha = 1.0 - smoothstep(0.30 + wob, 0.98 + wob, r);
-          alpha = pow(alpha, 1.5);
-
-          gl_FragColor = vec4(col, alpha * 0.97);
-        }
-      `,
     });
-    discMat.toneMapped = false;
-    const disc = new THREE.Mesh(discGeo, discMat);
-    disc.scale.set(1.0, 0.85, 1.0); // légèrement elliptique, comme la référence
-    blob.add(disc);
+    logoMat.toneMapped = false;
+    const logoGeos: THREE.BufferGeometry[] = [];
+    const logo = new THREE.Group();
+    svgData.paths.forEach((p) => {
+      SVGLoader.createShapes(p).forEach((shape) => {
+        const geo = new THREE.ExtrudeGeometry(shape, {
+          depth: 6,
+          bevelEnabled: false,
+        });
+        geo.translate(-60, -59, -3);
+        logoGeos.push(geo);
+        logo.add(new THREE.Mesh(geo, logoMat));
+      });
+    });
+    const LOGO_SCALE = 0.019;
+    logo.scale.set(LOGO_SCALE, -LOGO_SCALE, LOGO_SCALE);
+    blob.add(logo);
 
     // Halo très doux derrière la forme
     const haloCanvas = document.createElement("canvas");
@@ -268,8 +250,8 @@ export default function Scene3D() {
       transparent: true,
     });
     const halo = new THREE.Sprite(haloMat);
-    halo.scale.setScalar(3.4);
-    halo.position.z = -0.3;
+    halo.scale.setScalar(4.4);
+    halo.position.z = -0.35;
     blob.add(halo);
 
     // Face caméra, inclinaison légère + rotation dans le plan (comme la réf.)
@@ -311,7 +293,6 @@ export default function Scene3D() {
     const tick = () => {
       const t = clock.getElapsedTime();
       uniforms.uTime.value = t;
-      discUniforms.uTime.value = t;
 
       if (!reduce && uniforms.uProgress.value < 1) {
         const p = Math.min(clock.elapsedTime / introDuration, 1);
@@ -343,9 +324,10 @@ export default function Scene3D() {
       blob.position.x = kf.x * aspectScale + mx * 0.3;
       blob.position.y = kf.y + my * 0.25 + Math.sin(t * 0.45) * 0.08;
       blob.scale.setScalar(kf.s * 0.92 * breathe * uniforms.uProgress.value);
-      blob.rotation.z = 0.45 + t * 0.04 + mx * 0.1;
-      blob.rotation.x = -0.18 + my * -0.12;
-      blob.rotation.y = 0.12 + kf.ry * 0.03 + mx * 0.15;
+      // Balancement doux : le logo reste lisible
+      blob.rotation.z = Math.sin(t * 0.35) * 0.07 + mx * 0.08;
+      blob.rotation.x = -0.12 + my * -0.12;
+      blob.rotation.y = 0.08 + Math.sin(t * 0.25) * 0.1 + mx * 0.2;
 
       // Caméra : dérive douce + parallax
       camera.position.x += (mx * 0.5 + Math.sin(t * 0.12) * 0.2 - camera.position.x) * 0.03;
@@ -366,8 +348,8 @@ export default function Scene3D() {
       material.dispose();
       fGeo.dispose();
       fMat.dispose();
-      discGeo.dispose();
-      discMat.dispose();
+      logoGeos.forEach((g) => g.dispose());
+      logoMat.dispose();
       haloTex.dispose();
       haloMat.dispose();
       renderer.dispose();
