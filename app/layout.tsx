@@ -3,8 +3,9 @@ import Link from "next/link";
 import "@fontsource/space-grotesk/400.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/700.css";
-import "@fontsource/syne/700.css";
-import "@fontsource/syne/800.css";
+import "@fontsource/sora/600.css";
+import "@fontsource/sora/700.css";
+import "@fontsource/sora/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 
