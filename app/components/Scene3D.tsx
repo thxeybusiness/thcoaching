@@ -115,7 +115,7 @@ export default function Scene3D() {
 
     // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDelay = 1.4; // le logo 3D apparaît quand les bandes s'ouvrent
+    const introDelay = 1.1; // le logo 3D apparaît au reflux des vagues
     const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;

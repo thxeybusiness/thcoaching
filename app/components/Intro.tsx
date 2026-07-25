@@ -83,7 +83,7 @@ export default function Intro() {
           top: () => -window.innerHeight * 0.2,
           width: () => window.innerWidth * 1.25,
           height: () => window.innerHeight * 1.4,
-          duration: 0.85,
+          duration: 0.425,
           ease: "power2.inOut",
         })
         // … et s'épaississent en même temps pour couvrir toute la page
@@ -91,7 +91,7 @@ export default function Intro() {
           ".intro-reveal-wave",
           {
             scaleY: 2.1,
-            duration: 0.85,
+            duration: 0.425,
             ease: "power2.inOut",
             transformOrigin: "50% 50%",
           },
@@ -103,8 +103,8 @@ export default function Intro() {
         //    reflue : seules leurs courbes traversent l'écran.
         .to(".intro-reveal-wave", {
           y: -210,
-          duration: 1,
-          stagger: 0.12,
+          duration: 0.5,
+          stagger: 0.06,
           ease: "power3.inOut",
         });
     }, root);
