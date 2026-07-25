@@ -222,20 +222,19 @@ h3 {
 }
 
 /* Bandes de révélation (le logo devient la transition) */
-.intro-bands {
+/* Les vagues du logo deviennent le rideau : le SVG démarre exactement sur
+   le logo (position posée en JS) puis s'étire au plein écran. Avec
+   preserveAspectRatio="none", les courbes s'étirent sans jamais devenir
+   des angles droits. */
+.intro-reveal {
   position: absolute;
-  inset: 0;
   visibility: hidden;
   pointer-events: none;
+  overflow: visible;
 }
 
-/* Chaque bande naît à la place d'une vague du logo (positionnée en JS)
-   puis s'étire plein écran : la transition logo → bandes est continue. */
-.intro-band {
-  position: absolute;
-  display: block;
-  background: #ff8c2e;
-  will-change: transform, width, height;
+.intro-reveal-wave {
+  will-change: transform;
 }
 
 /* ---------- Hero ---------- */
