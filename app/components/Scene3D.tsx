@@ -115,7 +115,8 @@ export default function Scene3D() {
 
     // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDuration = 1.6;
+    const introDelay = 2.15; // le logo 3D apparaît à la levée du rideau
+    const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;
     let raf = 0;
@@ -124,7 +125,7 @@ export default function Scene3D() {
       const t = clock.getElapsedTime();
 
       if (!reduce && progress < 1) {
-        const p = Math.min(t / introDuration, 1);
+        const p = Math.min(Math.max(t - introDelay, 0) / introDuration, 1);
         progress = 1 - Math.pow(1 - p, 3);
       }
 

@@ -8,6 +8,7 @@ import "@fontsource/sora/700.css";
 import "@fontsource/sora/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import Intro from "./components/Intro";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body>
         <div className="waves-bg" aria-hidden="true" />
         <SmoothScroll />
+        <Intro />
         <Header />
         <main>{children}</main>
         <Footer />

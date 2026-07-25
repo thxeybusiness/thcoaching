@@ -187,6 +187,40 @@ h3 {
   font-size: 1.12rem;
 }
 
+/* ---------- Intro motion design ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #070707;
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+
+.intro-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.intro-logo-svg {
+  width: clamp(110px, 15vw, 168px);
+  height: auto;
+  filter: drop-shadow(0 0 28px rgba(255, 110, 40, 0.35));
+}
+
+.intro-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  padding-left: 0.4em; /* compense le tracking sur la dernière lettre */
+}
+
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
