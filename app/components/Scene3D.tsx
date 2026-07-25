@@ -115,7 +115,7 @@ export default function Scene3D() {
 
     // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDelay = 1.44; // le logo 3D apparaît à la coupure de l'intro
+    const introDelay = 0.15; // intro désactivée : entrée dès le chargement
     const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;

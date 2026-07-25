@@ -8,7 +8,10 @@ import "@fontsource/sora/700.css";
 import "@fontsource/sora/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
-import Intro from "./components/Intro";
+// Intro mise de côté pour le moment — pour la réactiver : décommenter
+// l'import et <Intro /> ci-dessous, puis remettre les délais d'entrée
+// (Hero : delay 1.44 · Scene3D : introDelay 1.44).
+// import Intro from "./components/Intro";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -98,7 +101,7 @@ export default function RootLayout({
       <body>
         <div className="waves-bg" aria-hidden="true" />
         <SmoothScroll />
-        <Intro />
+        {/* <Intro /> */}
         <Header />
         <main>{children}</main>
         <Footer />

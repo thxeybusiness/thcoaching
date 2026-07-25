@@ -43,7 +43,7 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
-        delay: 1.44, // démarre à la coupure nette de l'intro
+        delay: 0.2, // intro désactivée : entrée dès le chargement
         defaults: { ease: "power4.out" },
       });
 
