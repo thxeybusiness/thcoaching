@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 /**
- * Intro motion design : les 3 vagues du logo se dessinent trait par trait,
- * se remplissent d'orange, battement de cœur, wordmark, puis rideau vers
- * le haut qui révèle le site. ~2,4 s, jouée à chaque chargement.
+ * Intro motion design « le logo devient la transition » :
+ * 1. Les 3 vagues glissent depuis les côtés en alternance et s'empilent
+ * 2. Wordmark + battement de cœur
+ * 3. Les vagues s'étirent en 3 bandes orange plein écran
+ * 4. Les bandes coulissent en alternance et révèlent le site
  */
 
 const WAVE_PATHS = [
@@ -26,59 +28,56 @@ export default function Intro() {
     }
 
     const ctx = gsap.context(() => {
-      const paths = gsap.utils.toArray<SVGPathElement>(".intro-wave");
-      paths.forEach((p) => {
-        const len = p.getTotalLength();
-        gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
-      });
-
       const tl = gsap.timeline({
-        defaults: { ease: "power2.out" },
+        defaults: { ease: "power3.out" },
         onComplete: () => setDone(true),
       });
       tl.timeScale(1.4);
 
-      tl.to(paths, {
-        strokeDashoffset: 0,
-        duration: 0.75,
-        stagger: 0.15,
-        ease: "power2.inOut",
+      // 1. Les vagues glissent depuis les côtés, en alternance
+      tl.from(".intro-wave", {
+        xPercent: (i: number) => (i % 2 === 0 ? -140 : 140),
+        opacity: 0,
+        duration: 0.62,
+        stagger: 0.11,
+        ease: "power4.out",
       })
-        .to(
-          paths,
-          { fill: "rgba(255, 140, 46, 1)", duration: 0.45, stagger: 0.1 },
-          "-=0.3"
-        )
-        .to(paths, { stroke: "rgba(255, 140, 46, 0)", duration: 0.35 }, "<")
-        .from(
-          ".intro-name",
-          { opacity: 0, y: 12, duration: 0.5 },
-          "-=0.15"
-        )
+        // 2. Wordmark
+        .from(".intro-name", { opacity: 0, y: 14, duration: 0.45 }, "-=0.24")
         // Battement de cœur : logo + wordmark ensemble
         .fromTo(
           [".intro-logo-svg", ".intro-name"],
           { scale: 1 },
           {
             scale: 1.07,
-            duration: 0.2,
+            duration: 0.19,
             yoyo: true,
             repeat: 1,
             ease: "power1.inOut",
             transformOrigin: "center center",
           },
-          "-=0.1"
+          "-=0.06"
         )
-        .to(
-          ".intro-inner",
-          { opacity: 0, scale: 0.94, duration: 0.35, ease: "power2.in" },
-          "+=0.3"
+        // 3. Les vagues s'étirent en bandes plein écran
+        .to(".intro-inner", { opacity: 0, duration: 0.26, ease: "power2.in" })
+        .set(".intro-bands", { visibility: "visible" })
+        .fromTo(
+          ".intro-band",
+          { scaleY: 0, transformOrigin: "center center" },
+          { scaleY: 1, duration: 0.42, stagger: 0.07, ease: "power3.inOut" },
+          "-=0.12"
         )
-        .to(
-          root.current,
-          { yPercent: -100, duration: 0.75, ease: "power4.inOut" },
-          "-=0.1"
-        );
+        // Le fond noir s'efface : seules les bandes couvrent le site,
+        // qui se dévoile donc progressivement pendant leur sortie.
+        // (root.current : « .intro » est la racine du contexte, hors sélecteurs)
+        .set(root.current, { background: "transparent" })
+        // 4. Les bandes coulissent en alternance
+        .to(".intro-band", {
+          xPercent: (i: number) => (i % 2 === 0 ? -105 : 105),
+          duration: 0.78,
+          stagger: 0.09,
+          ease: "power4.inOut",
+        });
     }, root);
 
     return () => ctx.revert();
@@ -91,17 +90,16 @@ export default function Intro() {
       <div className="intro-inner">
         <svg className="intro-logo-svg" viewBox="0 0 120 120">
           {WAVE_PATHS.map((d) => (
-            <path
-              key={d}
-              className="intro-wave"
-              d={d}
-              fill="rgba(255, 140, 46, 0)"
-              stroke="#ff8c2e"
-              strokeWidth="2"
-            />
+            <path key={d} className="intro-wave" d={d} fill="#ff8c2e" />
           ))}
         </svg>
         <span className="intro-name">TH Coaching</span>
+      </div>
+
+      <div className="intro-bands">
+        <span className="intro-band" />
+        <span className="intro-band" />
+        <span className="intro-band" />
       </div>
     </div>
   );

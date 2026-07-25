@@ -43,7 +43,7 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
-        delay: 1.7, // calé sur la fin du rideau de l'intro (×1.4)
+        delay: 1.5, // calé sur l'ouverture des bandes de l'intro
         defaults: { ease: "power4.out" },
       });
 
