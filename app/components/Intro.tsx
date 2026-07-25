@@ -36,6 +36,7 @@ export default function Intro() {
         defaults: { ease: "power2.out" },
         onComplete: () => setDone(true),
       });
+      tl.timeScale(1.4);
 
       tl.to(paths, {
         strokeDashoffset: 0,

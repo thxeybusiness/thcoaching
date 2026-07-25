@@ -115,7 +115,7 @@ export default function Scene3D() {
 
     // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDelay = 2.15; // le logo 3D apparaît à la levée du rideau
+    const introDelay = 1.55; // le logo 3D apparaît à la levée du rideau (×1.4)
     const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;
