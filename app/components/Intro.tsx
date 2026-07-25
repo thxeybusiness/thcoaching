@@ -58,15 +58,35 @@ export default function Intro() {
           },
           "-=0.06"
         )
-        // 3. Les vagues s'étirent en bandes plein écran
-        .to(".intro-inner", { opacity: 0, duration: 0.26, ease: "power2.in" })
-        .set(".intro-bands", { visibility: "visible" })
-        .fromTo(
-          ".intro-band",
-          { scaleY: 0, transformOrigin: "center center" },
-          { scaleY: 1, duration: 0.42, stagger: 0.07, ease: "power3.inOut" },
-          "-=0.12"
-        )
+        // 3. Chaque vague DEVIENT sa bande : on place les bandes exactement
+        //    sur les vagues (même position, même taille, même couleur),
+        //    on masque le SVG à la même frame, puis on les étire plein écran.
+        .call(() => {
+          const waves = gsap.utils.toArray<SVGPathElement>(".intro-wave");
+          const bands = gsap.utils.toArray<HTMLElement>(".intro-band");
+          bands.forEach((band, i) => {
+            const r = waves[i].getBoundingClientRect();
+            gsap.set(band, {
+              left: r.left,
+              top: r.top,
+              width: r.width,
+              height: r.height,
+              xPercent: 0,
+              x: 0,
+            });
+          });
+          gsap.set(".intro-bands", { visibility: "visible" });
+          gsap.set(".intro-inner", { opacity: 0 });
+        })
+        .to(".intro-band", {
+          left: () => -window.innerWidth * 0.005,
+          top: (i: number) => (window.innerHeight / 3) * i,
+          width: () => window.innerWidth * 1.01,
+          height: () => window.innerHeight / 3 + 1,
+          duration: 0.62,
+          stagger: 0.06,
+          ease: "power3.inOut",
+        })
         // Le fond noir s'efface : seules les bandes couvrent le site,
         // qui se dévoile donc progressivement pendant leur sortie.
         // (root.current : « .intro » est la racine du contexte, hors sélecteurs)
