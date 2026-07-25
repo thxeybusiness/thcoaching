@@ -86,7 +86,9 @@ export default function Intro() {
           duration: 0.425,
           ease: "power2.inOut",
         })
-        // … et s'épaississent en même temps pour couvrir toute la page
+        // … et s'épaississent en même temps pour couvrir toute la page.
+        // À la milliseconde où le zoom se termine, l'intro disparaît :
+        // coupure nette sur le site (onComplete → démontage immédiat).
         .to(
           ".intro-reveal-wave",
           {
@@ -96,17 +98,7 @@ export default function Intro() {
             transformOrigin: "50% 50%",
           },
           "<"
-        )
-        // Le fond noir s'efface : le site se dévoile derrière les vagues
-        .set(root.current, { background: "transparent" })
-        // 4. Les vagues se retirent vers le haut, comme une marée qui
-        //    reflue : seules leurs courbes traversent l'écran.
-        .to(".intro-reveal-wave", {
-          y: -210,
-          duration: 0.5,
-          stagger: 0.06,
-          ease: "power3.inOut",
-        });
+        );
     }, root);
 
     return () => ctx.revert();
