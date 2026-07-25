@@ -50,8 +50,14 @@ export default function Intro() {
           "-=0.3"
         )
         .to(paths, { stroke: "rgba(255, 140, 46, 0)", duration: 0.35 }, "<")
+        .from(
+          ".intro-name",
+          { opacity: 0, y: 12, duration: 0.5 },
+          "-=0.15"
+        )
+        // Battement de cœur : logo + wordmark ensemble
         .fromTo(
-          ".intro-logo-svg",
+          [".intro-logo-svg", ".intro-name"],
           { scale: 1 },
           {
             scale: 1.07,
@@ -59,13 +65,9 @@ export default function Intro() {
             yoyo: true,
             repeat: 1,
             ease: "power1.inOut",
+            transformOrigin: "center center",
           },
-          "-=0.05"
-        )
-        .from(
-          ".intro-name",
-          { opacity: 0, y: 12, duration: 0.5 },
-          "-=0.25"
+          "-=0.1"
         )
         .to(
           ".intro-inner",
