@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "@fontsource/space-grotesk/400.css";
 import "@fontsource/space-grotesk/500.css";
@@ -40,7 +40,20 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "TH Coaching — Coach professionnel & de vie",
+    description:
+      "Un accompagnement humain, structuré et orienté action pour atteindre vos objectifs.",
+  },
   robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 function Header() {
@@ -55,7 +68,8 @@ function Header() {
           <a href="#offre">Programme</a>
           <a href="#apropos">À propos</a>
           <a href="#contact" className="nav-cta">
-            Réserver un appel
+            <span className="nav-cta-long">Réserver un appel</span>
+            <span className="nav-cta-short">Réserver</span>
           </a>
         </nav>
       </div>

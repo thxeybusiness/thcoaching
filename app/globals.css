@@ -21,6 +21,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
@@ -857,8 +858,12 @@ main {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
-  .nav a:not(.nav-cta) {
-    display: none;
+  .nav {
+    gap: 16px;
+    font-size: 0.85rem;
+  }
+  .nav-cta {
+    padding: 8px 14px;
   }
   .pillars {
     grid-template-columns: 1fr;
@@ -886,6 +891,40 @@ main {
   }
   .contact {
     padding: 120px 0 100px;
+  }
+  /* Le logo 3D devient une texture d'ambiance : sur un écran étroit il n'y a
+     aucun espace libre à côté du texte, il passait donc par-dessus. */
+  .world-canvas {
+    opacity: 0.16;
+  }
+  /* Le bandeau incliné dépassait de quelques pixels sur la droite */
+  .marquee {
+    transform: rotate(-1.4deg) scale(1.08);
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+  .header-inner {
+    height: 64px;
+  }
+}
+
+/* Libellé court du bouton d'appel sur les petits écrans */
+.nav-cta-short {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .nav {
+    gap: 13px;
+    font-size: 0.8rem;
+  }
+  .nav-cta-long {
+    display: none;
+  }
+  .nav-cta-short {
+    display: inline;
   }
 }
 

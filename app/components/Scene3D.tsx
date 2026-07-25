@@ -55,6 +55,9 @@ export default function Scene3D() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
+    // Sur mobile la scène devient une texture d'ambiance (opacité réduite via
+    // le CSS) : on allège aussi le rendu pour préserver la batterie.
+    let isMobile = width < 861;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
@@ -63,7 +66,7 @@ export default function Scene3D() {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
     mount.appendChild(renderer.domElement);
 
     // ---- Le logo TH Coaching (3 vagues extrudées) ----
@@ -107,8 +110,12 @@ export default function Scene3D() {
     const onResize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
+      isMobile = width < 861;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5)
+      );
       renderer.setSize(width, height);
     };
     window.addEventListener("resize", onResize);
@@ -122,6 +129,12 @@ export default function Scene3D() {
     let raf = 0;
 
     const tick = () => {
+      // Onglet en arrière-plan : on garde la boucle vivante mais on ne rend rien
+      if (document.hidden) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
       const t = clock.getElapsedTime();
 
       if (!reduce && progress < 1) {
@@ -139,12 +152,24 @@ export default function Scene3D() {
       pageP += (rawP - pageP) * 0.07;
 
       const kf = sampleKF(pageP);
-      const aspectScale = Math.min(1, camera.aspect / 1.45);
       const breathe = 1 + Math.sin(t * 0.8) * 0.04;
 
-      blob.position.x = kf.x * aspectScale + mx * 0.3;
+      // Sur mobile on colle le logo au bord de l'écran (au lieu de le laisser
+      // dériver vers le centre) pour qu'il n'empiète jamais sur le texte.
+      let posX: number;
+      if (isMobile) {
+        const halfW =
+          Math.tan(((camera.fov * Math.PI) / 180) / 2) * 5 * camera.aspect;
+        posX = (kf.x / 2.5) * halfW * 0.78;
+      } else {
+        posX = kf.x * Math.min(1, camera.aspect / 1.45);
+      }
+
+      blob.position.x = posX + mx * 0.3;
       blob.position.y = kf.y + my * 0.25 + Math.sin(t * 0.45) * 0.07;
-      blob.scale.setScalar(kf.s * 0.92 * breathe * progress);
+      blob.scale.setScalar(
+        kf.s * (isMobile ? 0.58 : 0.92) * breathe * progress
+      );
       blob.rotation.z = Math.sin(t * 0.35) * 0.07 + mx * 0.08;
       blob.rotation.x = -0.12 + my * -0.12;
       blob.rotation.y = 0.08 + Math.sin(t * 0.25) * 0.1 + mx * 0.2;
