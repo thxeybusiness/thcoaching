@@ -25,10 +25,10 @@ export default function Scene3DLoader() {
     const start = () => setShow(true);
 
     if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(start, { timeout: 1500 });
+      const id = w.requestIdleCallback(start, { timeout: 700 });
       return () => w.cancelIdleCallback?.(id);
     }
-    const id = window.setTimeout(start, 400);
+    const id = window.setTimeout(start, 250);
     return () => window.clearTimeout(id);
   }, []);
 

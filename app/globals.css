@@ -901,8 +901,8 @@ main {
   padding: 26px 24px 26px;
   background: linear-gradient(
     to top,
-    rgba(10, 10, 10, 0.94),
-    rgba(10, 10, 10, 0.72) 55%,
+    rgba(10, 10, 10, 0.9),
+    rgba(10, 10, 10, 0.5) 60%,
     rgba(10, 10, 10, 0)
   );
 }
@@ -1084,7 +1084,7 @@ main {
 .slide--contact .footer-word {
   position: absolute;
   left: 50%;
-  bottom: 15%;
+  bottom: 11%;
   transform: translateX(-50%);
   margin: 0;
   z-index: 0;
