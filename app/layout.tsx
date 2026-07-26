@@ -8,6 +8,8 @@ import "@fontsource/sora/700.css";
 import "@fontsource/sora/800.css";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 // Intro mise de côté pour le moment — pour la réactiver : décommenter
 // l'import et <Intro /> ci-dessous, puis remettre les délais d'entrée
 // (Hero : delay 1.44 · Scene3D : introDelay 1.44).
@@ -146,10 +148,15 @@ export default function RootLayout({
         <div className="waves-bg" aria-hidden="true" />
         <SmoothScroll />
         {/* <Intro /> */}
+        <a href="#contenu" className="skip-link">
+          Aller au contenu
+        </a>
         <Header />
-        <main>{children}</main>
+        <main id="contenu">{children}</main>
         <Footer />
         <div className="grain" aria-hidden="true" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
