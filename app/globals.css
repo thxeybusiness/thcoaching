@@ -264,14 +264,6 @@ h3 {
 }
 
 /* ---------- Hero ---------- */
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  color: #fff;
-}
 
 /* ---------- Fond vagues (écho du logo, animation subtile) ---------- */
 .waves-bg {
@@ -399,105 +391,19 @@ main {
   gap: 16px;
 }
 
-.hero-scroll {
-  position: absolute;
-  z-index: 2;
-  bottom: 76px;
-  right: 44px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.26em;
-  font-size: 0.62rem;
-  color: rgba(255, 255, 255, 0.5);
-}
 
-.hero-scroll i {
-  display: block;
-  width: 1px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.22);
-  position: relative;
-  overflow: hidden;
-}
 
-.hero-scroll i::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: var(--orange);
-  animation: scroll-hint 1.8s cubic-bezier(0.6, 0, 0.3, 1) infinite;
-}
 
-@keyframes scroll-hint {
-  to {
-    top: 110%;
-  }
-}
 
 /* ---------- Marquee ---------- */
-.marquee {
-  position: relative;
-  z-index: 3;
-  overflow: hidden;
-  background: var(--orange);
-  transform: rotate(-1.4deg) scale(1.04);
-  margin: -46px 0 30px;
-  box-shadow: 0 18px 70px -20px rgba(255, 90, 31, 0.45);
-}
 
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-scroll 36s linear infinite;
-}
 
-.marquee span {
-  font-family: var(--font-display);
-  font-weight: 800;
-  text-transform: uppercase;
-  white-space: nowrap;
-  font-size: clamp(1.05rem, 2.4vw, 1.7rem);
-  letter-spacing: 0.03em;
-  color: #0a0a0a;
-  padding: 18px 0;
-}
 
-.marquee--ghost {
-  background: transparent;
-  transform: none;
-  margin: 40px 0 -30px;
-  box-shadow: none;
-}
 
-.marquee--ghost span {
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14);
-  font-size: clamp(2.6rem, 7.5vw, 5.4rem);
-  padding: 10px 0;
-}
 
-.marquee--reverse .marquee-track {
-  animation-direction: reverse;
-}
 
-@keyframes marquee-scroll {
-  to {
-    transform: translateX(-50%);
-  }
-}
 
 /* ---------- Sections ---------- */
-.section {
-  position: relative;
-  padding: 130px 0;
-  overflow: hidden;
-}
 
 .section-glow {
   position: absolute;
@@ -704,10 +610,6 @@ main {
 }
 
 /* ---------- À propos ---------- */
-.about {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
 
 .about-ghost {
   position: absolute;
@@ -768,10 +670,6 @@ main {
 }
 
 /* ---------- Contact ---------- */
-.contact {
-  text-align: center;
-  padding: 170px 0 150px;
-}
 
 .contact-glow {
   position: absolute;
@@ -818,15 +716,6 @@ main {
 }
 
 /* ---------- Footer ---------- */
-.site-footer {
-  position: relative;
-  z-index: 1;
-  background: var(--bg); /* opaque : le logo 3D disparaît derrière = fin de page */
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 40px 0 44px;
-  overflow: hidden;
-  color: var(--muted);
-}
 
 .footer-word {
   margin: 0;
@@ -842,44 +731,11 @@ main {
   pointer-events: none;
 }
 
-.footer-grid {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 26px;
-  margin-top: 34px;
-}
 
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
 
-.footer-tagline {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--muted);
-}
 
-.footer-links {
-  display: flex;
-  gap: 26px;
-  font-size: 0.95rem;
-}
 
-.footer-links a:hover {
-  color: #fff;
-}
 
-.footer-legal {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 22px;
-  margin: 30px 0 0;
-  font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.5);
-}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
@@ -904,27 +760,14 @@ main {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .section {
-    padding: 90px 0;
-  }
   .hero-ghost {
     font-size: clamp(4rem, 20vw, 8rem);
     bottom: 9%;
-  }
-  .hero-scroll {
-    display: none;
-  }
-  .contact {
-    padding: 120px 0 100px;
   }
   /* Le logo 3D devient une texture d'ambiance : sur un écran étroit il n'y a
      aucun espace libre à côté du texte, il passait donc par-dessus. */
   .world-canvas {
     opacity: 0.16;
-  }
-  /* Le bandeau incliné dépassait de quelques pixels sur la droite */
-  .marquee {
-    transform: rotate(-1.4deg) scale(1.08);
   }
   .brand-logo {
     width: 38px;
@@ -958,9 +801,594 @@ main {
   html {
     scroll-behavior: auto;
   }
-  .marquee-track,
-  .waves-bg,
-  .hero-scroll i::after {
+  .waves-bg {
     animation: none !important;
+  }
+  .deck[data-ready="true"] .deck-track,
+  .deck[data-ready="true"] [data-r],
+  .deck-progress i {
+    transition: none !important;
+  }
+}
+
+/* ================= Deck : un chapitre = un écran ================= */
+/* Sans JavaScript (et avant hydratation) les écrans restent empilés
+   verticalement : tout le contenu est dans le HTML et reste lisible. */
+
+.deck {
+  position: relative;
+  z-index: 1;
+}
+
+.deck-track {
+  --deck-x: 0;
+}
+
+.slide {
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-inner {
+  width: 100%;
+  padding: 118px 0 96px;
+}
+
+.deck:not([data-ready="true"]) .deck-nav,
+.deck:not([data-ready="true"]) .deck-progress,
+.deck:not([data-ready="true"]) .deck-status {
+  display: none;
+}
+
+.deck[data-ready="true"] {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.deck[data-ready="true"] .deck-track {
+  display: flex;
+  height: 100dvh;
+  transform: translate3d(calc(var(--deck-x) * -100vw), 0, 0);
+  will-change: transform;
+}
+
+.deck[data-ready="true"] .slide {
+  flex: none;
+  width: 100vw;
+  height: 100dvh;
+}
+
+.deck[data-ready="true"] .slide-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 96px 0 132px;
+}
+
+/* margin auto plutôt que justify-content : ne rogne pas le haut du contenu
+   quand celui-ci dépasse la hauteur de l'écran */
+.deck[data-ready="true"] .slide-inner > * {
+  margin-block: auto;
+}
+
+/* ---------- Révélations à l'arrivée sur un écran ---------- */
+.deck[data-ready="true"] [data-r] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.65, 0.3, 1),
+    transform 0.8s cubic-bezier(0.2, 0.65, 0.3, 1);
+  transition-delay: calc(var(--r-i, 0) * 90ms);
+}
+
+.deck[data-ready="true"] .slide[data-active="true"] [data-r] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Barre de navigation ---------- */
+.deck-nav {
+  position: fixed;
+  z-index: 92;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 26px 24px 26px;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.94),
+    rgba(10, 10, 10, 0.72) 55%,
+    rgba(10, 10, 10, 0)
+  );
+}
+
+.deck-arrow,
+.deck-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.25s ease, opacity 0.2s ease;
+}
+
+.deck-arrow {
+  padding: 0;
+  width: 46px;
+  height: 46px;
+  justify-content: center;
+}
+
+.deck-next {
+  padding: 12px 22px;
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #0a0a0a;
+  box-shadow: 0 8px 34px -10px rgba(255, 90, 31, 0.7);
+}
+
+.deck-arrow svg,
+.deck-next svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.deck-arrow:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.deck-next:hover:not(:disabled) {
+  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(255, 90, 31, 0.6);
+}
+
+.deck-arrow:disabled,
+.deck-next:disabled {
+  opacity: 0.32;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ---------- Pastilles de chapitre ---------- */
+.deck-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.deck-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.deck-dot:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.deck-dot[data-current="true"] {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.deck-dot-mark {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+.deck-dot[data-current="true"] .deck-dot-mark {
+  background: var(--orange);
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(255, 90, 31, 0.9);
+}
+
+/* ---------- Barre de progression ---------- */
+.deck-progress {
+  position: fixed;
+  z-index: 93;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.deck-progress i {
+  display: block;
+  height: 100%;
+  background: var(--orange);
+  transform-origin: left center;
+  transition: transform 0.9s cubic-bezier(0.2, 0.65, 0.3, 1);
+}
+
+.deck-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Ajustements par écran ---------- */
+.slide--hero .hero-inner {
+  padding-top: 0;
+}
+
+.slide--about {
+  border-top: 0;
+}
+
+.slide--contact {
+  text-align: center;
+}
+
+.slide--contact .contact-inner {
+  margin-inline: auto;
+}
+
+/* Mention légale discrète, hors du bloc central : le logo 3D se couche
+   derrière le wordmark à cet endroit. */
+.contact-legal {
+  position: absolute;
+  left: 26px;
+  bottom: 30px;
+  margin: 0;
+  z-index: 2;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+
+.slide--contact .footer-word {
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 0;
+}
+
+/* Un écran = une hauteur fixe : on resserre les grands espacements */
+.deck[data-ready="true"] .section-title {
+  font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+}
+
+.deck[data-ready="true"] .pillars {
+  margin-top: 42px;
+}
+
+.deck[data-ready="true"] .pillar {
+  padding: 32px 32px;
+}
+
+.deck[data-ready="true"] .bonus {
+  margin-top: 36px;
+  padding: 38px;
+}
+
+.deck[data-ready="true"] .contact-title {
+  font-size: clamp(2.3rem, 6vw, 4.2rem);
+}
+
+@media (max-width: 860px) {
+  .deck-nav {
+    gap: 10px;
+    padding: 18px 14px 20px;
+  }
+  .deck-dot-label {
+    display: none;
+  }
+  .deck-dot {
+    padding: 9px;
+  }
+  .deck-arrow {
+    width: 42px;
+    height: 42px;
+  }
+  .deck-next {
+    padding: 11px 18px;
+    font-size: 0.86rem;
+  }
+  .deck[data-ready="true"] .slide-inner {
+    padding: 86px 0 112px;
+  }
+  .deck[data-ready="true"] .pillar {
+    padding: 24px 22px;
+  }
+  .deck[data-ready="true"] .bonus {
+    padding: 28px 22px;
+  }
+  .slide--contact .footer-word {
+    bottom: 20%;
+  }
+  /* Trop à l'étroit entre la flèche de retour et le logo qui se couche :
+     la mention réapparaîtra dans les mentions légales dédiées. */
+  .contact-legal {
+    display: none;
+  }
+}
+
+/* Sur mobile chaque chapitre doit tenir dans la hauteur de l'écran :
+   on resserre la typographie plutôt que de masquer du contenu. */
+@media (max-width: 860px) {
+  .deck[data-ready="true"] .section-title {
+    font-size: clamp(1.6rem, 7.4vw, 2.1rem);
+  }
+  .deck[data-ready="true"] .section-intro {
+    font-size: 0.96rem;
+    margin-top: 16px;
+  }
+  .deck[data-ready="true"] .section-label {
+    font-size: 0.66rem;
+    margin-bottom: 14px;
+  }
+  .deck[data-ready="true"] .pillars {
+    margin-top: 24px;
+    gap: 14px;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    font-size: 0.68rem;
+    margin-bottom: 14px;
+  }
+  .deck[data-ready="true"] .pillar-list {
+    gap: 9px;
+  }
+  .deck[data-ready="true"] .pillar-list li {
+    font-size: 0.98rem;
+    padding-left: 22px;
+  }
+  .deck[data-ready="true"] .pillar-num {
+    font-size: 3rem;
+    top: 10px;
+    right: 16px;
+  }
+  .deck[data-ready="true"] .bonus {
+    margin-top: 24px;
+  }
+  .deck[data-ready="true"] .bonus-head {
+    margin-bottom: 20px;
+  }
+  .deck[data-ready="true"] .bonus-head h3 {
+    font-size: 1.25rem;
+  }
+  .deck[data-ready="true"] .bonus-list {
+    gap: 16px;
+  }
+  .deck[data-ready="true"] .bonus-list strong {
+    font-size: 0.98rem;
+  }
+  .deck[data-ready="true"] .bonus-list span {
+    font-size: 0.86rem;
+  }
+  .deck[data-ready="true"] .bonus-list li {
+    padding-top: 13px;
+  }
+  .deck[data-ready="true"] .about-grid {
+    gap: 26px;
+  }
+  .deck[data-ready="true"] .about-text p:not(.section-label) {
+    font-size: 0.96rem;
+    margin-bottom: 12px;
+  }
+  .deck[data-ready="true"] .stats {
+    gap: 16px;
+  }
+  .deck[data-ready="true"] .stat strong {
+    font-size: 2rem;
+  }
+  .deck[data-ready="true"] .hero-sub {
+    font-size: 1rem;
+    margin: 20px 0 28px;
+  }
+  .deck[data-ready="true"] .contact-sub {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+}
+
+/* Écrans peu hauts (portables 720p, petits téléphones) : c'est la hauteur,
+   pas la largeur, qui contraint un chapitre. */
+@media (max-height: 780px) {
+  .deck[data-ready="true"] .slide-inner {
+    padding: 88px 0 116px;
+  }
+  .deck[data-ready="true"] .section-title {
+    font-size: clamp(1.55rem, 3.4vw + 0.4rem, 2.5rem);
+  }
+  .deck[data-ready="true"] .section-intro {
+    font-size: 0.98rem;
+    margin-top: 14px;
+  }
+  .deck[data-ready="true"] .pillars {
+    margin-top: 22px;
+    gap: 16px;
+  }
+  .deck[data-ready="true"] .pillar {
+    padding: 22px 24px;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    margin-bottom: 14px;
+  }
+  .deck[data-ready="true"] .pillar-list {
+    gap: 9px;
+  }
+  .deck[data-ready="true"] .pillar-list li {
+    font-size: 1rem;
+  }
+  .deck[data-ready="true"] .bonus {
+    margin-top: 22px;
+    padding: 26px 28px;
+  }
+  .deck[data-ready="true"] .bonus-head {
+    margin-bottom: 18px;
+  }
+  .deck[data-ready="true"] .bonus-head h3 {
+    font-size: 1.3rem;
+  }
+  .deck[data-ready="true"] .bonus-list {
+    gap: 18px;
+  }
+  .deck[data-ready="true"] .hero-title {
+    font-size: clamp(1.7rem, 3.6vw + 0.4rem, 2.9rem);
+  }
+  .deck[data-ready="true"] .hero-sub {
+    font-size: 1rem;
+    margin: 18px 0 26px;
+  }
+  .deck[data-ready="true"] .contact-title {
+    font-size: clamp(1.9rem, 4.4vw + 0.4rem, 3.2rem);
+  }
+  .deck[data-ready="true"] .contact-sub {
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+  .deck[data-ready="true"] .stat strong {
+    font-size: 2.1rem;
+  }
+  .deck[data-ready="true"] .about-grid {
+    gap: 24px;
+  }
+  .deck[data-ready="true"] .about-text p:not(.section-label) {
+    font-size: 0.98rem;
+    margin-bottom: 12px;
+  }
+  .deck-nav {
+    padding: 14px 20px 16px;
+  }
+}
+
+@media (max-height: 680px) {
+  .deck[data-ready="true"] .slide-inner {
+    padding: 78px 0 100px;
+  }
+  .deck[data-ready="true"] .section-title,
+  .deck[data-ready="true"] .hero-title {
+    font-size: clamp(1.4rem, 3vw + 0.35rem, 2rem);
+  }
+  .deck[data-ready="true"] .contact-title {
+    font-size: clamp(1.7rem, 3.6vw + 0.4rem, 2.4rem);
+  }
+  .deck[data-ready="true"] .section-intro,
+  .deck[data-ready="true"] .hero-sub,
+  .deck[data-ready="true"] .contact-sub,
+  .deck[data-ready="true"] .about-text p:not(.section-label) {
+    font-size: 0.9rem;
+  }
+  .deck[data-ready="true"] .pillar {
+    padding: 16px 18px;
+  }
+  .deck[data-ready="true"] .pillar-list {
+    gap: 7px;
+  }
+  .deck[data-ready="true"] .pillar-list li {
+    font-size: 0.92rem;
+  }
+  .deck[data-ready="true"] .bonus {
+    padding: 20px 20px;
+  }
+  .deck[data-ready="true"] .bonus-list {
+    gap: 12px;
+  }
+  .deck[data-ready="true"] .stat strong {
+    font-size: 1.7rem;
+  }
+  .deck[data-ready="true"] .btn {
+    padding: 12px 22px;
+    font-size: 0.94rem;
+  }
+  .deck[data-ready="true"] .btn-xl {
+    padding: 15px 32px;
+    font-size: 1rem;
+  }
+}
+
+/* Derniers ajustements mobiles pour que « Le programme » tienne d'un bloc */
+@media (max-width: 860px) {
+  .deck[data-ready="true"] .slide-inner {
+    padding: 80px 0 98px;
+  }
+  .deck[data-ready="true"] .pillars {
+    gap: 10px;
+  }
+  .deck[data-ready="true"] .pillar {
+    padding: 20px 20px;
+  }
+  .deck[data-ready="true"] .section-intro {
+    margin-top: 14px;
+  }
+}
+
+/* Écran vraiment court : le chapitre défile de l'intérieur, avec un repère
+   pour que ce ne soit pas une impasse. */
+.slide-scroll-hint {
+  display: none;
+}
+
+.deck[data-overflow="true"] .slide-scroll-hint {
+  display: block;
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  z-index: 91;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  animation: hint-bob 1.9s ease-in-out infinite;
+}
+
+@keyframes hint-bob {
+  50% {
+    transform: translate(-50%, 5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck[data-overflow="true"] .slide-scroll-hint {
+    animation: none;
   }
 }

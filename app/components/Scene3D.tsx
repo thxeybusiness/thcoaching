@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
+import { getDeckProgress } from "../lib/deck";
 
 /**
  * Scène 3D minimale : le logo TH Coaching (3 vagues extrudées, orange),
@@ -12,15 +13,21 @@ import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
  * uniquement des matériaux standards, fiables sur tous les navigateurs.
  */
 
-type KF = { p: number; x: number; y: number; s: number };
+type KF = { p: number; x: number; y: number; s: number; o: number };
 
+/**
+ * Une étape par écran du deck. `o` est l'intensité du logo une fois posé :
+ * pleine sur les écrans qui ont de l'espace libre (accueil, contact),
+ * discrète sur ceux qui sont remplis de texte, où il n'est plus qu'une
+ * texture de fond.
+ */
 const KEYFRAMES: KF[] = [
-  { p: 0.0, x: 2.4, y: 0.2, s: 1.0 },
-  { p: 0.3, x: -2.5, y: 0.1, s: 0.8 },
-  { p: 0.6, x: 2.5, y: 0.15, s: 0.85 },
-  { p: 0.84, x: -2.4, y: 0.2, s: 1.0 },
-  // Fin de page : le logo se couche derrière le wordmark
-  { p: 1.0, x: 0.0, y: -1.95, s: 1.25 },
+  { p: 0.0, x: 2.45, y: 0.15, s: 1.0, o: 1 },
+  { p: 0.25, x: 2.7, y: 1.2, s: 0.7, o: 0.22 },
+  { p: 0.5, x: -2.95, y: -1.5, s: 0.7, o: 0.22 },
+  { p: 0.75, x: 2.85, y: -1.5, s: 0.72, o: 0.24 },
+  // Dernier écran : le logo se couche derrière le wordmark
+  { p: 1.0, x: 0.0, y: -1.72, s: 1.2, o: 1 },
 ];
 
 function sampleKF(p: number): KF {
@@ -36,6 +43,7 @@ function sampleKF(p: number): KF {
         x: a.x + (b.x - a.x) * t,
         y: a.y + (b.y - a.y) * t,
         s: a.s + (b.s - a.s) * t,
+        o: a.o + (b.o - a.o) * t,
       };
     }
   }
@@ -75,6 +83,7 @@ export default function Scene3D() {
     const logoMat = new THREE.MeshBasicMaterial({
       color: 0xff8c2e,
       side: THREE.DoubleSide,
+      transparent: true,
     });
     logoMat.toneMapped = false;
     const logoGeos: THREE.BufferGeometry[] = [];
@@ -126,6 +135,7 @@ export default function Scene3D() {
     const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;
+    let travel = 0; // vitesse de déplacement lissée, pour le fondu
     let raf = 0;
 
     const tick = () => {
@@ -146,13 +156,20 @@ export default function Scene3D() {
       const mx = mouse.x - 0.5;
       const my = mouse.y - 0.55;
 
-      // Progression 0→1 sur la hauteur totale de la page (avec inertie)
-      const docH = document.documentElement.scrollHeight - height;
-      const rawP = docH > 0 ? window.scrollY / docH : 0;
-      pageP += (rawP - pageP) * 0.07;
+      // Progression 0→1 sur l'ensemble des écrans du deck (avec inertie)
+      const rawP = getDeckProgress();
+      pageP += (rawP - pageP) * 0.11;
+
+      // Le logo s'efface pendant qu'il voyage d'un chapitre à l'autre : sinon
+      // il traverse le texte de l'écran d'arrivée. Il revient une fois posé.
+      travel += (Math.abs(rawP - pageP) - travel) * 0.18;
+      const settled = 1 - Math.min(1, travel * 16);
 
       const kf = sampleKF(pageP);
       const breathe = 1 + Math.sin(t * 0.8) * 0.04;
+
+      // Intensité propre à l'écran, atténuée pendant le déplacement
+      logoMat.opacity = kf.o * (0.12 + 0.88 * settled * settled) * progress;
 
       // Sur mobile on colle le logo au bord de l'écran (au lieu de le laisser
       // dériver vers le centre) pour qu'il n'empiète jamais sur le texte.

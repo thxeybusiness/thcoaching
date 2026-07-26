@@ -1,10 +1,22 @@
+import type { CSSProperties } from "react";
 import Hero from "./components/Hero";
 import Scene3DLoader from "./components/Scene3DLoader";
-import Reveal from "./components/Reveal";
 import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
+import Deck, { type SlideMeta } from "./components/Deck";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
+
+/** Décalage de la révélation d'un élément à l'entrée de son écran. */
+const r = (i: number) => ({ "--r-i": i }) as CSSProperties;
+
+const SLIDES: SlideMeta[] = [
+  { id: "accueil", label: "Accueil" },
+  { id: "offre", label: "Programme" },
+  { id: "bonus", label: "Bonus" },
+  { id: "apropos", label: "À propos" },
+  { id: "contact", label: "Contact" },
+];
 
 const pillars = [
   {
@@ -40,181 +52,204 @@ const bonuses = [
   },
 ];
 
-function Marquee({
-  items,
-  ghost = false,
-  reverse = false,
-}: {
-  items: string[];
-  ghost?: boolean;
-  reverse?: boolean;
-}) {
-  const row = `${items.join("  •  ")}  •  `;
-  const cls = `marquee${ghost ? " marquee--ghost" : ""}${
-    reverse ? " marquee--reverse" : ""
-  }`;
-  return (
-    <div className={cls} aria-hidden="true">
-      <div className="marquee-track">
-        <span>{row.repeat(3)}</span>
-        <span>{row.repeat(3)}</span>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   return (
     <>
       <Scene3DLoader />
-      <Hero />
 
-      <Marquee
-        items={[
-          "Stratégie",
-          "Intelligence artificielle",
-          "Temps",
-          "Clients",
-          "Argent",
-          "Alimentation",
-          "Sommeil",
-          "Sport",
-        ]}
-      />
+      <Deck slides={SLIDES}>
+        {/* 1 — Accueil */}
+        <Hero />
 
-      {/* Offre / Programme */}
-      <section id="offre" className="section">
-        <div className="section-glow section-glow--left" aria-hidden="true" />
-        <div className="container">
-          <Reveal>
-            <p className="section-label">Le programme</p>
-            <h2 className="section-title">
-              Un Coaching Complet
-              <br />
-              <span className="accent">Business &amp; Performance.</span>
-            </h2>
-            <p className="section-intro">
-              Un accompagnement à 360° qui couvre à la fois la croissance de
-              votre business et votre équilibre personnel. On travaille
-              l&apos;essentiel, dans l&apos;ordre qui vous fait avancer.
-            </p>
-          </Reveal>
+        {/* 2 — Le programme */}
+        <section className="slide" id="offre" aria-labelledby="offre-titre">
+          <div className="section-glow section-glow--left" aria-hidden="true" />
+          <div className="slide-inner">
+            <div className="container">
+              <p className="section-label" style={r(0)} data-r>
+                Le programme
+              </p>
+              <h2 className="section-title" id="offre-titre" style={r(1)} data-r>
+                Un Coaching Complet
+                <br />
+                <span className="accent">Business &amp; Performance.</span>
+              </h2>
+              <p className="section-intro" style={r(2)} data-r>
+                Un accompagnement à 360° qui couvre à la fois la croissance de
+                votre business et votre équilibre personnel. On travaille
+                l&apos;essentiel, dans l&apos;ordre qui vous fait avancer.
+              </p>
 
-          <Reveal className="pillars" stagger y={50}>
-            {pillars.map((p) => (
-              <div key={p.group} className="pillar" data-hover>
-                <span className="pillar-num" aria-hidden="true">
-                  {p.num}
-                </span>
-                <h3 className="pillar-title">{p.group}</h3>
-                <ul className="pillar-list">
-                  {p.items.map((item) => (
-                    <li key={item}>{item}</li>
+              <div className="pillars">
+                {pillars.map((p, i) => (
+                  <div
+                    key={p.group}
+                    className="pillar"
+                    style={r(3 + i)}
+                    data-r
+                    data-hover
+                  >
+                    <span className="pillar-num" aria-hidden="true">
+                      {p.num}
+                    </span>
+                    <h3 className="pillar-title">{p.group}</h3>
+                    <ul className="pillar-list">
+                      {p.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3 — Les bonus */}
+        <section className="slide" id="bonus" aria-labelledby="bonus-titre">
+          <div className="slide-inner">
+            <div className="container">
+              <p className="section-label" style={r(0)} data-r>
+                Inclus dans l&apos;accompagnement
+              </p>
+              <h2 className="section-title" id="bonus-titre" style={r(1)} data-r>
+                Ce que vous recevez
+                <br />
+                <span className="accent">en plus du coaching.</span>
+              </h2>
+
+              <div className="bonus" style={r(2)} data-r>
+                <div className="bonus-head">
+                  <h3>Inclus en bonus</h3>
+                  <span className="bonus-value">+ de 628 € offerts</span>
+                </div>
+                <ul className="bonus-list">
+                  {bonuses.map((b) => (
+                    <li key={b.title}>
+                      <strong>{b.title}</strong>
+                      <span>{b.text}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-            ))}
-          </Reveal>
-
-          <Reveal>
-            <div className="bonus">
-              <div className="bonus-head">
-                <h3>Inclus en bonus</h3>
-                <span className="bonus-value">+ de 628 € offerts</span>
-              </div>
-              <ul className="bonus-list">
-                {bonuses.map((b) => (
-                  <li key={b.title}>
-                    <strong>{b.title}</strong>
-                    <span>{b.text}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* À propos */}
-      <section id="apropos" className="section about">
-        <span className="about-ghost" aria-hidden="true">
-          360°
-        </span>
-        <div className="container about-grid">
-          <Reveal className="about-text">
-            <p className="section-label">À propos</p>
-            <h2 className="section-title">
-              Un coach à vos côtés,
-              <br />
-              pas au-dessus.
-            </h2>
-            <p>
-              Ma conviction : un business qui tient dans la durée repose sur des
-              fondations solides — une stratégie claire, des outils qui font
-              gagner du temps, et un corps qui suit. C&apos;est pour ça que
-              l&apos;accompagnement travaille les deux à la fois.
-            </p>
-            <p>
-              Chaque accompagnement est confidentiel, bienveillant et rigoureux.
-              On avance à votre rythme, avec des objectifs clairs.
-            </p>
-          </Reveal>
-          <Reveal className="stats" stagger y={30}>
-            <div className="stat">
-              <strong>
-                <CountUp to={360} suffix="°" />
-              </strong>
-              <span>vision business &amp; santé</span>
-            </div>
-            <div className="stat">
-              <strong>
-                <CountUp to={628} suffix=" €" />
-              </strong>
-              <span>de bonus offerts</span>
-            </div>
-            <div className="stat">
-              <strong>
-                <CountUp to={8} />
-              </strong>
-              <span>domaines travaillés</span>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <Marquee items={["Business", "Performance", "Santé"]} ghost reverse />
-
-      {/* Contact */}
-      <section id="contact" className="section contact">
-        <div className="contact-glow" aria-hidden="true" />
-        <div className="container contact-inner">
-          <Reveal>
-            <p className="section-label section-label--center">Contact</p>
-            <h2 className="contact-title">
-              Prêt à passer au
-              <br />
-              <span className="accent">niveau supérieur ?</span>
-            </h2>
-            <p className="contact-sub">
-              Réservez votre appel découverte gratuit de 30 minutes. On fait le
-              point sur vos objectifs, sans engagement.
-            </p>
-            <div className="contact-cta">
-              <Magnetic>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
-                  className="btn btn-orange btn-xl"
+        {/* 4 — À propos */}
+        <section
+          className="slide slide--about"
+          id="apropos"
+          aria-labelledby="apropos-titre"
+        >
+          <span className="about-ghost" aria-hidden="true">
+            360°
+          </span>
+          <div className="slide-inner">
+            <div className="container about-grid">
+              <div className="about-text">
+                <p className="section-label" style={r(0)} data-r>
+                  À propos
+                </p>
+                <h2
+                  className="section-title"
+                  id="apropos-titre"
+                  style={r(1)}
+                  data-r
                 >
-                  Réserver mon appel
-                </a>
-              </Magnetic>
+                  Un coach à vos côtés,
+                  <br />
+                  pas au-dessus.
+                </h2>
+                <p style={r(2)} data-r>
+                  Ma conviction : un business qui tient dans la durée repose sur
+                  des fondations solides — une stratégie claire, des outils qui
+                  font gagner du temps, et un corps qui suit. C&apos;est pour ça
+                  que l&apos;accompagnement travaille les deux à la fois.
+                </p>
+                <p style={r(3)} data-r>
+                  Chaque accompagnement est confidentiel, bienveillant et
+                  rigoureux. On avance à votre rythme, avec des objectifs
+                  clairs.
+                </p>
+              </div>
+              <div className="stats">
+                <div className="stat" style={r(4)} data-r>
+                  <strong>
+                    <CountUp to={360} suffix="°" />
+                  </strong>
+                  <span>vision business &amp; santé</span>
+                </div>
+                <div className="stat" style={r(5)} data-r>
+                  <strong>
+                    <CountUp to={628} suffix=" €" />
+                  </strong>
+                  <span>de bonus offerts</span>
+                </div>
+                <div className="stat" style={r(6)} data-r>
+                  <strong>
+                    <CountUp to={8} />
+                  </strong>
+                  <span>domaines travaillés</span>
+                </div>
+              </div>
             </div>
-            <p className="contact-note">
-              Réponse sous 24h ouvrées · {CONTACT_EMAIL}
-            </p>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        </section>
+
+        {/* 5 — Contact */}
+        <section
+          className="slide slide--contact"
+          id="contact"
+          aria-labelledby="contact-titre"
+        >
+          <div className="contact-glow" aria-hidden="true" />
+          <p className="footer-word" aria-hidden="true">
+            TH Coaching
+          </p>
+          <div className="slide-inner">
+            <div className="container contact-inner">
+              <p
+                className="section-label section-label--center"
+                style={r(0)}
+                data-r
+              >
+                Contact
+              </p>
+              <h2
+                className="contact-title"
+                id="contact-titre"
+                style={r(1)}
+                data-r
+              >
+                Prêt à passer au
+                <br />
+                <span className="accent">niveau supérieur ?</span>
+              </h2>
+              <p className="contact-sub" style={r(2)} data-r>
+                Réservez votre appel découverte gratuit de 30 minutes. On fait
+                le point sur vos objectifs, sans engagement.
+              </p>
+              <div className="contact-cta" style={r(3)} data-r>
+                <Magnetic>
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}
+                    className="btn btn-orange btn-xl"
+                  >
+                    Réserver mon appel
+                  </a>
+                </Magnetic>
+              </div>
+              <p className="contact-note" style={r(4)} data-r>
+                Réponse sous 24h ouvrées · {CONTACT_EMAIL}
+              </p>
+            </div>
+          </div>
+          <p className="contact-legal" style={r(6)} data-r>
+            © 2026 TH Coaching · thcoaching.business
+          </p>
+        </section>
+      </Deck>
     </>
   );
 }

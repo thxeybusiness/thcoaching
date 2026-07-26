@@ -2,10 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
- * Compteur animé au scroll : 0 → valeur cible quand l'élément entre à l'écran.
+ * Compteur animé : 0 → valeur cible quand l'écran qui le contient arrive
+ * à l'image. Les écrans hors champ du deck sont translatés hors du viewport,
+ * un IntersectionObserver suffit donc à détecter leur arrivée.
  */
 export default function CountUp({
   to,
@@ -27,21 +28,29 @@ export default function CountUp({
       return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
     const obj = { v: 0 };
-    const tween = gsap.to(obj, {
-      v: to,
-      duration,
-      ease: "power2.out",
-      scrollTrigger: { trigger: el, start: "top 88%", once: true },
-      onUpdate: () => {
-        el.textContent = `${Math.round(obj.v)}${suffix}`;
+    let tween: gsap.core.Tween | undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        tween = gsap.to(obj, {
+          v: to,
+          duration,
+          ease: "power2.out",
+          onUpdate: () => {
+            el.textContent = `${Math.round(obj.v)}${suffix}`;
+          },
+        });
       },
-    });
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
 
     return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
+      observer.disconnect();
+      tween?.kill();
     };
   }, [to, suffix, duration]);
 

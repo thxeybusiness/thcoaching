@@ -7,7 +7,6 @@ import "@fontsource/sora/600.css";
 import "@fontsource/sora/700.css";
 import "@fontsource/sora/800.css";
 import "./globals.css";
-import SmoothScroll from "./components/SmoothScroll";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 // Intro mise de côté pour le moment — pour la réactiver : décommenter
@@ -105,36 +104,6 @@ function Header() {
   );
 }
 
-function Footer() {
-  const year = 2026;
-  return (
-    <footer className="site-footer">
-      <p className="footer-word" aria-hidden="true">
-        TH Coaching
-      </p>
-      <div className="container">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="" className="brand-logo" width={44} height={44} />
-            <p className="footer-tagline">
-              Business &amp; Performance —
-              <br />
-              un accompagnement à 360°.
-            </p>
-          </div>
-          <div className="footer-links">
-            <a href="#offre">Programme</a>
-            <a href="#apropos">À propos</a>
-            <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
-          </div>
-        </div>
-        <p className="footer-legal">© {year} TH Coaching · thcoaching.business</p>
-      </div>
-    </footer>
-  );
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -146,14 +115,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
         <div className="waves-bg" aria-hidden="true" />
-        <SmoothScroll />
         {/* <Intro /> */}
         <a href="#contenu" className="skip-link">
           Aller au contenu
         </a>
         <Header />
         <main id="contenu">{children}</main>
-        <Footer />
         <div className="grain" aria-hidden="true" />
         <Analytics />
         <SpeedInsights />
