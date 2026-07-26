@@ -15,26 +15,29 @@ import SmoothScroll from "./components/SmoothScroll";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
+const SITE_TITLE = "TH Coaching — Coaching Business & Performance";
+const SITE_DESCRIPTION =
+  "Un accompagnement à 360° : stratégie business, intelligence artificielle, gestion du temps, des clients et de l'argent — mais aussi alimentation, sommeil et sport.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
   title: {
-    default: "TH Coaching — Coach professionnel & de vie",
+    default: SITE_TITLE,
     template: "%s · TH Coaching",
   },
-  description:
-    "TH Coaching accompagne particuliers, dirigeants et équipes vers plus de clarté, de confiance et de résultats concrets. Coaching individuel, professionnel et ateliers.",
+  description: SITE_DESCRIPTION,
   keywords: [
-    "coaching",
-    "coach professionnel",
-    "développement personnel",
-    "accompagnement",
-    "coaching de vie",
-    "coaching dirigeant",
+    "coaching business",
+    "coach entrepreneur",
+    "performance",
+    "stratégie business",
+    "intelligence artificielle",
+    "gestion du temps",
+    "accompagnement dirigeant",
   ],
   openGraph: {
-    title: "TH Coaching — Coach professionnel & de vie",
-    description:
-      "Un accompagnement humain, structuré et orienté action pour atteindre vos objectifs.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     url: "https://thcoaching.business",
     siteName: "TH Coaching",
     locale: "fr_FR",
@@ -42,11 +45,34 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TH Coaching — Coach professionnel & de vie",
-    description:
-      "Un accompagnement humain, structuré et orienté action pour atteindre vos objectifs.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
+  alternates: { canonical: "https://thcoaching.business" },
   robots: { index: true, follow: true },
+};
+
+/** Fiche structurée pour Google (rich results / knowledge panel). */
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "TH Coaching",
+  url: "https://thcoaching.business",
+  logo: "https://thcoaching.business/logo.svg",
+  image: "https://thcoaching.business/opengraph-image",
+  email: CONTACT_EMAIL,
+  description: SITE_DESCRIPTION,
+  inLanguage: "fr",
+  serviceType: "Coaching business et performance",
+  makesOffer: {
+    "@type": "Offer",
+    itemOffered: {
+      "@type": "Service",
+      name: "Un Coaching Complet Business & Performance",
+      description:
+        "Accompagnement à 360° couvrant la stratégie business, l'intelligence artificielle, la gestion du temps, des clients et de l'argent, l'alimentation, le sommeil et le sport.",
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -113,6 +139,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
         <div className="waves-bg" aria-hidden="true" />
         <SmoothScroll />
         {/* <Intro /> */}

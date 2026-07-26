@@ -149,10 +149,10 @@ export default function Home() {
               pas au-dessus.
             </h2>
             <p>
-              Formé aux approches du coaching, j&apos;accompagne depuis plusieurs
-              années des entrepreneurs et des dirigeants qui veulent du
-              changement concret. Ma conviction : vous avez déjà les ressources —
-              mon rôle est de vous aider à les activer.
+              Ma conviction : un business qui tient dans la durée repose sur des
+              fondations solides — une stratégie claire, des outils qui font
+              gagner du temps, et un corps qui suit. C&apos;est pour ça que
+              l&apos;accompagnement travaille les deux à la fois.
             </p>
             <p>
               Chaque accompagnement est confidentiel, bienveillant et rigoureux.
@@ -174,9 +174,9 @@ export default function Home() {
             </div>
             <div className="stat">
               <strong>
-                <CountUp to={95} suffix="%" />
+                <CountUp to={8} />
               </strong>
-              <span>de recommandation</span>
+              <span>domaines travaillés</span>
             </div>
           </Reveal>
         </div>
