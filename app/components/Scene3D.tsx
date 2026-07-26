@@ -27,7 +27,7 @@ const KEYFRAMES: KF[] = [
   { p: 0.5, x: -2.95, y: -1.5, s: 0.7, o: 0.22 },
   { p: 0.75, x: 2.85, y: -1.5, s: 0.72, o: 0.24 },
   // Dernier écran : le logo se couche derrière le wordmark
-  { p: 1.0, x: 3.15, y: -1.45, s: 0.95, o: 1 },
+  { p: 1.0, x: 3.05, y: -0.95, s: 0.9, o: 1 },
 ];
 
 function sampleKF(p: number): KF {
