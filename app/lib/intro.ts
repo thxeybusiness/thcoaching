@@ -3,4 +3,4 @@
  * démarrent exactement quand le rideau se lève (et pas avant, sinon leur
  * animation se joue derrière et le site apparaît déjà figé).
  */
-export const INTRO_FIN = 2.06;
+export const INTRO_FIN = 1.66;

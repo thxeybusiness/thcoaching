@@ -9,9 +9,8 @@ import { gsap } from "gsap";
  * 1. Le logo apparaît en grand, ses trois vagues éteintes
  * 2. « Compréhension », « Optimisation », « Lancement » entrent l'un après
  *    l'autre — chaque mot allume la vague correspondante
- * 3. Au troisième mot, les vagues elles-mêmes deviennent le rideau : elles
- *    s'étirent au plein écran (toujours en courbes, aucun angle droit) et
- *    ouvrent le site.
+ * 3. Au troisième mot, un éclat couvre l'écran ; le décor s'efface derrière
+ *    lui et le site apparaît pendant que l'éclat retombe.
  */
 
 const WAVE_PATHS = [
@@ -26,6 +25,10 @@ const PILIERS = [
   { mot: "Optimisation", y: "49%" },
   { mot: "Lancement", y: "73%" },
 ];
+
+/** Départ de l'éclat, puis instant où le site apparaît derrière lui. */
+const ECLAT = 1.46;
+const OUVERTURE = 1.66;
 
 const ETEINT = "rgba(255, 150, 70, 0.09)";
 const ALLUME = "#ff8c2e";
@@ -113,58 +116,49 @@ export default function Intro() {
           );
       });
 
-      // Éclat au moment où le rideau part
-      tl.fromTo(
-        ".intro-flash",
-        { opacity: 0 },
-        { opacity: 0.22, duration: 0.14, ease: "power2.out" },
-        1.5
-      ).to(".intro-flash", { opacity: 0, duration: 0.4 }, 1.64);
-
-      // 3. Le logo devient le rideau : le SVG de révélation se pose
-      //    exactement dessus, puis s'étire au plein écran.
+      // 3. Transition : un éclat couvre l'écran, le décor s'efface derrière
+      //    lui, et le site apparaît pendant que l'éclat retombe.
       tl.call(
         () => {
+          // L'éclat part du logo, où qu'il soit à l'écran
           const logo = root.current?.querySelector(".intro-logo-svg");
-          if (!logo) return;
+          const el = root.current;
+          if (!logo || !el) return;
           const r = logo.getBoundingClientRect();
-          gsap.set(".intro-reveal", {
-            left: r.left,
-            top: r.top,
-            width: r.width,
-            height: r.height,
-            visibility: "visible",
-          });
-          gsap.set(".intro-inner", { opacity: 0 });
+          el.style.setProperty(
+            "--fx",
+            `${((r.left + r.width / 2) / window.innerWidth) * 100}%`
+          );
+          el.style.setProperty(
+            "--fy",
+            `${((r.top + r.height / 2) / window.innerHeight) * 100}%`
+          );
         },
         undefined,
-        1.62
+        ECLAT
       )
-        // Les tracés occupent 10%→90% du viewBox : le SVG est dimensionné à
-        // 1,25× la largeur pour que les vagues touchent pile les bords.
-        .to(
-          ".intro-reveal",
-          {
-            left: () => -window.innerWidth * 0.125,
-            top: () => -window.innerHeight * 0.2,
-            width: () => window.innerWidth * 1.25,
-            height: () => window.innerHeight * 1.4,
-            duration: 0.44,
-            ease: "power2.inOut",
-          },
-          1.62
+        .fromTo(
+          ".intro-flash",
+          { opacity: 0, scale: 0.5 },
+          { opacity: 1, scale: 1.15, duration: 0.2, ease: "power2.in" },
+          ECLAT
         )
-        // … en s'épaississant pour couvrir toute la page. Dès la fin du zoom,
-        // l'intro est démontée : coupure nette sur le site.
-        .to(
-          ".intro-reveal-wave",
-          {
-            scaleY: 2.1,
-            duration: 0.44,
-            ease: "power2.inOut",
-            transformOrigin: "50% 50%",
+        // Au sommet de l'éclat, tout le décor disparaît d'un coup : le site
+        // est déjà là derrière, on ne voit jamais la coupure.
+        .call(
+          () => {
+            gsap.set([".intro-inner", ".intro-fond", ".intro-vignette"], {
+              opacity: 0,
+            });
+            if (root.current) root.current.style.background = "transparent";
           },
-          1.62
+          undefined,
+          OUVERTURE
+        )
+        .to(
+          ".intro-flash",
+          { opacity: 0, scale: 1.6, duration: 0.42, ease: "power2.out" },
+          OUVERTURE
         );
     }, root);
 
@@ -214,16 +208,6 @@ export default function Intro() {
         </p>
       </div>
 
-      {/* Les mêmes vagues, devenues le rideau de révélation */}
-      <svg
-        className="intro-reveal"
-        viewBox="0 0 120 120"
-        preserveAspectRatio="none"
-      >
-        {WAVE_PATHS.map((d) => (
-          <path key={d} className="intro-reveal-wave" d={d} fill="#ff8c2e" />
-        ))}
-      </svg>
     </div>
   );
 }

@@ -225,6 +225,7 @@ h3 {
   background: #070707;
   display: grid;
   place-items: center;
+  pointer-events: none;
   will-change: transform;
   /* Filet de sécurité : si le JavaScript n'aboutit pas, l'intro s'efface
      d'elle-même au lieu de masquer le site indéfiniment. En marche normale
@@ -285,18 +286,21 @@ h3 {
   );
 }
 
-/* Éclat bref au départ du rideau */
+/* L'éclat qui fait la transition, depuis le logo vers tout l'écran */
 .intro-flash {
   position: absolute;
-  inset: 0;
-  z-index: 3;
+  inset: -25%;
+  z-index: 5;
   pointer-events: none;
   opacity: 0;
+  will-change: transform, opacity;
   background: radial-gradient(
-    70% 70% at 70% 50%,
-    rgba(255, 190, 120, 0.9),
-    rgba(255, 120, 40, 0.35) 45%,
-    transparent 72%
+    circle at var(--fx, 70%) var(--fy, 50%),
+    #fff 0%,
+    rgba(255, 214, 168, 0.97) 14%,
+    rgba(255, 152, 62, 0.82) 32%,
+    rgba(255, 90, 31, 0.32) 54%,
+    transparent 76%
   );
 }
 
@@ -443,22 +447,6 @@ h3 {
   .intro-word-texte {
     font-size: 0.8rem;
   }
-}
-
-/* Bandes de révélation (le logo devient la transition) */
-/* Les vagues du logo deviennent le rideau : le SVG démarre exactement sur
-   le logo (position posée en JS) puis s'étire au plein écran. Avec
-   preserveAspectRatio="none", les courbes s'étirent sans jamais devenir
-   des angles droits. */
-.intro-reveal {
-  position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.intro-reveal-wave {
-  will-change: transform;
 }
 
 /* ---------- Hero ---------- */
