@@ -1588,33 +1588,67 @@ main {
   }
 }
 
-/* ================= Page intérieure (le programme en détail) ================= */
-.page {
+/* ================= Page programme ================= */
+.pg {
   position: relative;
   z-index: 1;
-  padding: 130px 0 110px;
+  overflow: hidden;
 }
 
-.page-inner {
-  max-width: 860px;
+/* Barre de lecture */
+.pg-progression {
+  position: fixed;
+  z-index: 120;
+  top: 72px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.07);
 }
 
-.page-retour {
+.pg-progression i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange-soft));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ---------- Ouverture ---------- */
+.pg-tete {
+  position: relative;
+  padding: 150px 0 96px;
+}
+
+.pg-tete-fond {
+  position: absolute;
+  inset: -20% -10% 0;
+  pointer-events: none;
+  background:
+    radial-gradient(50vw 60vh at 78% 22%, rgba(255, 110, 40, 0.16), transparent 66%),
+    radial-gradient(60vw 40vh at 12% 78%, rgba(255, 90, 31, 0.08), transparent 70%);
+}
+
+.pg-tete-inner {
+  position: relative;
+}
+
+.pg-retour {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 44px;
+  margin-bottom: 46px;
   font-size: 0.88rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
   transition: color 0.2s ease;
 }
 
-.page-retour:hover {
+.pg-retour:hover {
   color: #fff;
 }
 
-.page-retour svg {
+.pg-retour svg {
   width: 17px;
   height: 17px;
   fill: none;
@@ -1625,210 +1659,534 @@ main {
   transition: transform 0.25s ease;
 }
 
-.page-retour:hover svg {
+.pg-retour:hover svg {
   transform: translateX(-4px);
 }
 
-.page-tete {
-  margin-bottom: 76px;
-}
-
-.page-titre {
+.pg-titre {
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.08;
   letter-spacing: -0.02em;
   margin: 0;
 }
 
-.page-chapo {
-  margin: 26px 0 0;
-  max-width: 620px;
-  font-size: 1.12rem;
+.mot-masque {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+  margin-right: 0.24em;
+}
+
+.mot {
+  display: inline-block;
+}
+
+.pg-chapo {
+  margin: 28px 0 0;
+  max-width: 560px;
+  font-size: 1.14rem;
   color: var(--muted);
 }
 
-.page-section {
-  margin-bottom: 72px;
+/* Trois chiffres clés */
+.pg-cles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 46px;
+  margin-top: 46px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
 }
 
-.page-h2 {
-  font-size: 0.76rem;
-  font-family: var(--font-body);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
+.pg-cles span {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.pg-cles strong {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
   color: var(--orange);
-  margin: 0 0 30px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  letter-spacing: -0.02em;
 }
 
-/* La méthode en trois temps */
+/* ---------- Sections ---------- */
+.pg-section {
+  position: relative;
+  padding: 96px 0;
+}
+
+.pg-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+.pg-intro {
+  margin: 0 0 54px;
+  max-width: 520px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+/* Mot géant en filigrane */
+.pg-fantome {
+  position: absolute;
+  top: 4%;
+  left: -3%;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(7rem, 20vw, 17rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.pg-fantome--droite {
+  left: auto;
+  right: -3%;
+}
+
+/* ---------- Orbite ---------- */
+.pg-section--orbite {
+  padding-bottom: 116px;
+}
+
+.orbite {
+  --rayon: clamp(112px, 26vw, 196px);
+  position: relative;
+  width: min(100%, 540px);
+  aspect-ratio: 1;
+  margin: 30px auto 0;
+}
+
+/* Un arc décoratif tourne en fond ; les libellés, eux, restent droits */
+.orbite-halo {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 62%,
+    rgba(255, 90, 31, 0.28) 78%,
+    rgba(255, 140, 26, 0.05) 88%,
+    transparent 96%
+  );
+  -webkit-mask-image: radial-gradient(circle, transparent 62%, #000 70%, #000 78%, transparent 84%);
+  mask-image: radial-gradient(circle, transparent 62%, #000 70%, #000 78%, transparent 84%);
+  animation: orbite-tour 26s linear infinite;
+  will-change: transform;
+}
+
+@keyframes orbite-tour {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbite-anneau {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.orbite-piste,
+.orbite-trace {
+  fill: none;
+  stroke-width: 1.4;
+}
+
+.orbite-piste {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.orbite-trace {
+  stroke: var(--orange);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.orbite-noyau {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.orbite-noyau-valeur {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 7vw, 3.8rem);
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(255, 90, 31, 0.55);
+}
+
+.orbite-noyau-texte {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.orbite-point {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: rotate(var(--a)) translateY(calc(-1 * var(--rayon)));
+}
+
+.orbite-redresse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: rotate(calc(-1 * var(--a)));
+}
+
+.orbite-contenu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+
+.orbite-pastille {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 0 5px rgba(255, 90, 31, 0.14),
+    0 0 18px rgba(255, 90, 31, 0.7);
+}
+
+.orbite-point[data-volet="corps"] .orbite-pastille {
+  background: var(--orange-soft);
+  box-shadow: 0 0 0 5px rgba(255, 140, 26, 0.13),
+    0 0 18px rgba(255, 140, 26, 0.6);
+}
+
+.orbite-nom {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---------- Cartes communes ---------- */
+.pg-carte {
+  position: relative;
+  border-radius: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: transform 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.pg-carte:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 90, 31, 0.5);
+  box-shadow: 0 26px 70px -34px rgba(255, 90, 31, 0.5);
+}
+
+/* ---------- Méthode ---------- */
 .methode {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
+  gap: 24px;
+}
+
+.methode-ligne {
+  position: absolute;
+  top: 62px;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.09);
+  z-index: 0;
+}
+
+.methode-ligne i {
+  display: block;
+  height: 100%;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 .methode-etape {
-  position: relative;
-  padding: 28px 24px;
-  border-radius: 18px;
-  background: var(--panel);
-  border: 1px solid var(--line);
+  z-index: 1;
+  padding: 30px 26px 28px;
 }
 
-.methode-num {
+.etape-logo {
+  width: 52px;
+  height: 52px;
+  display: block;
+  margin-bottom: 22px;
+}
+
+.etape-num {
   display: block;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.5rem;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 90, 31, 0.7);
-  margin-bottom: 14px;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: var(--orange);
+  margin-bottom: 10px;
 }
 
 .methode-etape h3 {
-  font-size: 1.12rem;
-  margin-bottom: 10px;
+  font-size: 1.24rem;
+  margin-bottom: 12px;
 }
 
 .methode-etape p {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   color: var(--muted);
 }
 
-/* Les domaines travaillés */
+/* ---------- Domaines ---------- */
 .domaines {
-  margin: 0;
   display: grid;
-  gap: 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
 }
 
 .domaine {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 26px;
-  padding: 22px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 28px 24px 30px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
 }
 
-.domaine:last-child {
-  border-bottom: 0;
-}
-
-.domaine dt {
+.domaine-index {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.06rem;
-  color: var(--ink);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
 }
 
-.domaine dd {
+.domaine-volet {
+  margin: 16px 0 8px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+
+.domaine[data-volet="corps"] .domaine-volet {
+  color: var(--orange-soft);
+}
+
+.domaine h3 {
+  font-size: 1.06rem;
+  margin-bottom: 10px;
+}
+
+.domaine p {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.92rem;
   color: var(--muted);
 }
 
-/* Les bonus */
-.bonus-detail {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Trait qui s'étire au survol */
+.domaine-trait {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange-soft));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.2, 0.65, 0.3, 1);
+}
+
+.domaine:hover .domaine-trait {
+  transform: scaleX(1);
+}
+
+/* ---------- Bonus ---------- */
+.bonus-cartes {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 
-.bonus-detail li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 22px;
-  padding: 24px 26px;
-  border-radius: 18px;
-  background: var(--bg-soft);
-  border: 1px solid var(--line);
+.bonus-carte {
+  padding: 32px 28px 34px;
 }
 
-.bonus-detail strong {
-  display: block;
-  font-size: 1.06rem;
-  margin-bottom: 6px;
+.bonus-carte-valeur {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #0a0a0a;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 0 34px rgba(255, 90, 31, 0.45);
 }
 
-.bonus-detail span {
+.bonus-carte h3 {
+  font-size: 1.14rem;
+  margin-bottom: 10px;
+}
+
+.bonus-carte p {
+  margin: 0;
   font-size: 0.95rem;
   color: var(--muted);
 }
 
-.bonus-detail-valeur {
-  flex: none;
-  padding: 9px 16px;
-  border-radius: 999px;
-  background: var(--orange);
-  color: #0a0a0a !important;
-  font-weight: 800;
-  font-size: 0.85rem;
-}
-
-/* Appel à l'action de fin */
-.page-fin {
+/* ---------- Fin ---------- */
+.pg-fin {
+  position: relative;
   text-align: center;
-  padding: 66px 26px;
-  border-radius: 24px;
+  padding: 110px 0 130px;
+  border-top: 1px solid var(--line);
+}
+
+.pg-fin-lueur {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 60vh;
+  pointer-events: none;
   background: radial-gradient(
-      70% 120% at 50% 0%,
-      rgba(255, 90, 31, 0.14),
-      transparent 70%
-    ),
-    var(--bg-soft);
-  border: 1px solid var(--line);
+    circle at 50% 0%,
+    rgba(255, 90, 31, 0.18),
+    transparent 62%
+  );
 }
 
-.page-fin h2 {
-  font-size: clamp(1.7rem, 4vw, 2.6rem);
-  margin-bottom: 18px;
+.pg-fin h2 {
+  position: relative;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  margin-bottom: 20px;
 }
 
-.page-fin p {
-  margin: 0 auto 34px;
-  max-width: 460px;
+.pg-fin p {
+  position: relative;
+  margin: 0 auto 36px;
+  max-width: 470px;
   color: var(--muted);
 }
 
-.page-fin-note {
-  margin: 28px auto 0 !important;
+.pg-fin .btn {
+  position: relative;
+}
+
+.pg-fin-note {
+  margin: 30px auto 0 !important;
   font-size: 0.88rem;
 }
 
+@media (max-width: 1080px) {
+  .domaines {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 860px) {
-  .page {
-    padding: 104px 0 80px;
+  .pg-progression {
+    top: 64px;
   }
-  .page-tete {
-    margin-bottom: 54px;
+  .pg-tete {
+    padding: 118px 0 70px;
   }
-  .page-section {
-    margin-bottom: 54px;
+  .pg-retour {
+    margin-bottom: 32px;
+  }
+  .pg-section {
+    padding: 68px 0;
+  }
+  .pg-intro {
+    margin-bottom: 38px;
+  }
+  .pg-cles {
+    gap: 12px 30px;
+    margin-top: 34px;
+    padding-top: 24px;
+  }
+  .pg-cles strong {
+    font-size: 1.7rem;
+  }
+  .orbite {
+    --rayon: clamp(96px, 33vw, 150px);
+    width: min(100%, 400px);
+  }
+  .orbite-nom {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
   }
   .methode {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
+  }
+  .methode-ligne {
+    display: none;
+  }
+  .bonus-cartes {
+    grid-template-columns: 1fr;
+  }
+  .pg-fin {
+    padding: 76px 0 90px;
+  }
+}
+
+@media (max-width: 520px) {
+  .domaines {
+    grid-template-columns: 1fr;
   }
   .domaine {
-    grid-template-columns: 1fr;
-    gap: 6px;
+    min-height: 0;
   }
-  .bonus-detail li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 20px 20px;
-  }
-  .page-fin {
-    padding: 46px 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbite-halo {
+    animation: none !important;
   }
 }
