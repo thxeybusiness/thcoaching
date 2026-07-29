@@ -19,20 +19,17 @@ const SLIDES: SlideMeta[] = [
   { id: "contact", label: "Contact" },
 ];
 
+/** Résumés : le détail de chaque domaine vit sur /programme. */
 const pillars = [
   {
     group: "Business & performance",
-    items: [
-      "Stratégie business",
-      "Intelligence artificielle",
-      "Gestion du temps",
-      "Gestion des clients",
-      "Gestion de l'argent",
-    ],
+    resume:
+      "Clarifier la stratégie, mettre l'intelligence artificielle là où elle fait gagner du temps, et reprendre la main sur le temps, les clients et l'argent.",
   },
   {
     group: "Corps & esprit",
-    items: ["Alimentation", "Sommeil", "Sport"],
+    resume:
+      "Retrouver l'énergie qui permet de tenir le rythme, en travaillant l'alimentation, le sommeil et le sport.",
   },
 ];
 
@@ -84,11 +81,7 @@ export default function Home() {
                   {pillars.map((p) => (
                     <span key={p.group} className="pillar">
                       <span className="pillar-title">{p.group}</span>
-                      <span className="pillar-list">
-                        {p.items.map((item) => (
-                          <span key={item}>{item}</span>
-                        ))}
-                      </span>
+                      <span className="pillar-resume">{p.resume}</span>
                     </span>
                   ))}
                 </span>

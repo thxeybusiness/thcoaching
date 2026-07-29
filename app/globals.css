@@ -712,6 +712,13 @@ main {
 }
 
 
+.pillar-resume {
+  display: block;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 .pillar-title {
   display: block;
   font-size: 0.78rem;
@@ -719,32 +726,12 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--orange);
-  margin-bottom: 26px;
+  margin-bottom: 14px;
   font-weight: 700;
 }
 
-.pillar-list {
-  display: grid;
-  gap: 15px;
-}
 
-.pillar-list > span {
-  position: relative;
-  padding-left: 28px;
-  font-size: 1.14rem;
-  font-weight: 600;
-  color: var(--ink);
-}
 
-.pillar-list > span::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.6em;
-  width: 13px;
-  height: 2px;
-  background: var(--orange);
-}
 
 /* ---------- Bonus ---------- */
 .bonus {
@@ -1314,14 +1301,10 @@ main {
   }
   .deck[data-ready="true"] .pillar-title {
     font-size: 0.68rem;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-  .deck[data-ready="true"] .pillar-list {
-    gap: 7px;
-  }
-  .deck[data-ready="true"] .pillar-list > span {
+  .deck[data-ready="true"] .pillar-resume {
     font-size: 0.94rem;
-    padding-left: 22px;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 24px;
@@ -1394,12 +1377,6 @@ main {
   .deck[data-ready="true"] .pillar-title {
     margin-bottom: 14px;
   }
-  .deck[data-ready="true"] .pillar-list {
-    gap: 7px;
-  }
-  .deck[data-ready="true"] .pillar-list > span {
-    font-size: 0.96rem;
-  }
   .deck[data-ready="true"] .bonus {
     margin-top: 22px;
     padding: 26px 28px;
@@ -1461,12 +1438,6 @@ main {
   }
   .deck[data-ready="true"] .pillars {
     padding: 18px 20px 12px;
-  }
-  .deck[data-ready="true"] .pillar-list {
-    gap: 7px;
-  }
-  .deck[data-ready="true"] .pillar-list > span {
-    font-size: 0.92rem;
   }
   .deck[data-ready="true"] .bonus {
     padding: 20px 20px;
