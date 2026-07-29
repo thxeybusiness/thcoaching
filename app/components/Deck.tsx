@@ -314,17 +314,17 @@ export default function Deck({
       </div>
 
       <nav className="deck-nav" aria-label="Navigation entre les chapitres">
-        <button
-          type="button"
-          className="deck-arrow"
-          onClick={() => goTo(index - 1)}
-          disabled={index === 0}
-          aria-label="Chapitre précédent"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M15 5 L8 12 L15 19" />
-          </svg>
-        </button>
+        {/* Indication de défilement — masquée sur le dernier chapitre, où il
+            n'y a plus rien devant. Les pastilles restent le chemin au clic. */}
+        <p className="deck-hint" aria-hidden="true" data-fin={index === last}>
+          <span className="deck-hint-libelle deck-hint-libelle--pointeur">
+            Faites défiler
+          </span>
+          <span className="deck-hint-libelle deck-hint-libelle--tactile">
+            Balayez
+          </span>
+          <i className="deck-hint-piste" />
+        </p>
 
         <ol className="deck-dots">
           {slides.map((s, i) => (
@@ -342,18 +342,6 @@ export default function Deck({
             </li>
           ))}
         </ol>
-
-        <button
-          type="button"
-          className="deck-next"
-          onClick={() => goTo(index + 1)}
-          disabled={index === last}
-        >
-          <span>{index === last ? "Fin" : "Suivant"}</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 5 L16 12 L9 19" />
-          </svg>
-        </button>
       </nav>
 
       <p className="slide-scroll-hint" aria-hidden="true">
