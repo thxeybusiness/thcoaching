@@ -239,14 +239,122 @@ h3 {
   }
 }
 
-/* Logo à gauche, chaque pilier en face de sa vague */
+/* Logo à droite, chaque pilier en face de sa vague */
 .intro-inner {
+  position: relative;
+  z-index: 2;
   display: flex;
+  flex-direction: row-reverse;
   align-items: stretch;
   gap: clamp(26px, 4vw, 60px);
 }
 
+/* ---------- Décor de l'intro ---------- */
+.intro-fond {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201440%20900'%3E%3Cpath%20d%3D'M0%20200%20C360%2090%20720%20310%201080%20180%20C1260%20120%201380%20170%201440%20150%20L1440%20330%20C1200%20395%20900%20250%20600%20330%20C360%20395%20120%20320%200%20375%20Z'%20fill%3D'rgba(255%2C90%2C31%2C0.03)'%2F%3E%3Cpath%20d%3D'M0%20520%20C360%20410%20720%20630%201080%20500%20C1260%20440%201380%20490%201440%20470%20L1440%20650%20C1200%20715%20900%20570%20600%20650%20C360%20715%20120%20640%200%20695%20Z'%20fill%3D'rgba(255%2C140%2C26%2C0.024)'%2F%3E%3Cpath%20d%3D'M0%20810%20C360%20700%20720%20920%201080%20790%20C1260%20730%201380%20780%201440%20760%20L1440%20900%20L0%20900%20Z'%20fill%3D'rgba(255%2C90%2C31%2C0.028)'%2F%3E%3C%2Fsvg%3E")
+      center / 155% auto no-repeat,
+    radial-gradient(46vw 52vh at 70% 48%, rgba(255, 110, 40, 0.1), transparent 64%),
+    radial-gradient(85vw 45vh at 45% 114%, rgba(255, 90, 31, 0.055), transparent 70%);
+  animation: intro-derive 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes intro-derive {
+  from {
+    transform: translate3d(-1.4%, 0.6%, 0) scale(1.03);
+  }
+  to {
+    transform: translate3d(1.4%, -0.6%, 0) scale(1.06);
+  }
+}
+
+.intro-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    105% 92% at 68% 50%,
+    transparent 20%,
+    rgba(0, 0, 0, 0.62) 58%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+/* Éclat bref au départ du rideau */
+.intro-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    70% 70% at 70% 50%,
+    rgba(255, 190, 120, 0.9),
+    rgba(255, 120, 40, 0.35) 45%,
+    transparent 72%
+  );
+}
+
+/* ---------- Lumière autour du logo ---------- */
+.intro-logo-zone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.intro-halo {
+  position: absolute;
+  width: min(64vw, 640px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 155, 70, 0.34),
+    rgba(255, 90, 31, 0.1) 34%,
+    transparent 64%
+  );
+}
+
+/* Rayons très discrets, en rotation lente */
+.intro-rayons {
+  position: absolute;
+  width: min(96vw, 940px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 7%,
+    rgba(255, 160, 70, 0.05) 9%,
+    transparent 11% 27%,
+    rgba(255, 160, 70, 0.038) 29%,
+    transparent 31% 52%,
+    rgba(255, 160, 70, 0.05) 54%,
+    transparent 56% 77%,
+    rgba(255, 160, 70, 0.035) 79%,
+    transparent 81%
+  );
+  -webkit-mask-image: radial-gradient(circle, transparent 14%, #000 30%, transparent 58%);
+  mask-image: radial-gradient(circle, transparent 14%, #000 30%, transparent 58%);
+  animation: intro-rayons 26s linear infinite;
+  will-change: transform;
+}
+
+@keyframes intro-rayons {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .intro-logo-svg {
+  position: relative;
+  z-index: 1;
   width: clamp(190px, 26vw, 330px);
   height: auto;
   overflow: visible;
@@ -280,9 +388,10 @@ h3 {
 .intro-word {
   position: absolute;
   top: var(--y);
-  left: 0;
+  right: 0;
   transform: translateY(-50%);
   white-space: nowrap;
+  text-align: right;
 }
 
 /* Invisible au départ, sinon les trois mots s'affichent une fraction de
@@ -305,6 +414,17 @@ h3 {
     flex-direction: column;
     align-items: center;
     gap: 26px;
+  }
+  .intro-vignette {
+    background: radial-gradient(
+      115% 92% at 50% 40%,
+      transparent 22%,
+      rgba(0, 0, 0, 0.6) 58%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+  }
+  .intro-rayons {
+    width: 130vw;
   }
   .intro-piliers {
     display: flex;
@@ -885,6 +1005,10 @@ main {
   .deck[data-ready="true"] [data-r],
   .deck-progress i {
     transition: none !important;
+  }
+  .intro-fond,
+  .intro-rayons {
+    animation: none !important;
   }
 }
 

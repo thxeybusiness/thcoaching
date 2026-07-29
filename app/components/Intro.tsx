@@ -27,7 +27,7 @@ const PILIERS = [
   { mot: "Concret", y: "73%" },
 ];
 
-const ETEINT = "rgba(255, 140, 46, 0.13)";
+const ETEINT = "rgba(255, 150, 70, 0.09)";
 const ALLUME = "#ff8c2e";
 
 export default function Intro() {
@@ -46,13 +46,20 @@ export default function Intro() {
         onComplete: () => setDone(true),
       });
 
-      // 1. Le logo, vagues éteintes
+      // 1. Le logo, vagues éteintes, dans un décor qui s'éveille
       tl.from(".intro-logo-svg", {
         opacity: 0,
         scale: 0.92,
         duration: 0.5,
         transformOrigin: "50% 50%",
-      });
+      })
+        .from(".intro-fond", { opacity: 0, duration: 1.1 }, 0)
+        .fromTo(
+          ".intro-rayons",
+          { opacity: 0, scale: 0.85 },
+          { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" },
+          0.1
+        );
 
       // 2. Un mot = une vague qui s'allume
       PILIERS.forEach((_, i) => {
@@ -89,11 +96,30 @@ export default function Intro() {
           )
           .fromTo(
             `.intro-word-${i} .intro-word-texte`,
-            { opacity: 0, x: -14, filter: "blur(4px)" },
+            { opacity: 0, x: 14, filter: "blur(4px)" },
             { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.42 },
             t + 0.04
+          )
+          // La lumière ambiante monte d'un cran à chaque pilier
+          .to(
+            ".intro-halo",
+            {
+              opacity: 0.42 + i * 0.29,
+              scale: 0.82 + i * 0.09,
+              duration: 0.55,
+              ease: "power2.out",
+            },
+            t
           );
       });
+
+      // Éclat au moment où le rideau part
+      tl.fromTo(
+        ".intro-flash",
+        { opacity: 0 },
+        { opacity: 0.22, duration: 0.14, ease: "power2.out" },
+        1.5
+      ).to(".intro-flash", { opacity: 0, duration: 0.4 }, 1.64);
 
       // 3. Le logo devient le rideau : le SVG de révélation se pose
       //    exactement dessus, puis s'étire au plein écran.
@@ -149,17 +175,26 @@ export default function Intro() {
 
   return (
     <div ref={root} className="intro" aria-hidden="true">
+      {/* Décor : vagues sombres en écho du logo, lueur chaude, vignette */}
+      <div className="intro-fond" />
+      <div className="intro-vignette" />
+      <div className="intro-flash" />
+
       <div className="intro-inner">
-        <svg className="intro-logo-svg" viewBox="0 0 120 120">
-          {WAVE_PATHS.map((d, i) => (
-            <path
-              key={d}
-              className={`intro-wave intro-wave-${i}`}
-              d={d}
-              fill={ETEINT}
-            />
-          ))}
-        </svg>
+        <span className="intro-logo-zone">
+          <span className="intro-rayons" />
+          <span className="intro-halo" />
+          <svg className="intro-logo-svg" viewBox="0 0 120 120">
+            {WAVE_PATHS.map((d, i) => (
+              <path
+                key={d}
+                className={`intro-wave intro-wave-${i}`}
+                d={d}
+                fill={ETEINT}
+              />
+            ))}
+          </svg>
+        </span>
 
         <p className="intro-piliers">
           {/* Copie invisible : les mots sont en absolu et ne donnent donc
