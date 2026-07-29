@@ -76,6 +76,18 @@ const JSON_LD = {
   },
 };
 
+const NOSCRIPT_CSS = `
+.deck[data-ready="true"]{height:auto;overflow:visible}
+.deck[data-ready="true"] .deck-track{display:block;height:auto;transform:none}
+.deck[data-ready="true"] .slide{width:auto;height:auto;min-height:100vh}
+.deck[data-ready="true"] .slide-inner{display:block;height:auto;overflow:visible;padding:118px 0 96px}
+.deck[data-ready="true"] .slide-inner>*{margin-block:0}
+.deck[data-ready="true"] [data-r]{opacity:1;transform:none}
+.deck-nav,.deck-progress,.deck-status,.slide-scroll-hint{display:none}
+.contact-legal{position:static;transform:none;margin-top:28px}
+.slide--contact .footer-word{position:static;transform:none}
+`;
+
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   colorScheme: "dark",
@@ -114,6 +126,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
+        {/* Sans JavaScript, le défilement horizontal ne peut pas fonctionner :
+            on rétablit les chapitres empilés verticalement, tout le contenu
+            reste alors lisible et indexable. */}
+        <noscript>
+          <style>{NOSCRIPT_CSS}</style>
+        </noscript>
         <div className="waves-bg" aria-hidden="true" />
         {/* <Intro /> */}
         <a href="#contenu" className="skip-link">

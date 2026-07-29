@@ -22,10 +22,14 @@ html {
   scroll-behavior: smooth;
   background: var(--bg);
   overflow-x: hidden;
+  /* Un balayage horizontal au pavé tactile déclenchait la navigation
+     « page précédente » du navigateur et faisait quitter le site. */
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
+  overscroll-behavior: none;
   font-family: var(--font-body);
   color: var(--ink);
   background: var(--bg);
@@ -834,15 +838,11 @@ main {
   padding: 118px 0 96px;
 }
 
-.deck:not([data-ready="true"]) .deck-nav,
-.deck:not([data-ready="true"]) .deck-progress,
-.deck:not([data-ready="true"]) .deck-status {
-  display: none;
-}
-
 .deck[data-ready="true"] {
   height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 
 .deck[data-ready="true"] .deck-track {
@@ -876,13 +876,15 @@ main {
 /* ---------- Révélations à l'arrivée sur un écran ---------- */
 .deck[data-ready="true"] [data-r] {
   opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.8s cubic-bezier(0.2, 0.65, 0.3, 1),
-    transform 0.8s cubic-bezier(0.2, 0.65, 0.3, 1);
-  transition-delay: calc(var(--r-i, 0) * 90ms);
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.65, 0.3, 1),
+    transform 0.6s cubic-bezier(0.2, 0.65, 0.3, 1);
+  transition-delay: calc(var(--r-i, 0) * 55ms);
 }
 
-.deck[data-ready="true"] .slide[data-active="true"] [data-r] {
+/* Dévoilé dès que l'écran est traversé, et il le reste : un écran déjà vu ne
+   doit jamais repasser au noir quand on le survole à nouveau. */
+.deck[data-ready="true"] .slide[data-seen="true"] [data-r] {
   opacity: 1;
   transform: none;
 }

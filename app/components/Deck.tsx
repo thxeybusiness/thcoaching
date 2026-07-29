@@ -1,10 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { gsap } from "gsap";
 import { setDeckProgress } from "../lib/deck";
 
 export type SlideMeta = { id: string; label: string };
+
+/** useLayoutEffect côté client, useEffect au rendu serveur (évite l'avertissement). */
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /**
  * Le site en format « deck » : chaque chapitre occupe un écran entier et on
@@ -37,20 +47,28 @@ export default function Deck({
       const target = Math.min(last, Math.max(0, next));
       if (target === indexRef.current || !track.current) return;
 
+      const depart = indexRef.current;
       indexRef.current = target;
       setIndex(target);
+
+      // Tous les écrans traversés sont dévoilés dès le départ : sinon on les
+      // voit défiler vides, puisque leur contenu n'apparaît qu'une fois actif.
+      const el = track.current;
+      const tous = el.querySelectorAll<HTMLElement>(".slide");
+      const de = Math.min(depart, target);
+      const a = Math.max(depart, target);
+      for (let i = de; i <= a; i++) tous[i]?.setAttribute("data-seen", "true");
 
       const reduce = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
       ).matches;
-      const el = track.current;
 
       gsap.killTweensOf(xRef);
       animating.current = true;
       gsap.to(xRef, {
         current: target,
-        duration: instant || reduce ? 0 : 0.9,
-        ease: "power3.inOut",
+        duration: instant || reduce ? 0 : 0.72,
+        ease: "power2.inOut",
         onUpdate: () => {
           el.style.setProperty("--deck-x", String(xRef.current));
           setDeckProgress(last > 0 ? xRef.current / last : 0);
@@ -66,8 +84,9 @@ export default function Deck({
     [last, slides]
   );
 
-  // Position de départ : respecte l'ancre de l'URL (#offre, #contact…)
-  useEffect(() => {
+  // Position de départ : respecte l'ancre de l'URL (#offre, #contact…).
+  // Avant la peinture, pour ne pas montrer l'accueil puis sauter.
+  useIsomorphicLayoutEffect(() => {
     const fromHash = () => {
       const id = window.location.hash.replace("#", "");
       const i = slides.findIndex((s) => s.id === id);
@@ -92,39 +111,100 @@ export default function Deck({
     return () => window.removeEventListener("hashchange", onHash);
   }, [goTo, last, slides]);
 
-  // Molette / trackpad — on laisse la main au contenu quand il déborde
+  /**
+   * Molette et pavé tactile.
+   *
+   * Un pavé tactile n'envoie pas un événement par cran mais une rafale de
+   * dizaines d'événements, dont une longue traîne d'inertie après que les
+   * doigts ont quitté la surface. Deux pièges à éviter :
+   *  - un seuil par événement ignore les glissements doux (deltas de 3-8),
+   *    donc on cumule au lieu de filtrer ;
+   *  - sans verrou, la traîne d'inertie déclenche 3 ou 4 changements d'écran
+   *    pour un seul geste. On se re-arme donc au silence de la molette, pas
+   *    après un délai fixe.
+   * Un glissement maintenu (dont l'amplitude ne retombe pas) reste accepté :
+   * c'est ce qui distingue un doigt encore posé d'une simple inertie.
+   */
   useEffect(() => {
     if (!ready) return;
     const el = root.current;
     if (!el) return;
 
-    let locked = false;
+    const SEUIL = 45; // cumul nécessaire pour changer d'écran
+    const SILENCE = 180; // ms sans événement = fin du geste
+    const MAINTIEN = 900; // ms avant d'accepter un glissement maintenu
+
+    let cumul = 0;
+    let pic = 0;
+    let arme = true;
+    let dernier = 0;
+    let declenche = 0;
+    let timerSilence = 0;
+
+    const finDuGeste = () => {
+      arme = true;
+      cumul = 0;
+      pic = 0;
+    };
+
     const onWheel = (e: WheelEvent) => {
+      // Si le contenu de l'écran déborde, il défile en premier
       const inner = (e.target as HTMLElement)?.closest?.(
         ".slide-inner"
       ) as HTMLElement | null;
       if (inner && inner.scrollHeight > inner.clientHeight + 1) {
-        const atTop = inner.scrollTop <= 0;
-        const atBottom =
+        const enHaut = inner.scrollTop <= 0;
+        const enBas =
           inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 1;
-        if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) return;
+        if ((e.deltaY < 0 && !enHaut) || (e.deltaY > 0 && !enBas)) return;
       }
 
-      const delta =
-        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (Math.abs(delta) < 12) return;
+      // Toujours neutraliser l'événement : sinon Safari interprète un geste
+      // horizontal comme « page précédente » et quitte le site.
       e.preventDefault();
-      if (locked || animating.current) return;
 
-      locked = true;
-      window.setTimeout(() => {
-        locked = false;
-      }, 700);
-      goTo(indexRef.current + (delta > 0 ? 1 : -1));
+      const now = performance.now();
+      if (now - dernier > SILENCE) finDuGeste();
+      dernier = now;
+
+      window.clearTimeout(timerSilence);
+      timerSilence = window.setTimeout(finDuGeste, SILENCE);
+
+      // Firefox exprime la molette en lignes, pas en pixels : sans conversion
+      // le seuil ne serait jamais atteint et rien ne bougerait.
+      const unite =
+        e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1;
+      const delta =
+        (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * unite;
+      const ampleur = Math.abs(delta);
+      pic = Math.max(pic, ampleur);
+
+      if (!arme) {
+        // Glissement encore maintenu (l'amplitude ne retombe pas) : on ré-arme
+        if (now - declenche > MAINTIEN && ampleur >= pic * 0.55) {
+          arme = true;
+          cumul = 0;
+        } else {
+          return;
+        }
+      }
+
+      if (cumul !== 0 && Math.sign(delta) !== Math.sign(cumul)) cumul = 0;
+      cumul += delta;
+      if (Math.abs(cumul) < SEUIL) return;
+
+      const sens = cumul > 0 ? 1 : -1;
+      arme = false;
+      declenche = now;
+      cumul = 0;
+      goTo(indexRef.current + sens);
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => {
+      window.clearTimeout(timerSilence);
+      el.removeEventListener("wheel", onWheel);
+    };
   }, [goTo, ready]);
 
   // Clavier
@@ -214,6 +294,7 @@ export default function Deck({
     const slidesEls = track.current?.querySelectorAll<HTMLElement>(".slide");
     slidesEls?.forEach((s, i) => {
       s.dataset.active = String(i === index);
+      if (i === index) s.dataset.seen = "true";
       s.setAttribute("aria-hidden", String(i !== index));
       // Les écrans hors champ ne doivent pas capter le focus au Tab
       if (ready && i !== index) s.setAttribute("inert", "");
@@ -224,7 +305,10 @@ export default function Deck({
   const current = slides[index];
 
   return (
-    <div className="deck" ref={root} data-ready={ready}>
+    // data-ready est posé dès le rendu serveur : sinon les cinq écrans
+    // s'affichent empilés le temps de l'hydratation, puis s'effondrent d'un
+    // coup. Sans JavaScript, le <noscript> du layout rétablit l'empilement.
+    <div className="deck" ref={root} data-ready="true" data-live={ready}>
       <div className="deck-track" ref={track}>
         {children}
       </div>
