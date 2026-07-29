@@ -84,32 +84,53 @@ export default function Deck({
     [last, slides]
   );
 
-  // Position de départ : respecte l'ancre de l'URL (#offre, #contact…).
-  // Avant la peinture, pour ne pas montrer l'accueil puis sauter.
+  /**
+   * Au chargement on repart toujours du premier chapitre, et l'ancre est
+   * retirée de l'URL.
+   *
+   * Ce n'est pas qu'une préférence : en arrivant sur « /#bonus », le
+   * navigateur fait défiler lui-même le conteneur pour amener l'ancre à
+   * l'écran — alors qu'il est en overflow hidden et positionné par une
+   * transformation. Les deux décalages s'additionnaient et on atterrissait
+   * sur un tout autre chapitre, forcément vide puisqu'il n'avait jamais été
+   * traversé.
+   */
   useIsomorphicLayoutEffect(() => {
-    const fromHash = () => {
-      const id = window.location.hash.replace("#", "");
-      const i = slides.findIndex((s) => s.id === id);
-      return i >= 0 ? i : null;
-    };
-
-    const start = fromHash();
-    if (start !== null && start !== 0) {
-      indexRef.current = start;
-      xRef.current = start;
-      setIndex(start);
-      track.current?.style.setProperty("--deck-x", String(start));
-      setDeckProgress(last > 0 ? start / last : 0);
+    if (window.location.hash) {
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
+    }
+    // Au cas où le navigateur aurait déjà fait défiler le conteneur
+    if (root.current) {
+      root.current.scrollLeft = 0;
+      root.current.scrollTop = 0;
     }
     setReady(true);
 
     const onHash = () => {
-      const i = fromHash();
-      if (i !== null) goTo(i);
+      const id = window.location.hash.replace("#", "");
+      const i = slides.findIndex((s) => s.id === id);
+      if (i >= 0) goTo(i);
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
-  }, [goTo, last, slides]);
+  }, [goTo, slides]);
+
+  // Le conteneur ne doit jamais défiler de lui-même : c'est la transformation
+  // qui positionne les écrans. Un défilement natif s'y ajouterait.
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const remettre = () => {
+      if (el.scrollLeft !== 0) el.scrollLeft = 0;
+      if (el.scrollTop !== 0) el.scrollTop = 0;
+    };
+    el.addEventListener("scroll", remettre, { passive: true });
+    return () => el.removeEventListener("scroll", remettre);
+  }, []);
 
   /**
    * Molette et pavé tactile.
