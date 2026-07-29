@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import Hero from "./components/Hero";
 import Scene3DLoader from "./components/Scene3DLoader";
 import CountUp from "./components/CountUp";
@@ -20,7 +21,6 @@ const SLIDES: SlideMeta[] = [
 
 const pillars = [
   {
-    num: "01",
     group: "Business & performance",
     items: [
       "Stratégie business",
@@ -31,7 +31,6 @@ const pillars = [
     ],
   },
   {
-    num: "02",
     group: "Corps & esprit",
     items: ["Alimentation", "Sommeil", "Sport"],
   },
@@ -80,27 +79,26 @@ export default function Home() {
                 l&apos;essentiel, dans l&apos;ordre qui vous fait avancer.
               </p>
 
-              <div className="pillars">
-                {pillars.map((p, i) => (
-                  <div
-                    key={p.group}
-                    className="pillar"
-                    style={r(3 + i)}
-                    data-r
-                    data-hover
-                  >
-                    <span className="pillar-num" aria-hidden="true">
-                      {p.num}
+              <Link href="/programme" className="pillars" style={r(3)} data-r>
+                <span className="pillars-grille">
+                  {pillars.map((p) => (
+                    <span key={p.group} className="pillar">
+                      <span className="pillar-title">{p.group}</span>
+                      <span className="pillar-list">
+                        {p.items.map((item) => (
+                          <span key={item}>{item}</span>
+                        ))}
+                      </span>
                     </span>
-                    <h3 className="pillar-title">{p.group}</h3>
-                    <ul className="pillar-list">
-                      {p.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </span>
+                <span className="pillars-lien">
+                  Voir tout ce que comprend l&apos;accompagnement
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12 H18 M12 6 L18 12 L12 18" />
+                  </svg>
+                </span>
+              </Link>
             </div>
           </div>
         </section>

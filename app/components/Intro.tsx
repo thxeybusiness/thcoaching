@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 
 /**
@@ -35,9 +36,17 @@ const ALLUME = "#ff8c2e";
 
 export default function Intro() {
   const root = useRef<HTMLDivElement>(null);
+  const chemin = usePathname();
   const [done, setDone] = useState(false);
+  // Uniquement à l'arrivée sur l'accueil : sur une page intérieure, un rideau
+  // de deux secondes n'aurait aucun sens.
+  const surAccueil = chemin === "/";
 
   useEffect(() => {
+    if (!surAccueil) {
+      setDone(true);
+      return;
+    }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setDone(true);
       return;
@@ -163,7 +172,7 @@ export default function Intro() {
     }, root);
 
     return () => ctx.revert();
-  }, []);
+  }, [surAccueil]);
 
   if (done) return null;
 

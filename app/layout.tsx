@@ -101,9 +101,9 @@ function Header() {
           <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
         </Link>
         <nav className="nav" aria-label="Navigation principale">
-          <a href="#offre">Programme</a>
-          <a href="#apropos">À propos</a>
-          <a href="#contact" className="nav-cta">
+          <a href="/#offre">Programme</a>
+          <a href="/#apropos">À propos</a>
+          <a href="/#contact" className="nav-cta">
             <span className="nav-cta-long">Réserver un appel</span>
             <span className="nav-cta-short">Réserver</span>
           </a>

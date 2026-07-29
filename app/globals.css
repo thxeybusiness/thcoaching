@@ -650,46 +650,70 @@ main {
   max-width: 620px;
 }
 
-/* ---------- Piliers ---------- */
+/* ---------- Piliers : un seul bloc, cliquable ---------- */
 .pillars {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 26px;
-  margin-top: 60px;
-}
-
-.pillar {
+  display: block;
   position: relative;
+  margin-top: 52px;
+  padding: 34px 36px 22px;
+  border-radius: 22px;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 40px 38px;
   overflow: hidden;
   backdrop-filter: blur(6px);
   transition: transform 0.35s ease, border-color 0.35s ease,
     box-shadow 0.35s ease;
 }
 
-.pillar:hover {
-  transform: translateY(-6px);
+.pillars:hover,
+.pillars:focus-visible {
+  transform: translateY(-5px);
   border-color: rgba(255, 90, 31, 0.55);
   box-shadow: 0 24px 70px -30px rgba(255, 90, 31, 0.45);
 }
 
-.pillar-num {
-  position: absolute;
-  top: 14px;
-  right: 22px;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 4.6rem;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
-  pointer-events: none;
+.pillars-grille {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 30px;
 }
 
+.pillar {
+  position: relative;
+  display: block;
+}
+
+/* Invitation à ouvrir la page détaillée */
+.pillars-lien {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.pillars-lien svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+}
+
+.pillars:hover .pillars-lien svg {
+  transform: translateX(4px);
+}
+
+
 .pillar-title {
+  display: block;
   font-size: 0.78rem;
   font-family: var(--font-body);
   text-transform: uppercase;
@@ -700,14 +724,11 @@ main {
 }
 
 .pillar-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
   gap: 15px;
 }
 
-.pillar-list li {
+.pillar-list > span {
   position: relative;
   padding-left: 28px;
   font-size: 1.14rem;
@@ -715,7 +736,7 @@ main {
   color: var(--ink);
 }
 
-.pillar-list li::before {
+.pillar-list > span::before {
   content: "";
   position: absolute;
   left: 0;
@@ -931,8 +952,9 @@ main {
   .nav-cta {
     padding: 8px 14px;
   }
-  .pillars {
+  .pillars-grille {
     grid-template-columns: 1fr;
+    gap: 22px;
   }
   .bonus-list {
     grid-template-columns: 1fr;
@@ -1221,11 +1243,8 @@ main {
 }
 
 .deck[data-ready="true"] .pillars {
-  margin-top: 42px;
-}
-
-.deck[data-ready="true"] .pillar {
-  padding: 32px 32px;
+  margin-top: 32px;
+  padding: 26px 30px 18px;
 }
 
 .deck[data-ready="true"] .bonus {
@@ -1251,8 +1270,8 @@ main {
   .deck[data-ready="true"] .slide-inner {
     padding: 86px 0 112px;
   }
-  .deck[data-ready="true"] .pillar {
-    padding: 24px 22px;
+  .deck[data-ready="true"] .pillars {
+    padding: 18px 18px 12px;
   }
   .deck[data-ready="true"] .bonus {
     padding: 28px 22px;
@@ -1282,24 +1301,27 @@ main {
     margin-bottom: 14px;
   }
   .deck[data-ready="true"] .pillars {
-    margin-top: 24px;
-    gap: 14px;
+    margin-top: 18px;
+    padding: 18px 18px 12px;
+  }
+  .deck[data-ready="true"] .pillars-grille {
+    gap: 12px;
+  }
+  .deck[data-ready="true"] .pillars-lien {
+    margin-top: 14px;
+    padding-top: 11px;
+    font-size: 0.78rem;
   }
   .deck[data-ready="true"] .pillar-title {
     font-size: 0.68rem;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
   .deck[data-ready="true"] .pillar-list {
-    gap: 9px;
+    gap: 7px;
   }
-  .deck[data-ready="true"] .pillar-list li {
-    font-size: 0.98rem;
+  .deck[data-ready="true"] .pillar-list > span {
+    font-size: 0.94rem;
     padding-left: 22px;
-  }
-  .deck[data-ready="true"] .pillar-num {
-    font-size: 3rem;
-    top: 10px;
-    right: 16px;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 24px;
@@ -1355,24 +1377,28 @@ main {
     font-size: clamp(1.55rem, 3.4vw + 0.4rem, 2.5rem);
   }
   .deck[data-ready="true"] .section-intro {
-    font-size: 0.98rem;
-    margin-top: 14px;
+    font-size: 0.95rem;
+    margin-top: 10px;
   }
   .deck[data-ready="true"] .pillars {
-    margin-top: 22px;
-    gap: 16px;
+    margin-top: 18px;
+    padding: 18px 22px 12px;
   }
-  .deck[data-ready="true"] .pillar {
-    padding: 22px 24px;
+  .deck[data-ready="true"] .pillars-grille {
+    gap: 20px;
+  }
+  .deck[data-ready="true"] .pillars-lien {
+    margin-top: 16px;
+    padding-top: 12px;
   }
   .deck[data-ready="true"] .pillar-title {
     margin-bottom: 14px;
   }
   .deck[data-ready="true"] .pillar-list {
-    gap: 9px;
+    gap: 7px;
   }
-  .deck[data-ready="true"] .pillar-list li {
-    font-size: 1rem;
+  .deck[data-ready="true"] .pillar-list > span {
+    font-size: 0.96rem;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 22px;
@@ -1433,13 +1459,13 @@ main {
   .deck[data-ready="true"] .about-text p:not(.section-label) {
     font-size: 0.9rem;
   }
-  .deck[data-ready="true"] .pillar {
-    padding: 16px 18px;
+  .deck[data-ready="true"] .pillars {
+    padding: 18px 20px 12px;
   }
   .deck[data-ready="true"] .pillar-list {
     gap: 7px;
   }
-  .deck[data-ready="true"] .pillar-list li {
+  .deck[data-ready="true"] .pillar-list > span {
     font-size: 0.92rem;
   }
   .deck[data-ready="true"] .bonus {
@@ -1466,11 +1492,11 @@ main {
   .deck[data-ready="true"] .slide-inner {
     padding: 80px 0 98px;
   }
-  .deck[data-ready="true"] .pillars {
-    gap: 10px;
+  .deck[data-ready="true"] .pillars-grille {
+    gap: 12px;
   }
-  .deck[data-ready="true"] .pillar {
-    padding: 20px 20px;
+  .deck[data-ready="true"] .pillars {
+    padding: 16px 18px 10px;
   }
   .deck[data-ready="true"] .section-intro {
     margin-top: 14px;
@@ -1588,5 +1614,250 @@ main {
   }
   .deck-hint-piste {
     width: 38px;
+  }
+}
+
+/* ================= Page intérieure (le programme en détail) ================= */
+.page {
+  position: relative;
+  z-index: 1;
+  padding: 130px 0 110px;
+}
+
+.page-inner {
+  max-width: 860px;
+}
+
+.page-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 44px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+}
+
+.page-retour:hover {
+  color: #fff;
+}
+
+.page-retour svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+}
+
+.page-retour:hover svg {
+  transform: translateX(-4px);
+}
+
+.page-tete {
+  margin-bottom: 76px;
+}
+
+.page-titre {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.page-chapo {
+  margin: 26px 0 0;
+  max-width: 620px;
+  font-size: 1.12rem;
+  color: var(--muted);
+}
+
+.page-section {
+  margin-bottom: 72px;
+}
+
+.page-h2 {
+  font-size: 0.76rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--orange);
+  margin: 0 0 30px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* La méthode en trois temps */
+.methode {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.methode-etape {
+  position: relative;
+  padding: 28px 24px;
+  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.methode-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 90, 31, 0.7);
+  margin-bottom: 14px;
+}
+
+.methode-etape h3 {
+  font-size: 1.12rem;
+  margin-bottom: 10px;
+}
+
+.methode-etape p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* Les domaines travaillés */
+.domaines {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.domaine {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 26px;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.domaine:last-child {
+  border-bottom: 0;
+}
+
+.domaine dt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.06rem;
+  color: var(--ink);
+}
+
+.domaine dd {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Les bonus */
+.bonus-detail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.bonus-detail li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 24px 26px;
+  border-radius: 18px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+}
+
+.bonus-detail strong {
+  display: block;
+  font-size: 1.06rem;
+  margin-bottom: 6px;
+}
+
+.bonus-detail span {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.bonus-detail-valeur {
+  flex: none;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #0a0a0a !important;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+/* Appel à l'action de fin */
+.page-fin {
+  text-align: center;
+  padding: 66px 26px;
+  border-radius: 24px;
+  background: radial-gradient(
+      70% 120% at 50% 0%,
+      rgba(255, 90, 31, 0.14),
+      transparent 70%
+    ),
+    var(--bg-soft);
+  border: 1px solid var(--line);
+}
+
+.page-fin h2 {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  margin-bottom: 18px;
+}
+
+.page-fin p {
+  margin: 0 auto 34px;
+  max-width: 460px;
+  color: var(--muted);
+}
+
+.page-fin-note {
+  margin: 28px auto 0 !important;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 104px 0 80px;
+  }
+  .page-tete {
+    margin-bottom: 54px;
+  }
+  .page-section {
+    margin-bottom: 54px;
+  }
+  .methode {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .domaine {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .bonus-detail li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 20px;
+  }
+  .page-fin {
+    padding: 46px 22px;
   }
 }

@@ -85,25 +85,49 @@ export default function Deck({
   );
 
   /**
-   * Au chargement on repart toujours du premier chapitre, et l'ancre est
-   * retirée de l'URL.
+   * Position de départ.
    *
-   * Ce n'est pas qu'une préférence : en arrivant sur « /#bonus », le
-   * navigateur fait défiler lui-même le conteneur pour amener l'ancre à
-   * l'écran — alors qu'il est en overflow hidden et positionné par une
-   * transformation. Les deux décalages s'additionnaient et on atterrissait
-   * sur un tout autre chapitre, forcément vide puisqu'il n'avait jamais été
-   * traversé.
+   * Un rechargement (F5) repart du premier chapitre et l'ancre est retirée
+   * de l'URL. Une arrivée par lien — depuis une page intérieure ou un
+   * partage — va au chapitre demandé.
+   *
+   * Dans les deux cas le défilement du conteneur est remis à zéro : en
+   * arrivant sur « /#bonus », le navigateur le fait défiler lui-même pour
+   * amener l'ancre à l'écran, alors qu'il est en overflow hidden et
+   * positionné par une transformation. Les deux décalages s'additionnaient
+   * et on atterrissait sur un tout autre chapitre, forcément vide puisqu'il
+   * n'avait jamais été traversé.
    */
   useIsomorphicLayoutEffect(() => {
-    if (window.location.hash) {
-      history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search
-      );
+    const cible = slides.findIndex(
+      (s) => s.id === window.location.hash.replace("#", "")
+    );
+
+    // Un rechargement repart de l'accueil ; une arrivée par lien (depuis une
+    // page intérieure ou un partage) va bien au chapitre demandé.
+    const nav = performance.getEntriesByType?.(
+      "navigation"
+    )?.[0] as PerformanceNavigationTiming | undefined;
+    const rechargement = nav ? nav.type === "reload" : false;
+
+    if (rechargement || cible < 0) {
+      if (window.location.hash) {
+        history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search
+        );
+      }
+    } else if (cible > 0) {
+      indexRef.current = cible;
+      xRef.current = cible;
+      setIndex(cible);
+      track.current?.style.setProperty("--deck-x", String(cible));
+      setDeckProgress(last > 0 ? cible / last : 0);
     }
-    // Au cas où le navigateur aurait déjà fait défiler le conteneur
+
+    // Le navigateur a pu faire défiler le conteneur lui-même pour amener
+    // l'ancre à l'écran : ce décalage s'ajouterait à la transformation.
     if (root.current) {
       root.current.scrollLeft = 0;
       root.current.scrollTop = 0;
@@ -117,7 +141,7 @@ export default function Deck({
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
-  }, [goTo, slides]);
+  }, [goTo, last, slides]);
 
   // Le conteneur ne doit jamais défiler de lui-même : c'est la transformation
   // qui positionne les écrans. Un défilement natif s'y ajouterait.
