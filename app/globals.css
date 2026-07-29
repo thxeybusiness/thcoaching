@@ -226,29 +226,102 @@ h3 {
   display: grid;
   place-items: center;
   will-change: transform;
+  /* Filet de sécurité : si le JavaScript n'aboutit pas, l'intro s'efface
+     d'elle-même au lieu de masquer le site indéfiniment. En marche normale
+     elle est démontée bien avant. */
+  animation: intro-secours 0.5s ease 6s forwards;
 }
 
+@keyframes intro-secours {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Logo à gauche, chaque pilier en face de sa vague */
 .intro-inner {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
+  align-items: stretch;
+  gap: clamp(26px, 4vw, 60px);
 }
 
 .intro-logo-svg {
-  width: clamp(110px, 15vw, 168px);
+  width: clamp(190px, 26vw, 330px);
   height: auto;
-  filter: drop-shadow(0 0 28px rgba(255, 110, 40, 0.35));
+  overflow: visible;
 }
 
-.intro-name {
+/* Chaque vague s'allume avec son pilier */
+.intro-wave {
+  transition: filter 0.45s ease;
+}
+
+.intro-wave[data-on="true"] {
+  filter: drop-shadow(0 0 18px rgba(255, 140, 46, 0.6));
+}
+
+/* Les trois piliers, alignés sur les trois vagues */
+.intro-piliers {
+  position: relative;
+  margin: 0;
+}
+
+.intro-piliers-gabarit {
+  visibility: hidden;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.4em;
+  font-size: clamp(0.78rem, 1.4vw, 1.02rem);
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-  padding-left: 0.4em; /* compense le tracking sur la dernière lettre */
+  white-space: nowrap;
+}
+
+.intro-word {
+  position: absolute;
+  top: var(--y);
+  left: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+/* Invisible au départ, sinon les trois mots s'affichent une fraction de
+   seconde avant que l'animation ne les reprenne. */
+.intro-word-texte {
+  display: inline-block;
+  opacity: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.78rem, 1.4vw, 1.02rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #f4f2ef;
+  will-change: transform, opacity;
+}
+
+/* Écran étroit : les piliers passent sous le logo */
+@media (max-width: 720px) {
+  .intro-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+  }
+  .intro-piliers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .intro-word {
+    position: static;
+    transform: none;
+  }
+  .intro-piliers-gabarit {
+    display: none;
+  }
+  .intro-word-texte {
+    font-size: 0.8rem;
+  }
 }
 
 /* Bandes de révélation (le logo devient la transition) */

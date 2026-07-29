@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Magnetic from "./Magnetic";
+import { INTRO_FIN } from "../lib/intro";
 
 /**
  * Premier écran du deck : typographie cinétique révélée caractère par
@@ -42,9 +43,14 @@ export default function Hero() {
     let obs: MutationObserver | undefined;
 
     const ctx = gsap.context(() => {
+      let premier = true;
       const play = () => {
         gsap
-          .timeline({ defaults: { ease: "power4.out" } })
+          .timeline({
+            // Au chargement, on attend la levée du rideau de l'intro
+            delay: premier ? INTRO_FIN : 0,
+            defaults: { ease: "power4.out" },
+          })
           .fromTo(
             ".hero-line-inner .char",
             { yPercent: 130, rotateZ: 7 },
@@ -71,6 +77,7 @@ export default function Hero() {
       };
 
       play();
+      premier = false;
 
       // Rejoue quand l'écran redevient actif (et non à chaque écriture de
       // l'attribut : le deck le repose à l'identique à chaque changement)

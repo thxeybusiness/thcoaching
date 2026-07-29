@@ -9,10 +9,7 @@ import "@fontsource/sora/800.css";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-// Intro mise de côté pour le moment — pour la réactiver : décommenter
-// l'import et <Intro /> ci-dessous, puis remettre les délais d'entrée
-// (Hero : delay 1.44 · Scene3D : introDelay 1.44).
-// import Intro from "./components/Intro";
+import Intro from "./components/Intro";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -83,7 +80,7 @@ const NOSCRIPT_CSS = `
 .deck[data-ready="true"] .slide-inner{display:block;height:auto;overflow:visible;padding:118px 0 96px}
 .deck[data-ready="true"] .slide-inner>*{margin-block:0}
 .deck[data-ready="true"] [data-r]{opacity:1;transform:none}
-.deck-nav,.deck-progress,.deck-status,.slide-scroll-hint{display:none}
+.deck-nav,.deck-progress,.deck-status,.slide-scroll-hint,.intro{display:none}
 .contact-legal{position:static;transform:none;margin-top:28px}
 .slide--contact .footer-word{position:static;transform:none}
 `;
@@ -133,7 +130,7 @@ export default function RootLayout({
           <style>{NOSCRIPT_CSS}</style>
         </noscript>
         <div className="waves-bg" aria-hidden="true" />
-        {/* <Intro /> */}
+        <Intro />
         <a href="#contenu" className="skip-link">
           Aller au contenu
         </a>

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { getDeckProgress } from "../lib/deck";
+import { INTRO_FIN } from "../lib/intro";
 
 /**
  * Scène 3D minimale : le logo TH Coaching (3 vagues extrudées, orange),
@@ -131,7 +132,7 @@ export default function Scene3D() {
 
     // ---- Boucle ----
     const clock = new THREE.Clock();
-    const introDelay = 0.15; // intro désactivée : entrée dès le chargement
+    const introDelay = INTRO_FIN; // le logo entre quand l'intro se lève
     const introDuration = 1.4;
     let progress = reduce ? 1 : 0;
     let pageP = 0;
