@@ -7,7 +7,7 @@ import { gsap } from "gsap";
  * Intro : les trois piliers allument le logo.
  *
  * 1. Le logo apparaît en grand, ses trois vagues éteintes
- * 2. « Compréhension », « Optimisation », « Concret » entrent l'un après
+ * 2. « Compréhension », « Optimisation », « Lancement » entrent l'un après
  *    l'autre — chaque mot allume la vague correspondante
  * 3. Au troisième mot, les vagues elles-mêmes deviennent le rideau : elles
  *    s'étirent au plein écran (toujours en courbes, aucun angle droit) et
@@ -24,7 +24,7 @@ const WAVE_PATHS = [
 const PILIERS = [
   { mot: "Compréhension", y: "25%" },
   { mot: "Optimisation", y: "49%" },
-  { mot: "Concret", y: "73%" },
+  { mot: "Lancement", y: "73%" },
 ];
 
 const ETEINT = "rgba(255, 150, 70, 0.09)";
