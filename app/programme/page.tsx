@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CountUp from "../components/CountUp";
 import ProgrammeMotion from "../components/ProgrammeMotion";
+import { PILIERS, NB_COMPETENCES } from "../lib/programme";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 export const metadata: Metadata = {
   title: "Le programme en détail",
   description:
-    "Tout ce que comprend l'accompagnement TH Coaching : stratégie business, intelligence artificielle, temps, clients, argent, alimentation, sommeil, sport, et les bonus inclus.",
+    "Les quatre piliers de l'accompagnement TH Coaching et les dix-sept compétences travaillées : fondations personnelles, compétences commerciales, créatives et techniques, pilotage et levier.",
   alternates: { canonical: "https://thcoaching.business/programme" },
 };
 
@@ -35,64 +36,6 @@ const METHODE = [
     titre: "Lancement",
     texte:
       "On passe à l'action avec un cap clair et des priorités tenables. C'est l'étape qui transforme le travail précédent en résultats concrets.",
-  },
-];
-
-/** Les huit domaines, placés en orbite puis détaillés. */
-const DOMAINES = [
-  {
-    court: "Stratégie",
-    titre: "Stratégie business",
-    volet: "business",
-    texte:
-      "Clarifier votre offre, votre positionnement et la direction à prendre en priorité.",
-  },
-  {
-    court: "IA",
-    titre: "Intelligence artificielle",
-    volet: "business",
-    texte:
-      "Intégrer les bons outils là où ils font réellement gagner du temps, sans se disperser.",
-  },
-  {
-    court: "Temps",
-    titre: "Gestion du temps",
-    volet: "business",
-    texte:
-      "Structurer vos journées autour de ce qui fait avancer, et protéger ce temps-là.",
-  },
-  {
-    court: "Clients",
-    titre: "Gestion des clients",
-    volet: "business",
-    texte:
-      "Trouver, convaincre et fidéliser, avec un suivi qui tient dans la durée.",
-  },
-  {
-    court: "Argent",
-    titre: "Gestion de l'argent",
-    volet: "business",
-    texte:
-      "Suivre vos chiffres et décider en connaissance de cause plutôt qu'au ressenti.",
-  },
-  {
-    court: "Alimentation",
-    titre: "Alimentation",
-    volet: "corps",
-    texte: "De l'énergie stable sur la journée, sans régime compliqué à tenir.",
-  },
-  {
-    court: "Sommeil",
-    titre: "Sommeil",
-    volet: "corps",
-    texte:
-      "Récupérer vraiment — parce que la fatigue coûte plus cher que tout le reste.",
-  },
-  {
-    court: "Sport",
-    titre: "Sport",
-    volet: "corps",
-    texte: "Une pratique régulière qui tient avec un emploi du temps chargé.",
   },
 ];
 
@@ -156,35 +99,36 @@ export default function Programme() {
             Le programme en détail
           </p>
           <h1 className="pg-titre">
-            {"Tout ce que comprend".split(" ").map((m) => (
+            {"Quatre piliers,".split(" ").map((m) => (
               <span key={m} className="mot-masque">
                 <span className="mot">{m}</span>
               </span>
             ))}
             <br />
-            {"l'accompagnement.".split(" ").map((m) => (
+            {"dix-sept compétences.".split(" ").map((m) => (
               <span key={m} className="mot-masque">
                 <span className="mot accent">{m}</span>
               </span>
             ))}
           </h1>
           <p className="pg-chapo" data-anim>
-            Huit domaines travaillés, une méthode en trois temps, et des
-            ressources incluses en plus du coaching lui-même.
+            Du socle physique et mental jusqu&apos;au pilotage de votre
+            activité : tout ce qui est travaillé pendant l&apos;accompagnement,
+            domaine par domaine.
           </p>
 
           <div className="pg-cles" data-anim>
             <span>
               <strong>
-                <CountUp to={8} />
+                <CountUp to={PILIERS.length} />
               </strong>
-              domaines
+              piliers
             </span>
             <span>
               <strong>
-                <CountUp to={3} />
+                <CountUp to={NB_COMPETENCES} />
               </strong>
-              étapes
+              compétences
             </span>
             <span>
               <strong>
@@ -196,7 +140,7 @@ export default function Programme() {
         </div>
       </header>
 
-      {/* ---------- L'orbite : les 8 domaines à 360° ---------- */}
+      {/* ---------- L'orbite : les quatre piliers ---------- */}
       <section className="pg-section pg-section--orbite" aria-labelledby="tour">
         <span className="pg-fantome" aria-hidden="true">
           360°
@@ -206,13 +150,17 @@ export default function Programme() {
             Un tour complet
           </h2>
           <p className="pg-intro" data-anim>
-            Le business et le corps ne sont pas deux sujets séparés. Ils tournent
-            autour du même axe : vous.
+            Le corps, le commerce, la création et le pilotage ne sont pas quatre
+            sujets séparés. Ils tournent autour du même axe : vous.
           </p>
 
           <div className="orbite">
             <span className="orbite-halo" aria-hidden="true" />
-            <svg className="orbite-anneau" viewBox="0 0 400 400" aria-hidden="true">
+            <svg
+              className="orbite-anneau"
+              viewBox="0 0 400 400"
+              aria-hidden="true"
+            >
               <circle className="orbite-piste" cx="200" cy="200" r="150" />
               <circle className="orbite-trace" cx="200" cy="200" r="150" />
             </svg>
@@ -222,17 +170,21 @@ export default function Programme() {
               <span className="orbite-noyau-texte">d&apos;accompagnement</span>
             </span>
 
-            {DOMAINES.map((d, i) => (
+            {PILIERS.map((p, i) => (
               <span
-                key={d.court}
+                key={p.cle}
                 className="orbite-point"
-                data-volet={d.volet}
-                style={{ "--a": `${i * 45}deg` } as CSSProperties}
+                style={{ "--a": `${i * 90}deg` } as CSSProperties}
               >
                 <span className="orbite-redresse">
                   <span className="orbite-contenu">
                     <i className="orbite-pastille" />
-                    <span className="orbite-nom">{d.court}</span>
+                    <span className="orbite-textes">
+                      <span className="orbite-nom">{p.court}</span>
+                      <span className="orbite-compte">
+                        {p.competences.length} compétences
+                      </span>
+                    </span>
                   </span>
                 </span>
               </span>
@@ -268,33 +220,50 @@ export default function Programme() {
         </div>
       </section>
 
-      {/* ---------- Les domaines en détail ---------- */}
-      <section className="pg-section" aria-labelledby="domaines-titre">
-        <span className="pg-fantome pg-fantome--droite" aria-hidden="true">
-          Détail
-        </span>
-        <div className="container">
-          <h2 className="pg-h2" id="domaines-titre" data-anim>
-            Les huit domaines
-          </h2>
-
-          <div className="domaines" data-cascade>
-            {DOMAINES.map((d, i) => (
-              <div key={d.titre} className="pg-carte domaine" data-volet={d.volet}>
-                <span className="domaine-index" aria-hidden="true">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="domaine-volet">
-                  {d.volet === "business" ? "Business" : "Corps & esprit"}
-                </span>
-                <h3>{d.titre}</h3>
-                <p>{d.texte}</p>
-                <span className="domaine-trait" aria-hidden="true" />
+      {/* ---------- Les quatre piliers, en détail ---------- */}
+      {PILIERS.map((p, i) => (
+        <section
+          key={p.cle}
+          className="pg-section pg-pilier"
+          id={p.cle}
+          aria-labelledby={`${p.cle}-titre`}
+        >
+          {i % 2 === 0 && (
+            <span className="pg-fantome pg-fantome--droite" aria-hidden="true">
+              {p.num}
+            </span>
+          )}
+          <div className="container">
+            <div className="pilier-tete" data-anim>
+              <span className="pilier-num" aria-hidden="true">
+                {p.num}
+              </span>
+              <div>
+                <h2 className="pg-h2" id={`${p.cle}-titre`}>
+                  {p.titre}
+                </h2>
+                <p className="pilier-promesse">{p.promesse}</p>
               </div>
-            ))}
+              <span className="pilier-compte">
+                {p.competences.length} compétences
+              </span>
+            </div>
+
+            <div className="competences" data-cascade>
+              {p.competences.map((c, j) => (
+                <div key={c.titre} className="pg-carte competence">
+                  <span className="competence-index" aria-hidden="true">
+                    {p.num}.{j + 1}
+                  </span>
+                  <h3>{c.titre}</h3>
+                  <p>{c.texte}</p>
+                  <span className="domaine-trait" aria-hidden="true" />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ))}
 
       {/* ---------- Les bonus ---------- */}
       <section className="pg-section" aria-labelledby="bonus-titre">

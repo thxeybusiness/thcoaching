@@ -674,8 +674,19 @@ main {
 
 .pillars-grille {
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 30px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 34px;
+}
+
+.pillar-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.32);
+  margin-bottom: 8px;
 }
 
 .pillar {
@@ -712,11 +723,21 @@ main {
 }
 
 
-.pillar-resume {
+.pillar-promesse {
   display: block;
-  font-size: 1.02rem;
-  line-height: 1.55;
+  font-size: 0.92rem;
+  line-height: 1.45;
   color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.pillar-compte {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange);
 }
 
 .pillar-title {
@@ -940,8 +961,8 @@ main {
     padding: 8px 14px;
   }
   .pillars-grille {
-    grid-template-columns: 1fr;
-    gap: 22px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 18px;
   }
   .bonus-list {
     grid-template-columns: 1fr;
@@ -1303,8 +1324,12 @@ main {
     font-size: 0.68rem;
     margin-bottom: 8px;
   }
-  .deck[data-ready="true"] .pillar-resume {
-    font-size: 0.94rem;
+  .deck[data-ready="true"] .pillar-promesse {
+    font-size: 0.82rem;
+    margin-bottom: 7px;
+  }
+  .deck[data-ready="true"] .pillar-compte {
+    font-size: 0.6rem;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 24px;
@@ -1364,11 +1389,21 @@ main {
     margin-top: 10px;
   }
   .deck[data-ready="true"] .pillars {
-    margin-top: 18px;
-    padding: 18px 22px 12px;
+    margin-top: 16px;
+    padding: 16px 20px 10px;
   }
   .deck[data-ready="true"] .pillars-grille {
-    gap: 20px;
+    gap: 12px 22px;
+  }
+  .deck[data-ready="true"] .pillar-promesse {
+    font-size: 0.86rem;
+    margin-bottom: 6px;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    margin-bottom: 6px;
+  }
+  .deck[data-ready="true"] .pillar-num {
+    margin-bottom: 4px;
   }
   .deck[data-ready="true"] .pillars-lien {
     margin-top: 16px;
@@ -1894,6 +1929,29 @@ main {
     0 0 18px rgba(255, 140, 26, 0.6);
 }
 
+/* Les libellés latéraux passent par-dessus l'anneau : un fondu sombre
+   derrière le texte interrompt le trait, sans flou ni masque sur le SVG. */
+.orbite-textes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.orbite-textes::before {
+  content: "";
+  position: absolute;
+  inset: -7px -18px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(8, 8, 9, 0.97) 0 52%,
+    rgba(8, 8, 9, 0) 80%
+  );
+}
+
 .orbite-nom {
   font-family: var(--font-body);
   font-size: 0.78rem;
@@ -2188,5 +2246,127 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .orbite-halo {
     animation: none !important;
+  }
+}
+
+/* ---------- Page : un pilier ---------- */
+.pg-pilier {
+  padding: 76px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pilier-tete {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  margin-bottom: 44px;
+}
+
+.pilier-num {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--orange);
+}
+
+.pilier-tete .pg-h2 {
+  margin-bottom: 6px;
+}
+
+.pilier-promesse {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.pilier-compte {
+  flex: none;
+  margin-left: auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange);
+  white-space: nowrap;
+}
+
+.competences {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.competence {
+  padding: 26px 24px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.competence-index {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--orange);
+  margin-bottom: 14px;
+}
+
+.competence h3 {
+  font-size: 1.08rem;
+  margin-bottom: 11px;
+  line-height: 1.25;
+}
+
+.competence p {
+  margin: 0;
+  font-size: 0.93rem;
+  color: var(--muted);
+}
+
+/* Compte de compétences sous chaque nom, dans l'orbite */
+.orbite-compte {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  margin-top: -2px;
+}
+
+@media (max-width: 1080px) {
+  .competences {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .pg-pilier {
+    padding: 54px 0;
+  }
+  .pilier-tete {
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .pilier-num {
+    font-size: 1.8rem;
+  }
+  .pilier-compte {
+    margin-left: 0;
+    order: 3;
+    width: 100%;
+    text-align: center;
+  }
+  .competences {
+    grid-template-columns: 1fr;
+  }
+  .orbite-compte {
+    display: none;
   }
 }

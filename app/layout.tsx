@@ -15,7 +15,7 @@ const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const SITE_TITLE = "TH Coaching — Coaching Business & Performance";
 const SITE_DESCRIPTION =
-  "Un accompagnement à 360° : stratégie business, intelligence artificielle, gestion du temps, des clients et de l'argent — mais aussi alimentation, sommeil et sport.";
+  "Un accompagnement à 360° en quatre piliers : fondations personnelles, compétences commerciales, compétences créatives et techniques, pilotage et levier. Dix-sept compétences travaillées.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
@@ -68,7 +68,7 @@ const JSON_LD = {
       "@type": "Service",
       name: "Un Coaching Complet Business & Performance",
       description:
-        "Accompagnement à 360° couvrant la stratégie business, l'intelligence artificielle, la gestion du temps, des clients et de l'argent, l'alimentation, le sommeil et le sport.",
+        "Accompagnement à 360° en quatre piliers : fondations personnelles (mindset, physiologie, sommeil, alimentation, sport), compétences commerciales (vente, closing, gestion client, finances), compétences créatives et techniques (contenu, graphisme, vidéo, 3D, IA), pilotage et levier (temps, projets, réseau).",
     },
   },
 };

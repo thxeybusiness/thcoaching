@@ -5,6 +5,7 @@ import Scene3DLoader from "./components/Scene3DLoader";
 import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
+import { PILIERS, NB_COMPETENCES } from "./lib/programme";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -17,20 +18,6 @@ const SLIDES: SlideMeta[] = [
   { id: "bonus", label: "Bonus" },
   { id: "apropos", label: "À propos" },
   { id: "contact", label: "Contact" },
-];
-
-/** Résumés : le détail de chaque domaine vit sur /programme. */
-const pillars = [
-  {
-    group: "Business & performance",
-    resume:
-      "Clarifier la stratégie, mettre l'intelligence artificielle là où elle fait gagner du temps, et reprendre la main sur le temps, les clients et l'argent.",
-  },
-  {
-    group: "Corps & esprit",
-    resume:
-      "Retrouver l'énergie qui permet de tenir le rythme, en travaillant l'alimentation, le sommeil et le sport.",
-  },
 ];
 
 const bonuses = [
@@ -71,17 +58,22 @@ export default function Home() {
                 <span className="accent">Business &amp; Performance.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
-                Un accompagnement à 360° qui couvre à la fois la croissance de
-                votre business et votre équilibre personnel. On travaille
-                l&apos;essentiel, dans l&apos;ordre qui vous fait avancer.
+                Quatre piliers, {NB_COMPETENCES} compétences : du socle
+                physique et mental jusqu&apos;au pilotage de votre activité.
               </p>
 
               <Link href="/programme" className="pillars" style={r(3)} data-r>
                 <span className="pillars-grille">
-                  {pillars.map((p) => (
-                    <span key={p.group} className="pillar">
-                      <span className="pillar-title">{p.group}</span>
-                      <span className="pillar-resume">{p.resume}</span>
+                  {PILIERS.map((p) => (
+                    <span key={p.cle} className="pillar">
+                      <span className="pillar-num" aria-hidden="true">
+                        {p.num}
+                      </span>
+                      <span className="pillar-title">{p.titre}</span>
+                      <span className="pillar-promesse">{p.promesse}</span>
+                      <span className="pillar-compte">
+                        {p.competences.length} compétences
+                      </span>
                     </span>
                   ))}
                 </span>
@@ -179,9 +171,9 @@ export default function Home() {
                 </div>
                 <div className="stat" style={r(6)} data-r>
                   <strong>
-                    <CountUp to={8} />
+                    <CountUp to={NB_COMPETENCES} />
                   </strong>
-                  <span>domaines travaillés</span>
+                  <span>compétences travaillées</span>
                 </div>
               </div>
             </div>
