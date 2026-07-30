@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
+import { ETAPES } from "../lib/methode";
 
 /**
- * Intro : les trois piliers allument le logo.
+ * Intro : les trois étapes du déroulé allument le logo.
  *
  * 1. Le logo apparaît en grand, ses trois vagues éteintes
- * 2. « Compréhension », « Optimisation », « Lancement » entrent l'un après
- *    l'autre — chaque mot allume la vague correspondante
+ * 2. « Fondations », « Perfectionnement », « Développement » entrent l'un
+ *    après l'autre — chaque mot allume la vague correspondante
  * 3. Au troisième mot, un éclat couvre l'écran ; le décor s'efface derrière
  *    lui et le site apparaît pendant que l'éclat retombe.
  */
@@ -20,12 +21,17 @@ const WAVE_PATHS = [
   "M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z",
 ];
 
-/** Chaque pilier est posé en face de sa vague (centre du tracé dans le viewBox). */
-const PILIERS = [
-  { mot: "Compréhension", y: "25%" },
-  { mot: "Optimisation", y: "49%" },
-  { mot: "Lancement", y: "73%" },
-];
+/** Ordonnées des trois vagues (centre du tracé dans le viewBox). */
+const HAUTEURS = ["25%", "49%", "73%"];
+
+/** Chaque étape est posée en face de sa vague. */
+const PILIERS = ETAPES.map((e, i) => ({ mot: e.mot, y: HAUTEURS[i] }));
+
+/** Le plus long des trois mots : c'est lui qui donne sa largeur au bloc. */
+const PLUS_LONG = PILIERS.reduce(
+  (a, b) => (b.mot.length > a.length ? b.mot : a),
+  ""
+);
 
 /** Départ de l'éclat, puis instant où le site apparaît derrière lui. */
 const ECLAT = 1.46;
@@ -203,7 +209,7 @@ export default function Intro() {
           {/* Copie invisible : les mots sont en absolu et ne donnent donc
               aucune largeur au bloc, qui serait décentré sans elle. */}
           <span className="intro-piliers-gabarit" aria-hidden="true">
-            {PILIERS[0].mot}
+            {PLUS_LONG}
           </span>
           {PILIERS.map(({ mot, y }, i) => (
             <span

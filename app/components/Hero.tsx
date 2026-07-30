@@ -109,18 +109,19 @@ export default function Hero() {
           </span>
           <h1 className="hero-title">
             <span className="hero-line">
-              <span className="hero-line-inner">Développez votre business.</span>
+              <span className="hero-line-inner">Bâtir le business</span>
             </span>
             <span className="hero-line">
-              <span className="hero-line-inner accent">
-                Sans négliger votre santé.
-              </span>
+              <span className="hero-line-inner accent">qui te correspond</span>
+            </span>
+            <span className="hero-line">
+              <span className="hero-line-inner accent">vraiment.</span>
             </span>
           </h1>
           <p className="hero-sub">
-            Un accompagnement à 360° : stratégie, argent, temps, clients — mais
-            aussi alimentation, sommeil et sport. Parce qu&apos;un business
-            solide repose sur un corps et un esprit en pleine forme.
+            On acquiert les fondamentaux, on les perfectionne jusqu&apos;au
+            réflexe, puis une étude approfondie détermine le business
+            réellement fait pour toi — avant de le construire.
           </p>
           <div className="hero-actions">
             <Magnetic>

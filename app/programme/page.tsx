@@ -4,13 +4,14 @@ import Link from "next/link";
 import CountUp from "../components/CountUp";
 import ProgrammeMotion from "../components/ProgrammeMotion";
 import { PILIERS, NB_COMPETENCES } from "../lib/programme";
+import { ETAPES, PROMESSE } from "../lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 export const metadata: Metadata = {
   title: "Le programme en détail",
   description:
-    "Les quatre piliers de l'accompagnement TH Coaching et les dix-sept compétences travaillées : fondations personnelles, compétences commerciales, créatives et techniques, pilotage et levier.",
+    "Le déroulé en trois étapes — fondations, perfectionnement, étude et développement — et les dix-sept compétences travaillées pour bâtir le business qui te correspond vraiment.",
   alternates: { canonical: "https://thcoaching.business/programme" },
 };
 
@@ -19,24 +20,6 @@ const VAGUES = [
   "M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z",
   "M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z",
   "M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z",
-];
-
-const METHODE = [
-  {
-    titre: "Compréhension",
-    texte:
-      "On part de votre situation réelle : ce qui tourne, ce qui coince, et ce qui vous prend du temps sans rien rapporter. Avant d'ajouter quoi que ce soit, on regarde ce qui est déjà là.",
-  },
-  {
-    titre: "Optimisation",
-    texte:
-      "On resserre ce qui existe : la stratégie, les outils, l'organisation des journées, et l'énergie disponible pour tenir le rythme. L'objectif n'est pas d'en faire plus, mais mieux.",
-  },
-  {
-    titre: "Lancement",
-    texte:
-      "On passe à l'action avec un cap clair et des priorités tenables. C'est l'étape qui transforme le travail précédent en résultats concrets.",
-  },
 ];
 
 const BONUS = [
@@ -112,9 +95,10 @@ export default function Programme() {
             ))}
           </h1>
           <p className="pg-chapo" data-anim>
-            Du socle physique et mental jusqu&apos;au pilotage de votre
-            activité : tout ce qui est travaillé pendant l&apos;accompagnement,
-            domaine par domaine.
+            {PROMESSE} On pose d&apos;abord les fondamentaux, on les
+            perfectionne jusqu&apos;à ce qu&apos;ils deviennent des réflexes,
+            puis on construit ton projet sur ces bases. Voici tout ce qui est
+            travaillé en chemin, domaine par domaine.
           </p>
 
           <div className="pg-cles" data-anim>
@@ -151,7 +135,7 @@ export default function Programme() {
           </h2>
           <p className="pg-intro" data-anim>
             Le corps, le commerce, la création et le pilotage ne sont pas quatre
-            sujets séparés. Ils tournent autour du même axe : vous.
+            sujets séparés. Ils tournent autour du même axe : toi.
           </p>
 
           <div className="orbite">
@@ -197,21 +181,21 @@ export default function Programme() {
       <section className="pg-section" aria-labelledby="methode-titre">
         <div className="container">
           <h2 className="pg-h2" id="methode-titre" data-anim>
-            La méthode, en trois temps
+            Le déroulé, en trois étapes
           </h2>
           <p className="pg-intro" data-anim>
-            Chaque étape allume une vague du logo. À la troisième, tout est en
-            place.
+            Chaque étape allume une vague du logo. À la troisième, ton business
+            est debout.
           </p>
 
           <div className="methode" data-cascade>
             <div className="methode-ligne" aria-hidden="true">
               <i />
             </div>
-            {METHODE.map((e, i) => (
-              <div key={e.titre} className="pg-carte methode-etape">
+            {ETAPES.map((e, i) => (
+              <div key={e.cle} className="pg-carte methode-etape">
                 <LogoEtape actif={i} />
-                <span className="etape-num">0{i + 1}</span>
+                <span className="etape-num">{e.num}</span>
                 <h3>{e.titre}</h3>
                 <p>{e.texte}</p>
               </div>
@@ -298,8 +282,8 @@ export default function Programme() {
             <span className="accent">de vive voix ?</span>
           </h2>
           <p data-anim>
-            Un appel découverte gratuit de 30 minutes pour faire le point sur vos
-            objectifs, sans engagement.
+            Un appel découverte gratuit de 30 minutes pour faire le point sur
+            ton profil et tes objectifs, sans engagement.
           </p>
           <a
             href={`mailto:${CONTACT_EMAIL}?subject=Coaching%20Business%20%26%20Performance`}

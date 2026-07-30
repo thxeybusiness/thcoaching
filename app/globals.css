@@ -548,7 +548,7 @@ main {
 }
 
 .hero-title {
-  font-size: clamp(2rem, 5vw, 3.9rem);
+  font-size: clamp(2rem, 4.6vw, 3.6rem);
   text-shadow: 0 2px 26px rgba(0, 0, 0, 0.85);
 }
 
@@ -749,6 +749,123 @@ main {
   color: var(--orange);
   margin-bottom: 14px;
   font-weight: 700;
+}
+
+/* ---------- Accueil : le déroulé en trois étapes ---------- */
+.section-glow--right {
+  width: 44vw;
+  height: 44vw;
+  top: 6%;
+  right: -20%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 140, 26, 0.09),
+    transparent 62%
+  );
+}
+
+.deroule {
+  list-style: none;
+  margin: 46px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.deroule-etape {
+  position: relative;
+  padding: 28px 26px 26px;
+  border-radius: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+/* Le filet du haut se remplit d'une étape à l'autre : la progression se lit
+   d'un coup d'œil, sans rien ajouter au texte. */
+.deroule-etape {
+  --avancee: 33%;
+}
+.deroule-etape:nth-child(2) {
+  --avancee: 66%;
+}
+.deroule-etape:nth-child(3) {
+  --avancee: 100%;
+}
+
+.deroule-etape::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--orange) 0 var(--avancee),
+    rgba(255, 255, 255, 0.07) var(--avancee)
+  );
+}
+
+.deroule-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 90, 31, 0.65);
+  margin-bottom: 16px;
+}
+
+.deroule-titre {
+  font-size: 1.08rem;
+  margin: 0 0 10px;
+}
+
+.deroule-court {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+@media (max-width: 860px) {
+  .deroule {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .deroule-etape {
+    padding: 17px 20px;
+  }
+  .deroule-num {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+  .deroule-titre {
+    font-size: 1rem;
+    margin-bottom: 7px;
+  }
+  .deroule-court {
+    font-size: 0.9rem;
+  }
+}
+
+/* Écrans peu hauts : le chapitre doit tenir dans la hauteur du deck */
+@media (max-height: 780px) {
+  .deroule {
+    margin-top: 32px;
+  }
+  .deroule-etape {
+    padding: 22px 22px 20px;
+  }
+  .deroule-num {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+  }
+  .deroule-court {
+    font-size: 0.9rem;
+  }
 }
 
 
@@ -1209,6 +1326,15 @@ main {
 /* ---------- Ajustements par écran ---------- */
 .slide--hero .hero-inner {
   padding-top: 0;
+  /* Le logo 3D occupe la droite de l'écran : le texte doit s'arrêter avant,
+     sinon la fin du titre passe dessous. */
+  max-width: min(940px, 68%);
+}
+
+@media (max-width: 900px) {
+  .slide--hero .hero-inner {
+    max-width: none;
+  }
 }
 
 .slide--about {

@@ -10,7 +10,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt =
-  "TH Coaching — Développez votre business sans négliger votre santé.";
+  "TH Coaching — Bâtir le business qui te correspond vraiment.";
 
 const FONT_FILES = {
   soraBold: "@fontsource/sora/files/sora-latin-800-normal.woff",
@@ -130,8 +130,10 @@ export async function renderShareImage() {
               color: "#f4f2ef",
             }}
           >
-            <span>Développez votre business.</span>
-            <span style={{ color: "#ff5a1f" }}>Sans négliger votre santé.</span>
+            <span>Bâtir le business</span>
+            <span style={{ color: "#ff5a1f" }}>
+              qui te correspond vraiment.
+            </span>
           </div>
         </div>
 
@@ -148,7 +150,7 @@ export async function renderShareImage() {
             color: "rgba(255,255,255,0.62)",
           }}
         >
-          <span>Stratégie · IA · Temps · Clients · Argent · Santé</span>
+          <span>Fondations · Perfectionnement · Développement</span>
           <span style={{ color: "#ff8c1a", fontWeight: 500 }}>
             thcoaching.business
           </span>

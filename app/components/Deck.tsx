@@ -363,10 +363,10 @@ export default function Deck({
             n'y a plus rien devant. Les pastilles restent le chemin au clic. */}
         <p className="deck-hint" aria-hidden="true" data-fin={index === last}>
           <span className="deck-hint-libelle deck-hint-libelle--pointeur">
-            Faites défiler
+            Fais défiler
           </span>
           <span className="deck-hint-libelle deck-hint-libelle--tactile">
-            Balayez
+            Balaye
           </span>
           <i className="deck-hint-piste" />
         </p>

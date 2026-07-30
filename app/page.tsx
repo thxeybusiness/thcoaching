@@ -6,6 +6,7 @@ import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
 import { PILIERS, NB_COMPETENCES } from "./lib/programme";
+import { ETAPES } from "./lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -14,6 +15,7 @@ const r = (i: number) => ({ "--r-i": i }) as CSSProperties;
 
 const SLIDES: SlideMeta[] = [
   { id: "accueil", label: "Accueil" },
+  { id: "methode", label: "Méthode" },
   { id: "offre", label: "Programme" },
   { id: "bonus", label: "Bonus" },
   { id: "apropos", label: "À propos" },
@@ -44,7 +46,50 @@ export default function Home() {
         {/* 1 — Accueil */}
         <Hero />
 
-        {/* 2 — Le programme */}
+        {/* 2 — Le déroulé */}
+        <section className="slide" id="methode" aria-labelledby="methode-titre">
+          <div className="section-glow section-glow--right" aria-hidden="true" />
+          <div className="slide-inner">
+            <div className="container">
+              <p className="section-label" style={r(0)} data-r>
+                La méthode
+              </p>
+              <h2
+                className="section-title"
+                id="methode-titre"
+                style={r(1)}
+                data-r
+              >
+                Le déroulé,
+                <br />
+                <span className="accent">en trois étapes.</span>
+              </h2>
+              <p className="section-intro" style={r(2)} data-r>
+                Pas de recette toute faite : on pose les bases, on les rend
+                automatiques, puis on construit le business qui te ressemble.
+              </p>
+
+              <ol className="deroule">
+                {ETAPES.map((e, i) => (
+                  <li
+                    key={e.cle}
+                    className="deroule-etape"
+                    style={r(3 + i)}
+                    data-r
+                  >
+                    <span className="deroule-num" aria-hidden="true">
+                      {e.num}
+                    </span>
+                    <h3 className="deroule-titre">{e.titre}</h3>
+                    <p className="deroule-court">{e.court}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        {/* 3 — Le programme */}
         <section className="slide" id="offre" aria-labelledby="offre-titre">
           <div className="section-glow section-glow--left" aria-hidden="true" />
           <div className="slide-inner">
@@ -53,13 +98,13 @@ export default function Home() {
                 Le programme
               </p>
               <h2 className="section-title" id="offre-titre" style={r(1)} data-r>
-                Un Coaching Complet
+                Les fondamentaux,
                 <br />
-                <span className="accent">Business &amp; Performance.</span>
+                <span className="accent">domaine par domaine.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
                 Quatre piliers, {NB_COMPETENCES} compétences : du socle
-                physique et mental jusqu&apos;au pilotage de votre activité.
+                physique et mental jusqu&apos;au pilotage de ton activité.
               </p>
 
               <Link href="/programme" className="pillars" style={r(3)} data-r>
@@ -88,7 +133,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 — Les bonus */}
+        {/* 4 — Les bonus */}
         <section className="slide" id="bonus" aria-labelledby="bonus-titre">
           <div className="slide-inner">
             <div className="container">
@@ -96,7 +141,7 @@ export default function Home() {
                 Inclus dans l&apos;accompagnement
               </p>
               <h2 className="section-title" id="bonus-titre" style={r(1)} data-r>
-                Ce que vous recevez
+                Ce que tu reçois
                 <br />
                 <span className="accent">en plus du coaching.</span>
               </h2>
@@ -119,7 +164,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4 — À propos */}
+        {/* 5 — À propos */}
         <section
           className="slide slide--about"
           id="apropos"
@@ -140,20 +185,19 @@ export default function Home() {
                   style={r(1)}
                   data-r
                 >
-                  Un coach à vos côtés,
+                  Un coach à tes côtés,
                   <br />
                   pas au-dessus.
                 </h2>
                 <p style={r(2)} data-r>
-                  Ma conviction : un business qui tient dans la durée repose sur
-                  des fondations solides — une stratégie claire, des outils qui
-                  font gagner du temps, et un corps qui suit. C&apos;est pour ça
-                  que l&apos;accompagnement travaille les deux à la fois.
+                  Ma conviction : il n&apos;existe pas un business idéal, mais
+                  un business idéal <em>pour toi</em>. C&apos;est pour ça
+                  qu&apos;on ne part jamais d&apos;un modèle tout fait, mais de
+                  ton profil, de tes compétences et de tes contraintes réelles.
                 </p>
                 <p style={r(3)} data-r>
                   Chaque accompagnement est confidentiel, bienveillant et
-                  rigoureux. On avance à votre rythme, avec des objectifs
-                  clairs.
+                  rigoureux. On avance à ton rythme, avec des objectifs clairs.
                 </p>
               </div>
               <div className="stats">
@@ -180,7 +224,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5 — Contact */}
+        {/* 6 — Contact */}
         <section
           className="slide slide--contact"
           id="contact"
@@ -210,8 +254,8 @@ export default function Home() {
                 <span className="accent">niveau supérieur ?</span>
               </h2>
               <p className="contact-sub" style={r(2)} data-r>
-                Réservez votre appel découverte gratuit de 30 minutes. On fait
-                le point sur vos objectifs, sans engagement.
+                Réserve ton appel découverte gratuit de 30 minutes. On fait le
+                point sur ton profil et tes objectifs, sans engagement.
               </p>
               <div className="contact-cta" style={r(3)} data-r>
                 <Magnetic>

@@ -15,7 +15,7 @@ const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const SITE_TITLE = "TH Coaching — Coaching Business & Performance";
 const SITE_DESCRIPTION =
-  "Un accompagnement à 360° en quatre piliers : fondations personnelles, compétences commerciales, compétences créatives et techniques, pilotage et levier. Dix-sept compétences travaillées.";
+  "Bâtir le business qui te correspond vraiment : on acquiert les fondamentaux, on les perfectionne jusqu'au réflexe, puis une étude personnalisée détermine le projet fait pour ton profil. Quatre piliers, dix-sept compétences.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
@@ -68,7 +68,7 @@ const JSON_LD = {
       "@type": "Service",
       name: "Un Coaching Complet Business & Performance",
       description:
-        "Accompagnement à 360° en quatre piliers : fondations personnelles (mindset, physiologie, sommeil, alimentation, sport), compétences commerciales (vente, closing, gestion client, finances), compétences créatives et techniques (contenu, graphisme, vidéo, 3D, IA), pilotage et levier (temps, projets, réseau).",
+        "Accompagnement en trois étapes — fondations (acquérir les bases indispensables à toute activité), perfectionnement (les affiner jusqu'au réflexe), étude et développement (identifier le business fait pour ton profil, puis le construire). Quatre piliers travaillés : fondations personnelles (mindset, physiologie, sommeil, alimentation, sport), compétences commerciales (vente, closing, gestion client, finances), compétences créatives et techniques (contenu, graphisme, vidéo, 3D, IA), pilotage et levier (temps, projets, réseau).",
     },
   },
 };
