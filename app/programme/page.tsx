@@ -1,10 +1,9 @@
-import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import CountUp from "../components/CountUp";
 import ProgrammeMotion from "../components/ProgrammeMotion";
-import GrilleCompetences from "../components/GrilleCompetences";
 import Etapes from "../components/Etapes";
+import Piliers from "../components/Piliers";
 import { PILIERS, NB_COMPETENCES } from "../lib/programme";
 import { PROMESSE } from "../lib/methode";
 
@@ -101,61 +100,6 @@ export default function Programme() {
         </div>
       </header>
 
-      {/* ---------- L'orbite : les quatre piliers ---------- */}
-      <section className="pg-section pg-section--orbite" aria-labelledby="tour">
-        <span className="pg-fantome" aria-hidden="true">
-          360°
-        </span>
-        <div className="container">
-          <h2 className="pg-h2" id="tour" data-anim>
-            Un tour complet
-          </h2>
-          <p className="pg-intro" data-anim>
-            Le corps, le commerce, la création et le pilotage ne sont pas quatre
-            sujets séparés. Ils tournent autour du même axe : toi.
-          </p>
-
-          <div className="orbite">
-            <span className="orbite-halo" aria-hidden="true" />
-            <svg
-              className="orbite-anneau"
-              viewBox="0 0 400 400"
-              aria-hidden="true"
-            >
-              <circle className="orbite-piste" cx="200" cy="200" r="150" />
-              <circle className="orbite-trace" cx="200" cy="200" r="150" />
-            </svg>
-
-            <span className="orbite-noyau" aria-hidden="true">
-              <span className="orbite-noyau-valeur">360°</span>
-              <span className="orbite-noyau-texte">d&apos;accompagnement</span>
-            </span>
-
-            {PILIERS.map((p, i) => (
-              <span
-                key={p.cle}
-                className="orbite-point"
-                style={
-                  { "--a": `${i * 90}deg`, "--teinte": p.teinte } as CSSProperties
-                }
-              >
-                <span className="orbite-redresse">
-                  <span className="orbite-contenu">
-                    <i className="orbite-pastille" />
-                    <span className="orbite-textes">
-                      <span className="orbite-nom">{p.court}</span>
-                      <span className="orbite-compte">
-                        {p.competences.length} compétences
-                      </span>
-                    </span>
-                  </span>
-                </span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ---------- La méthode ---------- */}
       <section className="pg-section" aria-labelledby="methode-titre">
         <div className="container">
@@ -171,70 +115,32 @@ export default function Programme() {
         </div>
       </section>
 
-      {/* ---------- Les quatre piliers, en détail ---------- */}
-      {PILIERS.map((p, i) => (
-        <section
-          key={p.cle}
-          className="pg-section pg-pilier"
-          id={p.cle}
-          aria-labelledby={`${p.cle}-titre`}
-          style={{ "--teinte": p.teinte } as CSSProperties}
-        >
-          {i % 2 === 0 && (
-            <span className="pg-fantome pg-fantome--droite" aria-hidden="true">
-              {p.num}
+      {/* ---------- Les quatre piliers : orbite + mur ---------- */}
+      <section className="pg-section pg-section--piliers" aria-labelledby="tour">
+        <span className="pg-fantome" aria-hidden="true">
+          360°
+        </span>
+        <div className="container">
+          <h2 className="pg-h2" id="tour" data-anim>
+            Un tour complet
+          </h2>
+          <p className="pg-intro" data-anim>
+            Le corps, le commerce, la création et le pilotage ne sont pas quatre
+            sujets séparés. Ils tournent autour du même axe : toi.
+          </p>
+
+          <p className="comp-repere piliers-repere" data-anim>
+            <span className="comp-repere-fleche" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12 H18 M12 6 L18 12 L12 18" />
+              </svg>
             </span>
-          )}
-          <div className="container">
-            <div className="pilier-tete" data-anim>
-              <span className="pilier-num" aria-hidden="true">
-                {p.num}
-              </span>
-              <div>
-                <h2 className="pg-h2" id={`${p.cle}-titre`}>
-                  {p.titre}
-                </h2>
-                <p className="pilier-promesse">{p.promesse}</p>
-              </div>
+            Choisis un pilier sur l&apos;orbite, puis ouvre une compétence
+          </p>
 
-              {/* Part de ce pilier dans les dix-sept compétences */}
-              <span
-                className="pilier-part"
-                style={
-                  {
-                    "--part": p.competences.length / NB_COMPETENCES,
-                  } as CSSProperties
-                }
-              >
-                <svg viewBox="0 0 44 44" aria-hidden="true">
-                  <circle className="part-piste" cx="22" cy="22" r="18" />
-                  <circle className="part-arc" cx="22" cy="22" r="18" />
-                </svg>
-                <b aria-hidden="true">{p.competences.length}</b>
-                <span className="sr-only">
-                  {p.competences.length} compétences sur {NB_COMPETENCES}
-                </span>
-              </span>
-            </div>
-
-            {i === 0 && (
-              <p className="comp-repere" data-anim>
-                <span className="comp-repere-signe" aria-hidden="true">
-                  <i />
-                  <i />
-                </span>
-                Ouvre une compétence pour le détail
-              </p>
-            )}
-
-            <GrilleCompetences
-              cle={p.cle}
-              num={p.num}
-              competences={p.competences}
-            />
-          </div>
-        </section>
-      ))}
+          <Piliers />
+        </div>
+      </section>
 
       {/* ---------- Les bonus ---------- */}
       <section className="pg-section" aria-labelledby="bonus-titre">
