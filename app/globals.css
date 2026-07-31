@@ -2433,12 +2433,30 @@ main {
 }
 
 /* ---------- Le panneau du pilier sélectionné ---------- */
-.pilier-panneau {
+
+/* Les quatre panneaux occupent la même case : la hauteur réservée est celle
+   du plus grand, donc elle ne change jamais. En passant d'un pilier à
+   l'autre, l'orbite reste rigoureusement en place.
+   « visibility » plutôt que « display » : le panneau masqué garde sa place
+   dans la grille, tout en sortant de l'ordre de tabulation et de l'arbre
+   d'accessibilité. */
+.piliers-panneaux {
+  display: grid;
   min-width: 0;
 }
 
-.pilier-panneau[hidden] {
-  display: none;
+.pilier-panneau {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.22s ease, visibility 0s linear 0.22s;
+}
+
+.pilier-panneau[data-actif="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.28s ease, visibility 0s;
 }
 
 .pilier-titre {

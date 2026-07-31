@@ -14,8 +14,10 @@ import GrilleCompetences from "./GrilleCompetences";
  * Le survol suffit à changer de pilier ; le mur reste ensuite sur le dernier
  * survolé, le temps d'aller y lire une compétence.
  *
- * Les quatre panneaux restent dans le document — seuls les inactifs sont
- * masqués — pour que les dix-sept compétences soient toujours indexables.
+ * Les quatre panneaux restent dans le document — les inactifs sont rendus
+ * invisibles, non retirés — pour que les dix-sept compétences soient
+ * toujours indexables et que la hauteur du bloc ne varie jamais : en
+ * changeant de pilier, seul le détail change, l'orbite ne bouge pas.
  */
 export default function Piliers() {
   const [actif, setActif] = useState(0);
@@ -46,9 +48,35 @@ export default function Piliers() {
 
   useEffect(() => annuler, []);
 
+  const boutons = useRef<(HTMLButtonElement | null)[]>([]);
+
+  /**
+   * Motif ARIA des onglets : seul l'onglet actif est dans l'ordre de
+   * tabulation, les flèches circulent entre les piliers. Sans cela, tabuler
+   * à travers l'orbite activerait chaque pilier au passage.
+   */
+  const auClavier = (e: React.KeyboardEvent) => {
+    const n = PILIERS.length;
+    let cible: number | null = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") cible = (actif + 1) % n;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+      cible = (actif - 1 + n) % n;
+    else if (e.key === "Home") cible = 0;
+    else if (e.key === "End") cible = n - 1;
+    if (cible === null) return;
+    e.preventDefault();
+    choisir(cible);
+    boutons.current[cible]?.focus();
+  };
+
   return (
     <div className="piliers-vue">
-      <div className="orbite" role="tablist" aria-label="Les quatre piliers">
+      <div
+        className="orbite"
+        role="tablist"
+        aria-label="Les quatre piliers"
+        onKeyDown={auClavier}
+      >
         <span className="orbite-halo" aria-hidden="true" />
         <svg className="orbite-anneau" viewBox="0 0 400 400" aria-hidden="true">
           <circle className="orbite-piste" cx="200" cy="200" r="150" />
@@ -74,6 +102,10 @@ export default function Piliers() {
                 role="tab"
                 id={`onglet-${p.cle}`}
                 className="orbite-contenu"
+                ref={(el) => {
+                  boutons.current[i] = el;
+                }}
+                tabIndex={i === actif ? 0 : -1}
                 data-actif={i === actif}
                 aria-selected={i === actif}
                 aria-controls={`panneau-${p.cle}`}
@@ -103,7 +135,7 @@ export default function Piliers() {
             id={`panneau-${p.cle}`}
             role="tabpanel"
             aria-labelledby={`onglet-${p.cle}`}
-            hidden={i !== actif}
+            data-actif={i === actif}
             style={{ "--teinte": p.teinte } as CSSProperties}
           >
             <div className="pilier-tete">
