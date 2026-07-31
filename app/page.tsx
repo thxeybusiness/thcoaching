@@ -25,7 +25,7 @@ const SLIDES: SlideMeta[] = [
 const bonuses = [
   {
     title: "2 formations en Marketing Digital",
-    text: "ASA & JDS — valeur totale de 628 €, offertes.",
+    text: "ASA & JDS, incluses dans l'accompagnement.",
   },
   {
     title: "Accès privés & réductions exclusives",
@@ -149,7 +149,6 @@ export default function Home() {
               <div className="bonus" style={r(2)} data-r>
                 <div className="bonus-head">
                   <h3>Inclus en bonus</h3>
-                  <span className="bonus-value">+ de 628 € offerts</span>
                 </div>
                 <ul className="bonus-list">
                   {bonuses.map((b) => (
@@ -209,9 +208,9 @@ export default function Home() {
                 </div>
                 <div className="stat" style={r(5)} data-r>
                   <strong>
-                    <CountUp to={628} suffix=" €" />
+                    <CountUp to={bonuses.length} />
                   </strong>
-                  <span>de bonus offerts</span>
+                  <span>bonus inclus</span>
                 </div>
                 <div className="stat" style={r(6)} data-r>
                   <strong>

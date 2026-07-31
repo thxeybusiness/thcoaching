@@ -903,17 +903,6 @@ main {
   font-size: 1.7rem;
 }
 
-.bonus-value {
-  background: var(--orange);
-  color: #0a0a0a;
-  font-weight: 800;
-  font-size: 0.9rem;
-  padding: 9px 18px;
-  border-radius: 999px;
-  white-space: nowrap;
-  box-shadow: 0 0 34px rgba(255, 90, 31, 0.45);
-}
-
 .bonus-list {
   list-style: none;
   margin: 0;
@@ -2301,19 +2290,6 @@ main {
 
 .bonus-carte {
   padding: 32px 28px 34px;
-}
-
-.bonus-carte-valeur {
-  display: inline-block;
-  margin-bottom: 18px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: var(--orange);
-  color: #0a0a0a;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1rem;
-  box-shadow: 0 0 34px rgba(255, 90, 31, 0.45);
 }
 
 .bonus-carte h3 {

@@ -20,20 +20,14 @@ const BONUS = [
   {
     titre: "2 formations en Marketing Digital",
     texte: "ASA et JDS, incluses dans l'accompagnement.",
-    valeur: 628,
-    suffixe: " €",
   },
   {
     titre: "Accès privés & réductions",
     texte: "Sur des SaaS développés spécialement pour le business.",
-    valeur: null,
-    suffixe: "",
   },
   {
     titre: "Groupe privé d'entraide",
     texte: "Pour progresser ensemble, entre entrepreneurs.",
-    valeur: null,
-    suffixe: "",
   },
 ];
 
@@ -92,9 +86,9 @@ export default function Programme() {
             </span>
             <span>
               <strong>
-                <CountUp to={628} suffix=" €" />
+                <CountUp to={BONUS.length} />
               </strong>
-              de bonus
+              bonus inclus
             </span>
           </div>
         </div>
@@ -152,11 +146,6 @@ export default function Programme() {
           <div className="bonus-cartes" data-cascade>
             {BONUS.map((b) => (
               <div key={b.titre} className="pg-carte bonus-carte">
-                {b.valeur !== null && (
-                  <span className="bonus-carte-valeur">
-                    <CountUp to={b.valeur} suffix={b.suffixe} />
-                  </span>
-                )}
                 <h3>{b.titre}</h3>
                 <p>{b.texte}</p>
               </div>
