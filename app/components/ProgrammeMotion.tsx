@@ -49,14 +49,41 @@ export default function ProgrammeMotion() {
       });
 
       // Révélations génériques
+      const SEUIL = 0.88;
+      const defilementMax =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      /**
+       * Un élément trop proche du bas du document ne remonte jamais jusqu'au
+       * seuil, même défilement au maximum : son déclencheur ne se produirait
+       * pas et il resterait invisible pour toujours. On se rabat alors sur sa
+       * section, plus haute, puis sur aucun déclencheur du tout.
+       *
+       * La marge évite les cas limites : la mesure est prise au montage, alors
+       * que la hauteur du document peut encore bouger de quelques pixels.
+       */
+      const MARGE = 0.12;
+      const atteint = (e: Element, seuil: number) =>
+        e.getBoundingClientRect().top + window.scrollY - defilementMax <
+        window.innerHeight * seuil;
+
+      const declencheur = (el: HTMLElement): Element | null => {
+        if (atteint(el, SEUIL - MARGE)) return el;
+        const section = el.closest("section");
+        return section && atteint(section, SEUIL - MARGE) ? section : null;
+      };
+
       gsap.utils.toArray<HTMLElement>("[data-anim]").forEach((el) => {
         if (el.closest(".pg-tete")) return;
+        const cible = declencheur(el);
         gsap.from(el, {
           opacity: 0,
           y: 26,
           duration: 0.75,
           ease: "power2.out",
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+          scrollTrigger: cible
+            ? { trigger: cible, start: `top ${SEUIL * 100}%`, once: true }
+            : undefined,
         });
       });
 

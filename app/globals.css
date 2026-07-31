@@ -1778,7 +1778,7 @@ main {
 /* ---------- Ouverture ---------- */
 .pg-tete {
   position: relative;
-  padding: 150px 0 96px;
+  padding: 150px 0 60px;
 }
 
 .pg-tete-fond {
@@ -1881,7 +1881,7 @@ main {
 /* ---------- Sections ---------- */
 .pg-section {
   position: relative;
-  padding: 96px 0;
+  padding: 60px 0;
 }
 
 .pg-h2 {
@@ -1918,7 +1918,7 @@ main {
 
 /* ---------- Orbite + mur : les quatre piliers en un écran ---------- */
 .pg-section--piliers {
-  padding-bottom: 108px;
+  padding-bottom: 68px;
 }
 
 /* Au-delà de 1140 px, l'orbite et le mur tiennent côte à côte : on choisit
@@ -2336,7 +2336,7 @@ main {
 .pg-fin {
   position: relative;
   text-align: center;
-  padding: 110px 0 130px;
+  padding: 74px 0 104px;
   border-top: 1px solid var(--line);
 }
 
@@ -2385,13 +2385,13 @@ main {
     top: 64px;
   }
   .pg-tete {
-    padding: 118px 0 70px;
+    padding: 118px 0 46px;
   }
   .pg-retour {
     margin-bottom: 32px;
   }
   .pg-section {
-    padding: 68px 0;
+    padding: 46px 0;
   }
   .pg-intro {
     margin-bottom: 38px;
@@ -2419,7 +2419,7 @@ main {
     grid-template-columns: 1fr;
   }
   .pg-fin {
-    padding: 76px 0 90px;
+    padding: 56px 0 76px;
   }
 }
 
