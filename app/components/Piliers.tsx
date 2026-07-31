@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { PILIERS, NB_COMPETENCES } from "../lib/programme";
 import GrilleCompetences from "./GrilleCompetences";
 
@@ -11,11 +11,40 @@ import GrilleCompetences from "./GrilleCompetences";
  * son mur de compétences s'échange à côté. On ne fait plus défiler quatre
  * sections identiques l'une après l'autre.
  *
+ * Le survol suffit à changer de pilier ; le mur reste ensuite sur le dernier
+ * survolé, le temps d'aller y lire une compétence.
+ *
  * Les quatre panneaux restent dans le document — seuls les inactifs sont
  * masqués — pour que les dix-sept compétences soient toujours indexables.
  */
 export default function Piliers() {
   const [actif, setActif] = useState(0);
+  const attente = useRef<number | null>(null);
+
+  const annuler = () => {
+    if (attente.current !== null) {
+      window.clearTimeout(attente.current);
+      attente.current = null;
+    }
+  };
+
+  /**
+   * Un survol appuyé change de pilier. Le court délai évite qu'un simple
+   * passage de la souris vers le mur — qui longe le point de droite — ne
+   * bascule le contenu au passage.
+   */
+  const survoler = (i: number) => {
+    annuler();
+    if (i === actif) return;
+    attente.current = window.setTimeout(() => setActif(i), 110);
+  };
+
+  const choisir = (i: number) => {
+    annuler();
+    setActif(i);
+  };
+
+  useEffect(() => annuler, []);
 
   return (
     <div className="piliers-vue">
@@ -48,7 +77,10 @@ export default function Piliers() {
                 data-actif={i === actif}
                 aria-selected={i === actif}
                 aria-controls={`panneau-${p.cle}`}
-                onClick={() => setActif(i)}
+                onMouseEnter={() => survoler(i)}
+                onMouseLeave={annuler}
+                onFocus={() => choisir(i)}
+                onClick={() => choisir(i)}
               >
                 <i className="orbite-pastille" />
                 <span className="orbite-textes">

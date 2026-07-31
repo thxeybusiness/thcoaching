@@ -135,7 +135,7 @@ export default function Programme() {
                 <path d="M5 12 H18 M12 6 L18 12 L12 18" />
               </svg>
             </span>
-            Choisis un pilier sur l&apos;orbite, puis ouvre une compétence
+            Parcours les piliers sur l&apos;orbite, puis ouvre une compétence
           </p>
 
           <Piliers />
