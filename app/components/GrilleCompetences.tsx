@@ -7,6 +7,14 @@ import IconeCompetence from "./IconeCompetence";
 import type { Competence } from "../lib/programme";
 
 /**
+ * Cadence de l'entrée des tuiles. Les durées restent écrites à leur valeur
+ * d'origine et sont divisées ici : le rapport reste lisible et un seul
+ * nombre règle la vitesse d'ensemble.
+ */
+const VITESSE = 1.8;
+const t = (secondes: number) => secondes / VITESSE;
+
+/**
  * Le mur de compétences d'un pilier.
  *
  * Par défaut on ne voit que le pictogramme et le nom : la page se lit d'un
@@ -53,8 +61,8 @@ export default function GrilleCompetences({
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.55,
-            stagger: 0.05,
+            duration: t(0.55),
+            stagger: t(0.05),
             ease: "power2.out",
             clearProps: "all",
           }
@@ -66,33 +74,33 @@ export default function GrilleCompetences({
           { opacity: 0 },
           {
             opacity: 0.26,
-            duration: 0.7,
-            delay: 0.25,
-            stagger: 0.02,
+            duration: t(0.7),
+            delay: t(0.25),
+            stagger: t(0.02),
             ease: "power2.out",
             clearProps: "opacity",
           }
         );
 
         const traits: SVGGeometryElement[] = [];
-        el.querySelectorAll<SVGGeometryElement>(".ico-trait > *").forEach((t) => {
+        el.querySelectorAll<SVGGeometryElement>(".ico-trait > *").forEach((forme) => {
           // getTotalLength lève sur les formes dégénérées : on les ignore
           let l = 0;
           try {
-            l = t.getTotalLength();
+            l = forme.getTotalLength();
           } catch {
             return;
           }
           if (!l) return;
-          gsap.set(t, { strokeDasharray: l, strokeDashoffset: l });
-          traits.push(t);
+          gsap.set(forme, { strokeDasharray: l, strokeDashoffset: l });
+          traits.push(forme);
         });
 
         if (traits.length) {
           gsap.to(traits, {
             strokeDashoffset: 0,
-            duration: 0.85,
-            stagger: 0.02,
+            duration: t(0.85),
+            stagger: t(0.02),
             ease: "power2.inOut",
             clearProps: "strokeDasharray,strokeDashoffset",
           });
