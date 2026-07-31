@@ -114,7 +114,9 @@ export default function Piliers() {
                 onFocus={() => choisir(i)}
                 onClick={() => choisir(i)}
               >
-                <i className="orbite-pastille" />
+                <i className="orbite-pastille" aria-hidden="true">
+                  {i + 1}
+                </i>
                 <span className="orbite-textes">
                   <span className="orbite-nom">{p.court}</span>
                   <span className="orbite-compte">

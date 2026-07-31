@@ -2062,19 +2062,52 @@ main {
   cursor: pointer;
 }
 
-/* On atténue les éléments un par un plutôt que le bouton entier : sinon le
+/* Repère numéroté, centré exactement sur l'anneau : les quatre piliers se
+   lisent comme un parcours, 1 en haut puis dans le sens des aiguilles.
+   Son fond opaque interrompt le trait de l'anneau, le chiffre reste net.
+   On atténue les éléments un par un plutôt que le bouton entier : sinon le
    fond qui interrompt l'anneau derrière le libellé s'atténue avec eux. */
 .orbite-pastille {
-  opacity: 0.5;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--orange);
+  background: #0c0c0d;
+  color: var(--orange);
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 0.74rem;
+  line-height: 1;
+  opacity: 0.62;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--orange) 32%, transparent);
+  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.5, 1),
+    opacity 0.32s ease, background 0.32s ease, color 0.32s ease,
+    box-shadow 0.32s ease;
 }
 
 .orbite-contenu[data-actif="true"] .orbite-pastille {
   opacity: 1;
+  transform: translate(-50%, -50%) scale(1.14);
+  background: var(--orange);
+  color: #0a0a0a;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--orange) 15%, transparent),
+    0 0 24px color-mix(in srgb, var(--orange) 58%, transparent);
+}
+
+.orbite-contenu[data-actif="true"] .orbite-nom {
+  color: #fff;
 }
 
 @media (hover: hover) {
   .orbite-contenu:hover .orbite-pastille {
-    opacity: 0.85;
+    opacity: 0.9;
   }
   .orbite-contenu:hover .orbite-nom {
     color: rgba(255, 255, 255, 0.8);
@@ -2086,49 +2119,11 @@ main {
   outline-offset: 2px;
 }
 
-.orbite-contenu[data-actif="true"] .orbite-pastille {
-  transform: translate(-50%, -50%) scale(1.55);
-}
-
-.orbite-contenu[data-actif="true"] .orbite-nom {
-  color: #fff;
-}
-
-.orbite-pastille {
-  transform: scale(1.5);
-}
-
-.orbite-contenu[data-actif="true"] .orbite-nom {
-  color: #fff;
-}
-
-.orbite-pastille {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 11px;
-  height: 11px;
-  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.5, 1),
-    opacity 0.32s ease;
-  border-radius: 50%;
-  background: var(--orange);
-  box-shadow: 0 0 0 5px
-      color-mix(in srgb, var(--orange) 16%, transparent),
-    0 0 18px color-mix(in srgb, var(--orange) 70%, transparent);
-}
-
-.orbite-point[data-volet="corps"] .orbite-pastille {
-  background: var(--orange-soft);
-  box-shadow: 0 0 0 5px rgba(255, 140, 26, 0.13),
-    0 0 18px rgba(255, 140, 26, 0.6);
-}
-
 /* Les libellés latéraux passent par-dessus l'anneau : un fondu sombre
    derrière le texte interrompt le trait, sans flou ni masque sur le SVG. */
 .orbite-textes {
   position: absolute;
-  top: calc(100% - 4px);
+  top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -2406,6 +2401,11 @@ main {
   }
   .orbite {
     width: min(100%, 340px);
+  }
+  .orbite-pastille {
+    width: 24px;
+    height: 24px;
+    font-size: 0.66rem;
   }
   .orbite-nom {
     font-size: 0.66rem;
