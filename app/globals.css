@@ -2044,9 +2044,10 @@ main {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: var(--orange);
-  box-shadow: 0 0 0 5px rgba(255, 90, 31, 0.14),
-    0 0 18px rgba(255, 90, 31, 0.7);
+  background: var(--teinte, var(--orange));
+  box-shadow: 0 0 0 5px
+      color-mix(in srgb, var(--teinte, #ff5a1f) 16%, transparent),
+    0 0 18px color-mix(in srgb, var(--teinte, #ff5a1f) 70%, transparent);
 }
 
 .orbite-point[data-volet="corps"] .orbite-pastille {
@@ -2110,6 +2111,9 @@ main {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  /* Sans cela, déplier une étape étirerait les deux autres à la même
+     hauteur et laisserait deux grands vides à côté. */
+  align-items: start;
 }
 
 .methode-ligne {
@@ -2132,7 +2136,7 @@ main {
 
 .methode-etape {
   z-index: 1;
-  padding: 30px 26px 28px;
+  padding: 30px 26px 62px;
 }
 
 .etape-logo {
@@ -2157,74 +2161,85 @@ main {
   margin-bottom: 12px;
 }
 
+.methode-etape {
+  position: relative;
+}
+
+/* Le récit complet se déplie au clic : par défaut, une seule ligne. */
+.etape-court {
+  margin: 0;
+  padding-right: 34px;
+}
+
+.etape-detail {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.46s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease, margin-top 0.46s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.methode-etape[data-ouvert="true"] .etape-detail {
+  max-height: 560px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.etape-bascule {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.etape-bascule:hover,
+.etape-bascule:focus-visible {
+  border-color: rgba(255, 90, 31, 0.6);
+  background: rgba(255, 90, 31, 0.08);
+}
+
+.etape-signe {
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+
+.etape-signe i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--orange);
+  transition: transform 0.34s cubic-bezier(0.5, 0, 0.2, 1);
+}
+
+.etape-signe i:last-child {
+  transform: rotate(90deg);
+}
+
+.methode-etape[data-ouvert="true"] .etape-signe i:first-child {
+  transform: rotate(135deg);
+}
+
+.methode-etape[data-ouvert="true"] .etape-signe i:last-child {
+  transform: rotate(45deg);
+}
+
 .methode-etape p {
   margin: 0;
   font-size: 0.96rem;
   color: var(--muted);
-}
-
-/* ---------- Domaines ---------- */
-.domaines {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-}
-
-.domaine {
-  padding: 28px 24px 30px;
-  min-height: 210px;
-  display: flex;
-  flex-direction: column;
-}
-
-.domaine-index {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.9rem;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-}
-
-.domaine-volet {
-  margin: 16px 0 8px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--orange);
-}
-
-.domaine[data-volet="corps"] .domaine-volet {
-  color: var(--orange-soft);
-}
-
-.domaine h3 {
-  font-size: 1.06rem;
-  margin-bottom: 10px;
-}
-
-.domaine p {
-  margin: 0;
-  font-size: 0.92rem;
-  color: var(--muted);
-}
-
-/* Trait qui s'étire au survol */
-.domaine-trait {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: linear-gradient(90deg, var(--orange), var(--orange-soft));
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.45s cubic-bezier(0.2, 0.65, 0.3, 1);
-}
-
-.domaine:hover .domaine-trait {
-  transform: scaleX(1);
 }
 
 /* ---------- Bonus ---------- */
@@ -2308,10 +2323,7 @@ main {
 }
 
 @media (max-width: 1080px) {
-  .domaines {
-    grid-template-columns: repeat(2, 1fr);
   }
-}
 
 @media (max-width: 860px) {
   .pg-progression {
@@ -2361,13 +2373,7 @@ main {
 }
 
 @media (max-width: 520px) {
-  .domaines {
-    grid-template-columns: 1fr;
-  }
-  .domaine {
-    min-height: 0;
-  }
-}
+    }
 
 @media (prefers-reduced-motion: reduce) {
   .orbite-halo {
@@ -2408,51 +2414,279 @@ main {
   color: var(--muted);
 }
 
-.pilier-compte {
+/* Part du pilier dans les dix-sept compétences : un anneau plutôt qu'un
+   libellé — même information, aucun mot. */
+.pilier-part {
+  --tour: 113.1; /* 2πr, r = 18 */
   flex: none;
   margin-left: auto;
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--orange);
-  white-space: nowrap;
+  position: relative;
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
 }
 
-.competences {
+.pilier-part svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.part-piste {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.part-arc {
+  stroke: var(--teinte, var(--orange));
+  stroke-dasharray: calc(var(--part) * var(--tour)) var(--tour);
+}
+
+.pilier-part b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--teinte, var(--orange));
+}
+
+/* ---------- Le mur de compétences ---------- */
+
+/* Repère d'interaction, posé une seule fois sur la page */
+.comp-repere {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.comp-repere-signe {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+
+.comp-repere-signe i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--teinte, var(--orange));
+}
+
+.comp-repere-signe i:last-child {
+  transform: rotate(90deg);
+}
+
+.comp-grille {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+  gap: 14px;
 }
 
 .competence {
-  padding: 26px 24px 30px;
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  aspect-ratio: 1;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.32s ease, transform 0.32s ease,
+    box-shadow 0.32s ease;
 }
 
-.competence-index {
+/* Lueur propre au pilier, révélée à l'approche */
+.competence::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 118%,
+    color-mix(in srgb, var(--teinte, #ff5a1f) 30%, transparent),
+    transparent 66%
+  );
+  transition: opacity 0.32s ease;
+}
+
+.comp-index {
+  position: absolute;
+  top: 20px;
+  left: 20px;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  color: var(--orange);
-  margin-bottom: 14px;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.26);
+  transition: color 0.3s ease;
 }
 
-.competence h3 {
-  font-size: 1.08rem;
-  margin-bottom: 11px;
+.competence[data-ouvert="true"] .comp-index {
+  color: color-mix(in srgb, var(--teinte, #ff5a1f) 75%, transparent);
+}
+
+.comp-face,
+.comp-dos {
+  position: absolute;
+  inset: 0;
+  padding: 22px 20px;
+  transition: opacity 0.3s ease, transform 0.36s ease;
+}
+
+.comp-face {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.comp-icone {
+  width: 54px;
+  height: 54px;
+  fill: none;
+  stroke: var(--teinte, var(--orange));
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-top: auto;
+}
+
+.comp-face::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  bottom: 44px;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--teinte, #ff5a1f) 17%, transparent),
+    transparent 68%
+  );
+}
+
+.comp-nom {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
   line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
-.competence p {
-  margin: 0;
-  font-size: 0.93rem;
-  color: var(--muted);
+.comp-dos {
+  opacity: 0;
+  transform: translateY(10px);
+  padding-top: 46px;
+  display: flex;
+  align-items: center;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* Le signe + bascule en × quand le détail est ouvert */
+.comp-signe {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 15px;
+  height: 15px;
+}
+
+.comp-signe i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--teinte, var(--orange));
+  transition: transform 0.34s cubic-bezier(0.5, 0, 0.2, 1);
+}
+
+.comp-signe i:last-child {
+  transform: rotate(90deg);
+}
+
+.competence[data-ouvert="true"] .comp-signe i:first-child {
+  transform: rotate(135deg);
+}
+
+.competence[data-ouvert="true"] .comp-signe i:last-child {
+  transform: rotate(45deg);
+}
+
+/* Ouverture — au clic, et au survol quand la souris existe */
+.competence[data-ouvert="true"] {
+  border-color: color-mix(in srgb, var(--teinte, #ff5a1f) 60%, transparent);
+}
+
+.competence[data-ouvert="true"]::before {
+  opacity: 1;
+}
+
+.competence[data-ouvert="true"] .comp-face {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.competence[data-ouvert="true"] .comp-dos {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .competence:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--teinte, #ff5a1f) 60%, transparent);
+    box-shadow: 0 22px 50px -28px
+      color-mix(in srgb, var(--teinte, #ff5a1f) 70%, transparent);
+  }
+  .competence:hover::before {
+    opacity: 1;
+  }
+  .competence:hover .comp-face {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  .competence:hover .comp-dos {
+    opacity: 1;
+    transform: none;
+  }
+  .competence:hover .comp-signe i:first-child {
+    transform: rotate(135deg);
+  }
+  .competence:hover .comp-signe i:last-child {
+    transform: rotate(45deg);
+  }
+  .competence:hover .comp-index {
+    color: color-mix(in srgb, var(--teinte, #ff5a1f) 75%, transparent);
+  }
+}
+
+.competence:focus-visible {
+  outline: 2px solid var(--teinte, var(--orange));
+  outline-offset: 3px;
 }
 
 /* Compte de compétences sous chaque nom, dans l'orbite */
@@ -2465,34 +2699,83 @@ main {
   margin-top: -2px;
 }
 
-@media (max-width: 1080px) {
-  .competences {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 860px) {
   .pg-pilier {
     padding: 54px 0;
   }
   .pilier-tete {
-    flex-wrap: wrap;
     gap: 14px;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
   }
   .pilier-num {
     font-size: 1.8rem;
   }
-  .pilier-compte {
-    margin-left: 0;
-    order: 3;
-    width: 100%;
-    text-align: center;
+  .pilier-part {
+    width: 52px;
+    height: 52px;
   }
-  .competences {
-    grid-template-columns: 1fr;
+  .pilier-part b {
+    font-size: 1.05rem;
+  }
+  .comp-grille {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  /* Deux colonnes étroites : la tuile s'allonge pour loger le détail */
+  .competence {
+    aspect-ratio: 0.86;
+  }
+  .comp-face,
+  .comp-dos {
+    padding: 16px 15px;
+  }
+  .comp-icone {
+    width: 38px;
+    height: 38px;
+  }
+  .comp-face::after {
+    left: 2px;
+    bottom: 32px;
+    width: 88px;
+    height: 88px;
+  }
+  .comp-face {
+    gap: 11px;
+  }
+  .comp-nom {
+    font-size: 0.85rem;
+  }
+  .comp-dos {
+    font-size: 0.76rem;
+    line-height: 1.42;
+  }
+  .comp-signe {
+    top: 13px;
+    right: 13px;
+    width: 12px;
+  }
+  .comp-index {
+    top: 14px;
+    left: 15px;
+    font-size: 0.6rem;
+  }
+  .comp-dos {
+    padding-top: 34px;
   }
   .orbite-compte {
     display: none;
   }
+}
+
+/* Lecteurs d'écran uniquement */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

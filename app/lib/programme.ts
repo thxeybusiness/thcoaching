@@ -3,7 +3,7 @@
  * détaillée. Quatre piliers, dix-sept compétences.
  */
 
-export type Competence = { titre: string; texte: string };
+export type Competence = { titre: string; texte: string; icone: string };
 
 export type Pilier = {
   cle: string;
@@ -14,6 +14,8 @@ export type Pilier = {
   court: string;
   /** Sous-titre du pilier */
   promesse: string;
+  /** Teinte propre au pilier — une rampe chaude, du doré au rouge */
+  teinte: string;
   /** Résumé d'une ligne pour l'accueil */
   resume: string;
   competences: Competence[];
@@ -22,6 +24,7 @@ export type Pilier = {
 export const PILIERS: Pilier[] = [
   {
     cle: "fondations",
+    teinte: "#ffc24d",
     num: "01",
     titre: "Fondations personnelles",
     court: "Fondations",
@@ -30,26 +33,31 @@ export const PILIERS: Pilier[] = [
       "Mindset, physiologie, sommeil, alimentation, sport — le socle sur lequel tout le reste repose.",
     competences: [
       {
+        icone: "mindset",
         titre: "Mindset",
         texte:
           "Discipline, gestion des émotions et de l'échec, capacité à tenir un cap sur le long terme sans dépendre de la motivation.",
       },
       {
+        icone: "physiologie",
         titre: "Comprendre son corps et son cerveau",
         texte:
           "Notions de physiologie et de neurosciences appliquées : dopamine, cortisol, cycles d'énergie, mécanismes de l'attention et de la mémoire.",
       },
       {
+        icone: "sommeil",
         titre: "Sommeil",
         texte:
           "Optimisation de la récupération : régularité des cycles, qualité du sommeil profond, impact direct sur la concentration et la prise de décision.",
       },
       {
+        icone: "alimentation",
         titre: "Alimentation",
         texte:
           "Nutrition fonctionnelle : stabilité de l'énergie sur la journée, clarté mentale, santé métabolique à long terme.",
       },
       {
+        icone: "sport",
         titre: "Sport",
         texte:
           "Entretien de la condition physique, gestion du stress par l'effort, construction de la discipline par l'entraînement régulier.",
@@ -58,6 +66,7 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "commercial",
+    teinte: "#ff9a2b",
     num: "02",
     titre: "Compétences commerciales",
     court: "Commercial",
@@ -66,21 +75,25 @@ export const PILIERS: Pilier[] = [
       "Stratégie de vente, closing, gestion client et pilotage financier.",
     competences: [
       {
+        icone: "vente",
         titre: "Stratégie de vente",
         texte:
           "Construction d'un système de vente complet : positionnement, ciblage, offre, tunnel d'acquisition et suivi.",
       },
       {
+        icone: "closing",
         titre: "Closing",
         texte:
           "Maîtrise de l'entretien de vente : découverte du besoin, traitement des objections, cadrage et conclusion.",
       },
       {
+        icone: "client",
         titre: "Gestion client",
         texte:
           "Relation client de bout en bout : onboarding, communication, satisfaction, fidélisation et recommandations.",
       },
       {
+        icone: "finance",
         titre: "Gestion financière",
         texte:
           "Pilotage de l'argent : marge, trésorerie, séparation pro/perso, épargne, réinvestissement et fiscalité de base.",
@@ -89,6 +102,7 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "creatif",
+    teinte: "#ff6f2c",
     num: "03",
     titre: "Compétences créatives & techniques",
     court: "Créatif",
@@ -97,26 +111,31 @@ export const PILIERS: Pilier[] = [
       "Création de contenu, graphisme, montage vidéo, 3D et maîtrise de l'IA.",
     competences: [
       {
+        icone: "contenu",
         titre: "Création de contenu",
         texte:
           "Stratégie éditoriale, storytelling, formats adaptés à chaque plateforme, régularité de publication.",
       },
       {
+        icone: "graphisme",
         titre: "Graphisme",
         texte:
           "Identité visuelle, composition, typographie, couleurs ; maîtrise des outils de design.",
       },
       {
+        icone: "video",
         titre: "Montage vidéo",
         texte:
           "Narration par l'image, rythme, montage, sound design et étalonnage.",
       },
       {
+        icone: "cube",
         titre: "3D",
         texte:
           "Modélisation, texturing, éclairage et rendu, pour des visuels différenciants.",
       },
       {
+        icone: "ia",
         titre: "Maîtrise de l'IA",
         texte:
           "Compréhension des modèles, prompting efficace, automatisation de tâches et intégration de l'IA dans ses workflows.",
@@ -125,6 +144,7 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "pilotage",
+    teinte: "#ff4d1f",
     num: "04",
     titre: "Pilotage & levier",
     court: "Pilotage",
@@ -133,16 +153,19 @@ export const PILIERS: Pilier[] = [
       "Gestion du temps, création et pilotage de projets, activation du réseau.",
     competences: [
       {
+        icone: "temps",
         titre: "Gestion et optimisation du temps",
         texte:
           "Priorisation, planification, deep work, élimination des tâches à faible valeur, délégation et automatisation.",
       },
       {
+        icone: "projets",
         titre: "Création et gestion de projets / business",
         texte:
           "Du concept au lancement : validation d'idée, structuration, exécution, suivi des indicateurs et scalabilité.",
       },
       {
+        icone: "reseau",
         titre: "Réseau et relations",
         texte:
           "Activation stratégique de son entourage : construction de relations de valeur, partenariats, opportunités et recommandations.",

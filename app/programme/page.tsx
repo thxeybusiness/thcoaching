@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CountUp from "../components/CountUp";
 import ProgrammeMotion from "../components/ProgrammeMotion";
+import GrilleCompetences from "../components/GrilleCompetences";
+import Etapes from "../components/Etapes";
 import { PILIERS, NB_COMPETENCES } from "../lib/programme";
-import { ETAPES, PROMESSE } from "../lib/methode";
+import { PROMESSE } from "../lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -14,13 +16,6 @@ export const metadata: Metadata = {
     "Le déroulé en trois étapes — fondations, perfectionnement, étude et développement — et les dix-sept compétences travaillées pour bâtir le business qui te correspond vraiment.",
   alternates: { canonical: "https://thcoaching.business/programme" },
 };
-
-/** Les trois vagues du logo — une par étape de la méthode. */
-const VAGUES = [
-  "M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z",
-  "M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z",
-  "M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z",
-];
 
 const BONUS = [
   {
@@ -42,21 +37,6 @@ const BONUS = [
     suffixe: "",
   },
 ];
-
-/** Le logo, avec une seule vague allumée. */
-function LogoEtape({ actif }: { actif: number }) {
-  return (
-    <svg className="etape-logo" viewBox="0 0 120 120" aria-hidden="true">
-      {VAGUES.map((d, i) => (
-        <path
-          key={d}
-          d={d}
-          fill={i === actif ? "var(--orange-soft)" : "rgba(255,150,70,0.12)"}
-        />
-      ))}
-    </svg>
-  );
-}
 
 export default function Programme() {
   return (
@@ -95,10 +75,7 @@ export default function Programme() {
             ))}
           </h1>
           <p className="pg-chapo" data-anim>
-            {PROMESSE} On pose d&apos;abord les fondamentaux, on les
-            perfectionne jusqu&apos;à ce qu&apos;ils deviennent des réflexes,
-            puis on construit ton projet sur ces bases. Voici tout ce qui est
-            travaillé en chemin, domaine par domaine.
+            {PROMESSE}
           </p>
 
           <div className="pg-cles" data-anim>
@@ -158,7 +135,9 @@ export default function Programme() {
               <span
                 key={p.cle}
                 className="orbite-point"
-                style={{ "--a": `${i * 90}deg` } as CSSProperties}
+                style={
+                  { "--a": `${i * 90}deg`, "--teinte": p.teinte } as CSSProperties
+                }
               >
                 <span className="orbite-redresse">
                   <span className="orbite-contenu">
@@ -188,19 +167,7 @@ export default function Programme() {
             est debout.
           </p>
 
-          <div className="methode" data-cascade>
-            <div className="methode-ligne" aria-hidden="true">
-              <i />
-            </div>
-            {ETAPES.map((e, i) => (
-              <div key={e.cle} className="pg-carte methode-etape">
-                <LogoEtape actif={i} />
-                <span className="etape-num">{e.num}</span>
-                <h3>{e.titre}</h3>
-                <p>{e.texte}</p>
-              </div>
-            ))}
-          </div>
+          <Etapes />
         </div>
       </section>
 
@@ -211,6 +178,7 @@ export default function Programme() {
           className="pg-section pg-pilier"
           id={p.cle}
           aria-labelledby={`${p.cle}-titre`}
+          style={{ "--teinte": p.teinte } as CSSProperties}
         >
           {i % 2 === 0 && (
             <span className="pg-fantome pg-fantome--droite" aria-hidden="true">
@@ -228,23 +196,42 @@ export default function Programme() {
                 </h2>
                 <p className="pilier-promesse">{p.promesse}</p>
               </div>
-              <span className="pilier-compte">
-                {p.competences.length} compétences
+
+              {/* Part de ce pilier dans les dix-sept compétences */}
+              <span
+                className="pilier-part"
+                style={
+                  {
+                    "--part": p.competences.length / NB_COMPETENCES,
+                  } as CSSProperties
+                }
+              >
+                <svg viewBox="0 0 44 44" aria-hidden="true">
+                  <circle className="part-piste" cx="22" cy="22" r="18" />
+                  <circle className="part-arc" cx="22" cy="22" r="18" />
+                </svg>
+                <b aria-hidden="true">{p.competences.length}</b>
+                <span className="sr-only">
+                  {p.competences.length} compétences sur {NB_COMPETENCES}
+                </span>
               </span>
             </div>
 
-            <div className="competences" data-cascade>
-              {p.competences.map((c, j) => (
-                <div key={c.titre} className="pg-carte competence">
-                  <span className="competence-index" aria-hidden="true">
-                    {p.num}.{j + 1}
-                  </span>
-                  <h3>{c.titre}</h3>
-                  <p>{c.texte}</p>
-                  <span className="domaine-trait" aria-hidden="true" />
-                </div>
-              ))}
-            </div>
+            {i === 0 && (
+              <p className="comp-repere" data-anim>
+                <span className="comp-repere-signe" aria-hidden="true">
+                  <i />
+                  <i />
+                </span>
+                Ouvre une compétence pour le détail
+              </p>
+            )}
+
+            <GrilleCompetences
+              cle={p.cle}
+              num={p.num}
+              competences={p.competences}
+            />
           </div>
         </section>
       ))}

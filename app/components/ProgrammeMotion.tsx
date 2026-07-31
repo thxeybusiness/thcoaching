@@ -13,7 +13,7 @@ export default function ProgrammeMotion() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Tout reste visible, simplement sans animation
-      gsap.set("[data-anim], .pg-carte, .orbite-point", {
+      gsap.set("[data-anim], .pg-carte, .orbite-point, .competence", {
         opacity: 1,
         clearProps: "transform",
       });
@@ -72,7 +72,53 @@ export default function ProgrammeMotion() {
         });
       });
 
-      // L'orbite se trace, puis les huit domaines se posent un par un
+      // Les murs de compétences : les tuiles se posent, puis chaque
+      // pictogramme se dessine d'un trait.
+      gsap.utils.toArray<HTMLElement>("[data-grille]").forEach((grille) => {
+        const declencheur = {
+          trigger: grille,
+          start: "top 84%",
+          once: true,
+        } as const;
+
+        gsap.from(grille.querySelectorAll(".competence"), {
+          opacity: 0,
+          y: 28,
+          scale: 0.95,
+          duration: 0.62,
+          stagger: 0.06,
+          ease: "power2.out",
+          scrollTrigger: declencheur,
+        });
+
+        const traits = grille.querySelectorAll<SVGGeometryElement>(
+          ".comp-icone path, .comp-icone circle, .comp-icone rect"
+        );
+        const traçables: SVGGeometryElement[] = [];
+        traits.forEach((t) => {
+          // getTotalLength lève sur les formes dégénérées : on les ignore
+          let l = 0;
+          try {
+            l = t.getTotalLength();
+          } catch {
+            return;
+          }
+          if (!l) return;
+          gsap.set(t, { strokeDasharray: l, strokeDashoffset: l });
+          traçables.push(t);
+        });
+        if (traçables.length) {
+          gsap.to(traçables, {
+            strokeDashoffset: 0,
+            duration: 0.9,
+            stagger: 0.025,
+            ease: "power2.inOut",
+            scrollTrigger: declencheur,
+          });
+        }
+      });
+
+      // L'orbite se trace, puis les quatre piliers se posent un par un
       const trace = document.querySelector<SVGCircleElement>(".orbite-trace");
       if (trace) {
         const l = trace.getTotalLength();
