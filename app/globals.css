@@ -2573,7 +2573,7 @@ main {
 
 .competence {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 0.92;
   display: block;
   width: 100%;
   padding: 0;
@@ -2627,18 +2627,27 @@ main {
   transition: opacity 0.3s ease, transform 0.36s ease;
 }
 
+/* Le pictogramme occupe le cadre : illustration centrée, nom en pied.
+   La lueur est un fond (donc derrière le tracé) et non un pseudo-élément
+   qui se peindrait par-dessus. */
 .comp-face {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: 16px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  padding: 32px 15px 18px;
+  background: radial-gradient(
+    circle at 50% 42%,
+    color-mix(in srgb, var(--teinte, #ff5a1f) 15%, transparent) 0%,
+    transparent 60%
+  );
 }
 
 .comp-icone {
-  width: 54px;
-  height: 54px;
-  margin-top: auto;
+  width: min(66%, 128px);
+  height: auto;
+  aspect-ratio: 1;
   color: var(--teinte, var(--orange));
   overflow: visible;
 }
@@ -2650,28 +2659,14 @@ main {
   opacity: 0.26;
 }
 
+/* Contour fin : le pictogramme est affiché quatre fois plus grand
+   qu'auparavant, une épaisseur de 1,8 y deviendrait un trait épais. */
 .ico-trait {
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.comp-face::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  bottom: 44px;
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--teinte, #ff5a1f) 17%, transparent),
-    transparent 68%
-  );
 }
 
 .comp-nom {
@@ -2808,40 +2803,34 @@ main {
   .pilier-part b {
     font-size: 1.05rem;
   }
+  /* Deux colonnes sur téléphone, davantage sur tablette : sans plafond, une
+     tablette produisait des tuiles de 355 px où l'illustration flottait. */
   .comp-grille {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(45%, 168px), 1fr));
     gap: 10px;
   }
   /* Deux colonnes étroites : la tuile s'allonge pour loger le détail */
   .competence {
-    aspect-ratio: 0.86;
+    aspect-ratio: 0.9;
   }
-  .comp-face,
   .comp-dos {
-    padding: 16px 15px;
-  }
-  .comp-icone {
-    width: 38px;
-    height: 38px;
-  }
-  .ico-trait {
-    stroke-width: 2;
-  }
-  .comp-face::after {
-    left: 2px;
-    bottom: 32px;
-    width: 88px;
-    height: 88px;
+    padding: 30px 13px 13px;
   }
   .comp-face {
-    gap: 11px;
+    padding: 24px 12px 14px;
+  }
+  .comp-icone {
+    width: 56%;
+  }
+  .ico-trait {
+    stroke-width: 1.1;
   }
   .comp-nom {
     font-size: 0.85rem;
   }
   .comp-dos {
     font-size: 0.76rem;
-    line-height: 1.42;
+    line-height: 1.38;
   }
   .comp-signe {
     top: 13px;
@@ -2852,9 +2841,6 @@ main {
     top: 14px;
     left: 15px;
     font-size: 0.6rem;
-  }
-  .comp-dos {
-    padding-top: 34px;
   }
   .orbite-compte {
     display: none;
