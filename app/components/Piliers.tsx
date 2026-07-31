@@ -93,7 +93,7 @@ export default function Piliers() {
             key={p.cle}
             className="orbite-point"
             style={
-              { "--a": `${i * 90}deg`, "--teinte": p.teinte } as CSSProperties
+              { "--a": `${i * 90}deg` } as CSSProperties
             }
           >
             <span className="orbite-redresse">
@@ -136,7 +136,6 @@ export default function Piliers() {
             role="tabpanel"
             aria-labelledby={`onglet-${p.cle}`}
             data-actif={i === actif}
-            style={{ "--teinte": p.teinte } as CSSProperties}
           >
             <div className="pilier-tete">
               <span className="pilier-num" aria-hidden="true">

@@ -5,7 +5,7 @@
  * par-dessus. Deux groupes séparés — `ico-fond` et `ico-trait` — pour que le
  * contour puisse se dessiner au défilement (stroke-dashoffset) pendant que
  * l'aplat se révèle en fondu. ViewBox 32, contour 1,8, extrémités arrondies.
- * Aucun flou, aucun dégradé : la teinte du pilier suffit.
+ * Aucun flou, aucun dégradé : l'orange de la marque suffit.
  */
 
 type Trace = { fond?: React.ReactNode; trait: React.ReactNode };

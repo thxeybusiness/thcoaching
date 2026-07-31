@@ -14,8 +14,6 @@ export type Pilier = {
   court: string;
   /** Sous-titre du pilier */
   promesse: string;
-  /** Teinte propre au pilier — une rampe chaude, du doré au rouge */
-  teinte: string;
   /** Résumé d'une ligne pour l'accueil */
   resume: string;
   competences: Competence[];
@@ -24,7 +22,6 @@ export type Pilier = {
 export const PILIERS: Pilier[] = [
   {
     cle: "fondations",
-    teinte: "#ffc24d",
     num: "01",
     titre: "Fondations personnelles",
     court: "Fondations",
@@ -66,7 +63,6 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "commercial",
-    teinte: "#ff9a2b",
     num: "02",
     titre: "Compétences commerciales",
     court: "Commercial",
@@ -102,7 +98,6 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "creatif",
-    teinte: "#ff6f2c",
     num: "03",
     titre: "Compétences créatives & techniques",
     court: "Créatif",
@@ -144,7 +139,6 @@ export const PILIERS: Pilier[] = [
   },
   {
     cle: "pilotage",
-    teinte: "#ff4d1f",
     num: "04",
     titre: "Pilotage & levier",
     court: "Pilotage",
