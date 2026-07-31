@@ -2638,12 +2638,24 @@ main {
 .comp-icone {
   width: 54px;
   height: 54px;
+  margin-top: auto;
+  color: var(--teinte, var(--orange));
+  overflow: visible;
+}
+
+/* L'aplat pose la masse, le contour la dessine par-dessus */
+.ico-fond {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.26;
+}
+
+.ico-trait {
   fill: none;
-  stroke: var(--teinte, var(--orange));
-  stroke-width: 1.6;
+  stroke: currentColor;
+  stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  margin-top: auto;
 }
 
 .comp-face::after {
@@ -2811,6 +2823,9 @@ main {
   .comp-icone {
     width: 38px;
     height: 38px;
+  }
+  .ico-trait {
+    stroke-width: 2;
   }
   .comp-face::after {
     left: 2px;

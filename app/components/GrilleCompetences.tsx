@@ -60,10 +60,22 @@ export default function GrilleCompetences({
           }
         );
 
+        // L'aplat se révèle en fondu pendant que le contour se dessine
+        gsap.fromTo(
+          el.querySelectorAll(".ico-fond"),
+          { opacity: 0 },
+          {
+            opacity: 0.26,
+            duration: 0.7,
+            delay: 0.25,
+            stagger: 0.02,
+            ease: "power2.out",
+            clearProps: "opacity",
+          }
+        );
+
         const traits: SVGGeometryElement[] = [];
-        el.querySelectorAll<SVGGeometryElement>(
-          ".comp-icone path, .comp-icone circle, .comp-icone rect"
-        ).forEach((t) => {
+        el.querySelectorAll<SVGGeometryElement>(".ico-trait > *").forEach((t) => {
           // getTotalLength lève sur les formes dégénérées : on les ignore
           let l = 0;
           try {
