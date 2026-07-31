@@ -109,10 +109,10 @@ export default function Home() {
 
               <Link href="/programme" className="pillars" style={r(3)} data-r>
                 <span className="pillars-grille">
-                  {PILIERS.map((p) => (
+                  {PILIERS.map((p, i) => (
                     <span key={p.cle} className="pillar">
                       <span className="pillar-num" aria-hidden="true">
-                        {p.num}
+                        {i + 1}
                       </span>
                       <span className="pillar-title">{p.titre}</span>
                       <span className="pillar-promesse">{p.promesse}</span>
@@ -123,7 +123,7 @@ export default function Home() {
                   ))}
                 </span>
                 <span className="pillars-lien">
-                  Voir tout ce que comprend l&apos;accompagnement
+                  Voir le programme en détail
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12 H18 M12 6 L18 12 L12 18" />
                   </svg>

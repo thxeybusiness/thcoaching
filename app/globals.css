@@ -651,58 +651,95 @@ main {
 }
 
 /* ---------- Piliers : un seul bloc, cliquable ---------- */
+/* ---------- Accueil : le programme en quatre cartes ----------
+   L'ancien grand cadre unique était quasi transparent et floutait son fond :
+   le logo 3D transparaissait en bouillie au milieu du bloc, qui restait par
+   ailleurs à moitié vide. Quatre cartes opaques, numérotées comme les repères
+   de l'orbite de la page programme. */
 .pillars {
   display: block;
-  position: relative;
-  margin-top: 52px;
-  padding: 34px 36px 22px;
-  border-radius: 22px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  backdrop-filter: blur(6px);
-  transition: transform 0.35s ease, border-color 0.35s ease,
-    box-shadow 0.35s ease;
-}
-
-.pillars:hover,
-.pillars:focus-visible {
-  transform: translateY(-5px);
-  border-color: rgba(255, 90, 31, 0.55);
-  box-shadow: 0 24px 70px -30px rgba(255, 90, 31, 0.45);
+  margin-top: 38px;
 }
 
 .pillars-grille {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px 34px;
-}
-
-.pillar-num {
-  display: block;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.32);
-  margin-bottom: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
 }
 
 .pillar {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 22px 20px 20px;
+  border-radius: 18px;
+  background: #101011;
+  border: 1px solid var(--line);
+  transition: transform 0.3s ease, background 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  .pillar:hover {
+    transform: translateY(-4px);
+    background: #151415;
+    border-color: rgba(255, 90, 31, 0.5);
+    box-shadow: 0 20px 46px -26px rgba(255, 90, 31, 0.5);
+  }
+}
+
+.pillar-num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  border: 1.4px solid var(--orange);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.76rem;
+  line-height: 1;
+  color: var(--orange);
+}
+
+.pillar-title {
   display: block;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.pillar-promesse {
+  display: block;
+  flex: 1;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.pillar-compte {
+  display: inline-block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange);
 }
 
 /* Invitation à ouvrir la page détaillée */
 .pillars-lien {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 26px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  font-size: 0.9rem;
+  margin-top: 24px;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--orange);
 }
@@ -720,35 +757,6 @@ main {
 
 .pillars:hover .pillars-lien svg {
   transform: translateX(4px);
-}
-
-
-.pillar-promesse {
-  display: block;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-.pillar-compte {
-  display: inline-block;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--orange);
-}
-
-.pillar-title {
-  display: block;
-  font-size: 0.78rem;
-  font-family: var(--font-body);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--orange);
-  margin-bottom: 14px;
-  font-weight: 700;
 }
 
 /* ---------- Accueil : le déroulé en trois étapes ---------- */
@@ -1425,26 +1433,31 @@ main {
   }
   .deck[data-ready="true"] .pillars {
     margin-top: 18px;
-    padding: 18px 18px 12px;
   }
   .deck[data-ready="true"] .pillars-grille {
-    gap: 12px;
+    gap: 10px;
+  }
+  .deck[data-ready="true"] .pillar {
+    gap: 8px;
+    padding: 14px 14px 13px;
+  }
+  .deck[data-ready="true"] .pillar-num {
+    width: 24px;
+    height: 24px;
+    font-size: 0.66rem;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    font-size: 0.84rem;
+  }
+  .deck[data-ready="true"] .pillar-promesse {
+    font-size: 0.78rem;
+  }
+  .deck[data-ready="true"] .pillar-compte {
+    font-size: 0.58rem;
   }
   .deck[data-ready="true"] .pillars-lien {
     margin-top: 14px;
-    padding-top: 11px;
     font-size: 0.78rem;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    font-size: 0.68rem;
-    margin-bottom: 8px;
-  }
-  .deck[data-ready="true"] .pillar-promesse {
-    font-size: 0.82rem;
-    margin-bottom: 7px;
-  }
-  .deck[data-ready="true"] .pillar-compte {
-    font-size: 0.6rem;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 24px;
@@ -1504,28 +1517,23 @@ main {
     margin-top: 10px;
   }
   .deck[data-ready="true"] .pillars {
-    margin-top: 16px;
-    padding: 16px 20px 10px;
+    margin-top: 20px;
   }
   .deck[data-ready="true"] .pillars-grille {
-    gap: 12px 22px;
+    gap: 12px;
+  }
+  .deck[data-ready="true"] .pillar {
+    gap: 10px;
+    padding: 18px 16px 16px;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    font-size: 0.92rem;
   }
   .deck[data-ready="true"] .pillar-promesse {
-    font-size: 0.86rem;
-    margin-bottom: 6px;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    margin-bottom: 6px;
-  }
-  .deck[data-ready="true"] .pillar-num {
-    margin-bottom: 4px;
+    font-size: 0.84rem;
   }
   .deck[data-ready="true"] .pillars-lien {
-    margin-top: 16px;
-    padding-top: 12px;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    margin-bottom: 14px;
+    margin-top: 18px;
   }
   .deck[data-ready="true"] .bonus {
     margin-top: 22px;
@@ -1586,9 +1594,6 @@ main {
   .deck[data-ready="true"] .about-text p:not(.section-label) {
     font-size: 0.9rem;
   }
-  .deck[data-ready="true"] .pillars {
-    padding: 18px 20px 12px;
-  }
   .deck[data-ready="true"] .bonus {
     padding: 20px 20px;
   }
@@ -1614,10 +1619,14 @@ main {
     padding: 80px 0 98px;
   }
   .deck[data-ready="true"] .pillars-grille {
-    gap: 12px;
+    gap: 10px;
   }
-  .deck[data-ready="true"] .pillars {
-    padding: 16px 18px 10px;
+  .deck[data-ready="true"] .pillar {
+    padding: 14px 14px 13px;
+  }
+  /* Tient sur une seule ligne : sinon la flèche se retrouve isolée à droite */
+  .deck[data-ready="true"] .pillars-lien {
+    font-size: 0.8rem;
   }
   .deck[data-ready="true"] .section-intro {
     margin-top: 14px;
@@ -2834,4 +2843,31 @@ main {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* Sous 380 px, quatre cartes empilées ne tiennent plus dans la hauteur du
+   chapitre : elles deviennent des lignes compactes. Le détail complet reste
+   à un clic, sur la page programme. */
+@media (max-width: 380px) {
+  .deck[data-ready="true"] .pillars-grille {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .deck[data-ready="true"] .pillar {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 13px;
+  }
+  .deck[data-ready="true"] .pillar-promesse {
+    display: none;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    flex: 1;
+    font-size: 0.8rem;
+  }
+  .deck[data-ready="true"] .pillar-compte {
+    flex: none;
+    font-size: 0.55rem;
+  }
 }
