@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { ETAPES } from "../lib/methode";
+import { cadence as t, INTRO_FIN } from "../lib/intro";
 
 /**
  * Intro : les trois étapes du déroulé allument le logo.
@@ -33,9 +34,11 @@ const PLUS_LONG = PILIERS.reduce(
   ""
 );
 
-/** Départ de l'éclat, puis instant où le site apparaît derrière lui. */
-const ECLAT = 1.46;
-const OUVERTURE = 1.66;
+/** Départ de l'éclat, puis instant où le site apparaît derrière lui.
+    Toutes les durées passent par `t` : elles sont écrites à leur valeur
+    d'origine et divisées par la cadence commune. */
+const ECLAT = t(1.46);
+const OUVERTURE = INTRO_FIN;
 
 const ETEINT = "rgba(255, 150, 70, 0.09)";
 const ALLUME = "#ff8c2e";
@@ -68,25 +71,25 @@ export default function Intro() {
       tl.from(".intro-logo-svg", {
         opacity: 0,
         scale: 0.92,
-        duration: 0.5,
+        duration: t(0.5),
         transformOrigin: "50% 50%",
       })
-        .from(".intro-fond", { opacity: 0, duration: 1.1 }, 0)
+        .from(".intro-fond", { opacity: 0, duration: t(1.1) }, 0)
         .fromTo(
           ".intro-rayons",
           { opacity: 0, scale: 0.85 },
-          { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" },
-          0.1
+          { opacity: 1, scale: 1, duration: t(1.2), ease: "power2.out" },
+          t(0.1)
         );
 
       // 2. Un mot = une vague qui s'allume
       PILIERS.forEach((_, i) => {
-        const t = 0.34 + i * 0.44;
+        const debut = t(0.34 + i * 0.44);
 
         tl.to(
           `.intro-wave-${i}`,
-          { fill: ALLUME, duration: 0.3, ease: "power2.out" },
-          t
+          { fill: ALLUME, duration: t(0.3), ease: "power2.out" },
+          debut
         )
           // léger sursaut de la vague au moment où elle s'allume
           .fromTo(
@@ -94,13 +97,13 @@ export default function Intro() {
             { scale: 1 },
             {
               scale: 1.07,
-              duration: 0.15,
+              duration: t(0.15),
               yoyo: true,
               repeat: 1,
               ease: "power1.inOut",
               transformOrigin: "50% 50%",
             },
-            t
+            debut
           )
           // halo (transition CSS, plus léger qu'un filtre animé)
           .call(
@@ -110,13 +113,13 @@ export default function Intro() {
                 ?.setAttribute("data-on", "true");
             },
             undefined,
-            t
+            debut
           )
           .fromTo(
             `.intro-word-${i} .intro-word-texte`,
             { opacity: 0, x: 14, filter: "blur(4px)" },
-            { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.42 },
-            t + 0.04
+            { opacity: 1, x: 0, filter: "blur(0px)", duration: t(0.42) },
+            debut + t(0.04)
           )
           // La lumière ambiante monte d'un cran à chaque pilier
           .to(
@@ -124,10 +127,10 @@ export default function Intro() {
             {
               opacity: 0.42 + i * 0.29,
               scale: 0.82 + i * 0.09,
-              duration: 0.55,
+              duration: t(0.55),
               ease: "power2.out",
             },
-            t
+            debut
           );
       });
 
@@ -155,7 +158,7 @@ export default function Intro() {
         .fromTo(
           ".intro-flash",
           { opacity: 0, scale: 0.5 },
-          { opacity: 1, scale: 1.15, duration: 0.2, ease: "power2.in" },
+          { opacity: 1, scale: 1.15, duration: t(0.2), ease: "power2.in" },
           ECLAT
         )
         // Au sommet de l'éclat, tout le décor disparaît d'un coup : le site
@@ -172,7 +175,7 @@ export default function Intro() {
         )
         .to(
           ".intro-flash",
-          { opacity: 0, scale: 1.6, duration: 0.42, ease: "power2.out" },
+          { opacity: 0, scale: 1.6, duration: t(0.42), ease: "power2.out" },
           OUVERTURE
         );
     }, root);
