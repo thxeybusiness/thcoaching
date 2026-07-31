@@ -34,10 +34,6 @@ export default function Etapes() {
 
   return (
     <div className="methode" data-cascade>
-      <div className="methode-ligne" aria-hidden="true">
-        <i />
-      </div>
-
       {ETAPES.map((e, i) => (
         <div
           key={e.cle}

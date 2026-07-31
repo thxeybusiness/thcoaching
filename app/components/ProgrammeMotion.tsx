@@ -146,18 +146,6 @@ export default function ProgrammeMotion() {
         scrollTrigger: { trigger: ".orbite", start: "top 78%", once: true },
       });
 
-      // La ligne de méthode se dessine
-      gsap.to(".methode-ligne i", {
-        scaleX: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".methode",
-          start: "top 78%",
-          end: "bottom 60%",
-          scrub: 0.4,
-        },
-      });
-
       // Parallaxe des mots géants
       gsap.utils.toArray<HTMLElement>(".pg-fantome").forEach((el) => {
         gsap.to(el, {

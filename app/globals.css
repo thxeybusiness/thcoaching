@@ -2116,24 +2116,6 @@ main {
   align-items: start;
 }
 
-.methode-ligne {
-  position: absolute;
-  top: 62px;
-  left: 8%;
-  right: 8%;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.09);
-  z-index: 0;
-}
-
-.methode-ligne i {
-  display: block;
-  height: 100%;
-  background: var(--orange);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
 .methode-etape {
   z-index: 1;
   padding: 30px 26px 62px;
@@ -2360,9 +2342,6 @@ main {
   .methode {
     grid-template-columns: 1fr;
     gap: 14px;
-  }
-  .methode-ligne {
-    display: none;
   }
   .bonus-cartes {
     grid-template-columns: 1fr;
