@@ -80,7 +80,7 @@ const NOSCRIPT_CSS = `
 .deck[data-ready="true"] .slide-inner{display:block;height:auto;overflow:visible;padding:118px 0 96px}
 .deck[data-ready="true"] .slide-inner>*{margin-block:0}
 .deck[data-ready="true"] [data-r]{opacity:1;transform:none}
-.deck-nav,.deck-progress,.deck-status,.slide-scroll-hint,.intro{display:none}
+.deck-nav,.deck-progress,.deck-status,.intro{display:none}
 .contact-legal{position:static;transform:none;margin-top:28px}
 .slide--contact .footer-word{position:static;transform:none}
 `;

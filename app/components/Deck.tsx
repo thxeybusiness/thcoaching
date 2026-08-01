@@ -357,38 +357,6 @@ export default function Deck({
     };
   }, [goTo, ready]);
 
-  // Sur un écran très court, un chapitre peut dépasser : on le signale pour
-  // que le visiteur sache qu'il reste du contenu sous la ligne de flottaison.
-  useEffect(() => {
-    if (!ready) return;
-    const el = root.current;
-    if (!el) return;
-
-    const inner = el.querySelectorAll<HTMLElement>(".slide-inner")[index];
-    const check = () => {
-      const over = !!inner && inner.scrollHeight > inner.clientHeight + 4;
-      el.dataset.overflow = String(over);
-    };
-    check();
-    const id = window.setTimeout(check, 400); // après les révélations
-    window.addEventListener("resize", check);
-
-    /* Une seule mesure ne suffit pas : la hauteur du chapitre bouge encore
-       après coup — polices chargées, révélations, et surtout le chapitre
-       « Programme », dont le mur change de hauteur à chaque pôle choisi. */
-    const observateur = new ResizeObserver(check);
-    if (inner) {
-      observateur.observe(inner);
-      for (const enfant of Array.from(inner.children)) observateur.observe(enfant);
-    }
-
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener("resize", check);
-      observateur.disconnect();
-    };
-  }, [index, ready]);
-
   // Marque l'écran courant (déclenche les révélations en CSS)
   useEffect(() => {
     const slidesEls = track.current?.querySelectorAll<HTMLElement>(".slide");
@@ -443,10 +411,6 @@ export default function Deck({
           ))}
         </ol>
       </nav>
-
-      <p className="slide-scroll-hint" aria-hidden="true">
-        ↓ suite du chapitre
-      </p>
 
       <div className="deck-progress" aria-hidden="true">
         <i style={{ transform: `scaleX(${last > 0 ? index / last : 1})` }} />

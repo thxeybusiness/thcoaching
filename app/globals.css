@@ -1396,39 +1396,6 @@ cliquable ---------- */
   }
 }
 
-/* Écran vraiment court : le chapitre défile de l'intérieur, avec un repère
-   pour que ce ne soit pas une impasse. */
-.slide-scroll-hint {
-  display: none;
-}
-
-.deck[data-overflow="true"] .slide-scroll-hint {
-  display: block;
-  position: fixed;
-  left: 50%;
-  bottom: 84px;
-  transform: translateX(-50%);
-  z-index: 91;
-  font-size: 0.62rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  pointer-events: none;
-  animation: hint-bob 1.9s ease-in-out infinite;
-}
-
-@keyframes hint-bob {
-  50% {
-    transform: translate(-50%, 5px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .deck[data-overflow="true"] .slide-scroll-hint {
-    animation: none;
-  }
-}
-
 /* ---------- Indication de défilement ---------- */
 .deck-hint {
   display: inline-flex;
