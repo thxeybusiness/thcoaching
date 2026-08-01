@@ -1,25 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { PILIERS, NB_COMPETENCES } from "../lib/programme";
+import { POLES, NB_COMPETENCES } from "../lib/programme";
 import GrilleCompetences from "./GrilleCompetences";
 
 /**
- * Les quatre piliers, en un seul écran.
+ * Les cinq pôles, en un seul écran.
  *
- * L'orbite n'est plus décorative : c'est elle qui sélectionne le pilier, et
- * son mur de compétences s'échange à côté. On ne fait plus défiler quatre
- * sections identiques l'une après l'autre.
+ * L'orbite n'est plus décorative : c'est elle qui sélectionne le pôle, et son
+ * mur de compétences s'échange à côté. On ne fait plus défiler cinq sections
+ * identiques l'une après l'autre.
  *
- * Le survol suffit à changer de pilier ; le mur reste ensuite sur le dernier
+ * Le survol suffit à changer de pôle ; le mur reste ensuite sur le dernier
  * survolé, le temps d'aller y lire une compétence.
  *
- * Les quatre panneaux restent dans le document — les inactifs sont rendus
- * invisibles, non retirés — pour que les dix-sept compétences soient
- * toujours indexables et que la hauteur du bloc ne varie jamais : en
- * changeant de pilier, seul le détail change, l'orbite ne bouge pas.
+ * Les cinq panneaux restent dans le document — les inactifs sont rendus
+ * invisibles et sortis du flux, non retirés — pour que les quarante-trois
+ * compétences soient toujours indexables. L'orbite, elle, est accrochée au
+ * début de sa rangée : en changeant de pôle, elle ne bouge pas d'un pixel,
+ * seul le mur change.
  */
-export default function Piliers() {
+export default function Poles() {
   const [actif, setActif] = useState(0);
   const attente = useRef<number | null>(null);
 
@@ -31,7 +32,7 @@ export default function Piliers() {
   };
 
   /**
-   * Un survol appuyé change de pilier. Le court délai évite qu'un simple
+   * Un survol appuyé change de pôle. Le court délai évite qu'un simple
    * passage de la souris vers le mur — qui longe le point de droite — ne
    * bascule le contenu au passage.
    */
@@ -52,11 +53,11 @@ export default function Piliers() {
 
   /**
    * Motif ARIA des onglets : seul l'onglet actif est dans l'ordre de
-   * tabulation, les flèches circulent entre les piliers. Sans cela, tabuler
-   * à travers l'orbite activerait chaque pilier au passage.
+   * tabulation, les flèches circulent entre les pôles. Sans cela, tabuler à
+   * travers l'orbite activerait chaque pôle au passage.
    */
   const auClavier = (e: React.KeyboardEvent) => {
-    const n = PILIERS.length;
+    const n = POLES.length;
     let cible: number | null = null;
     if (e.key === "ArrowRight" || e.key === "ArrowDown") cible = (actif + 1) % n;
     else if (e.key === "ArrowLeft" || e.key === "ArrowUp")
@@ -74,7 +75,7 @@ export default function Piliers() {
       <div
         className="orbite"
         role="tablist"
-        aria-label="Les quatre piliers"
+        aria-label="Les cinq pôles"
         onKeyDown={auClavier}
       >
         <span className="orbite-halo" aria-hidden="true" />
@@ -88,12 +89,12 @@ export default function Piliers() {
           <span className="orbite-noyau-texte">d&apos;accompagnement</span>
         </span>
 
-        {PILIERS.map((p, i) => (
+        {POLES.map((p, i) => (
           <span
             key={p.cle}
             className="orbite-point"
             style={
-              { "--a": `${i * 90}deg` } as CSSProperties
+              { "--a": `${(i * 360) / POLES.length}deg` } as CSSProperties
             }
           >
             <span className="orbite-redresse">
@@ -130,7 +131,7 @@ export default function Piliers() {
       </div>
 
       <div className="piliers-panneaux">
-        {PILIERS.map((p, i) => (
+        {POLES.map((p, i) => (
           <div
             key={p.cle}
             className="pilier-panneau"
@@ -145,10 +146,13 @@ export default function Piliers() {
               </span>
               <div>
                 <h3 className="pilier-titre">{p.titre}</h3>
-                <p className="pilier-promesse">{p.promesse}</p>
+                <p className="pilier-promesse">
+                  <span className="pole-role">{p.role}</span>
+                  {p.promesse}
+                </p>
               </div>
 
-              {/* Part de ce pilier dans les dix-sept compétences */}
+              {/* Part de ce pôle dans les quarante-trois compétences */}
               <span
                 className="pilier-part"
                 style={

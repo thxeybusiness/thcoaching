@@ -7,7 +7,7 @@ import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
 import LogoEtape from "./components/LogoEtape";
 import IconeCompetence from "./components/IconeCompetence";
-import { PILIERS, NB_COMPETENCES } from "./lib/programme";
+import { POLES, NB_COMPETENCES } from "./lib/programme";
 import { ETAPES } from "./lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
@@ -118,13 +118,13 @@ export default function Home() {
                 <span className="accent">domaine par domaine.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
-                Quatre piliers, {NB_COMPETENCES} compétences : du socle
-                physique et mental jusqu&apos;au pilotage de ton activité.
+                Cinq pôles, {NB_COMPETENCES} compétences : du socle personnel
+                jusqu&apos;au pilotage de ton activité.
               </p>
 
               <Link href="/programme" className="pillars" style={r(3)} data-r>
                 <span className="pillars-grille">
-                  {PILIERS.map((p, i) => (
+                  {POLES.map((p, i) => (
                     <span key={p.cle} className="pillar">
                       <span className="pillar-num" aria-hidden="true">
                         {i + 1}

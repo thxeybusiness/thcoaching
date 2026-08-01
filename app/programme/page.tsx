@@ -3,8 +3,8 @@ import Link from "next/link";
 import CountUp from "../components/CountUp";
 import ProgrammeMotion from "../components/ProgrammeMotion";
 import Etapes from "../components/Etapes";
-import Piliers from "../components/Piliers";
-import { PILIERS, NB_COMPETENCES } from "../lib/programme";
+import Poles from "../components/Poles";
+import { POLES, NB_COMPETENCES } from "../lib/programme";
 import { PROMESSE } from "../lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
@@ -12,7 +12,7 @@ const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 export const metadata: Metadata = {
   title: "Le programme en détail",
   description:
-    "Le déroulé en trois étapes — fondations, perfectionnement, étude et développement — et les dix-sept compétences travaillées pour bâtir le business qui te correspond vraiment.",
+    "Le déroulé en trois étapes — fondations, perfectionnement, étude et développement — et les quarante-trois compétences réparties en cinq pôles pour bâtir le business qui te correspond vraiment.",
   alternates: { canonical: "https://thcoaching.business/programme" },
 };
 
@@ -55,13 +55,13 @@ export default function Programme() {
             Le programme en détail
           </p>
           <h1 className="pg-titre">
-            {"Quatre piliers,".split(" ").map((m) => (
+            {"Cinq pôles,".split(" ").map((m) => (
               <span key={m} className="mot-masque">
                 <span className="mot">{m}</span>
               </span>
             ))}
             <br />
-            {"dix-sept compétences.".split(" ").map((m) => (
+            {"quarante-trois compétences.".split(" ").map((m) => (
               <span key={m} className="mot-masque">
                 <span className="mot accent">{m}</span>
               </span>
@@ -74,9 +74,9 @@ export default function Programme() {
           <div className="pg-cles" data-anim>
             <span>
               <strong>
-                <CountUp to={PILIERS.length} />
+                <CountUp to={POLES.length} />
               </strong>
-              piliers
+              pôles
             </span>
             <span>
               <strong>
@@ -109,7 +109,7 @@ export default function Programme() {
         </div>
       </section>
 
-      {/* ---------- Les quatre piliers : orbite + mur ---------- */}
+      {/* ---------- Les cinq pôles : orbite + mur ---------- */}
       <section className="pg-section pg-section--piliers" aria-labelledby="tour">
         <span className="pg-fantome" aria-hidden="true">
           360°
@@ -119,8 +119,9 @@ export default function Programme() {
             Un tour complet
           </h2>
           <p className="pg-intro" data-anim>
-            Le corps, le commerce, la création et le pilotage ne sont pas quatre
-            sujets séparés. Ils tournent autour du même axe : toi.
+            Le socle personnel, la création, la vente, les systèmes et le
+            pilotage ne sont pas cinq sujets séparés. Ils tournent autour du
+            même axe : toi.
           </p>
 
           <p className="comp-repere piliers-repere" data-anim>
@@ -129,10 +130,10 @@ export default function Programme() {
                 <path d="M5 12 H18 M12 6 L18 12 L12 18" />
               </svg>
             </span>
-            Parcours les piliers sur l&apos;orbite, puis ouvre une compétence
+            Parcours les pôles sur l&apos;orbite, puis ouvre une compétence
           </p>
 
-          <Piliers />
+          <Poles />
         </div>
       </section>
 

@@ -654,7 +654,7 @@ main {
 /* ---------- Accueil : le programme en quatre cartes ----------
    L'ancien grand cadre unique était quasi transparent et floutait son fond :
    le logo 3D transparaissait en bouillie au milieu du bloc, qui restait par
-   ailleurs à moitié vide. Quatre cartes opaques, numérotées comme les repères
+   ailleurs à moitié vide. Cinq cartes opaques, numérotées comme les repères
    de l'orbite de la page programme. */
 .pillars {
   display: block;
@@ -663,7 +663,7 @@ main {
 
 .pillars-grille {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
 }
 
@@ -1102,9 +1102,19 @@ main {
   .nav-cta {
     padding: 8px 14px;
   }
+  /* Cinq cartes ne se rangent pas en deux ou trois colonnes sans laisser un
+     trou. Six colonnes fines, chaque carte en occupe deux : trois cartes sur
+     la première ligne, les deux dernières décalées d'une colonne, donc
+     centrées sous elles. */
   .pillars-grille {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 16px 18px;
+  }
+  .pillar {
+    grid-column: span 2;
+  }
+  .pillar:nth-child(4) {
+    grid-column: 2 / span 2;
   }
   .about-grid {
     grid-template-columns: 1fr;
@@ -1606,6 +1616,35 @@ main {
   }
 }
 
+/* Sur téléphone, cinq cartes en pavés ne tiennent plus dans la hauteur d'un
+   chapitre : elles deviennent cinq lignes compactes, une par pôle, qui se
+   parcourent d'un coup d'œil. */
+@media (max-width: 640px) {
+  .deck[data-ready="true"] .pillars-grille {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .deck[data-ready="true"] .pillar,
+  .deck[data-ready="true"] .pillar:nth-child(4) {
+    grid-column: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 13px;
+  }
+  .deck[data-ready="true"] .pillar-promesse {
+    display: none;
+  }
+  .deck[data-ready="true"] .pillar-title {
+    flex: 1;
+    font-size: 0.82rem;
+  }
+  .deck[data-ready="true"] .pillar-compte {
+    flex: none;
+    font-size: 0.56rem;
+  }
+}
+
 /* Écran vraiment court : le chapitre défile de l'intérieur, avec un repère
    pour que ce ne soit pas une impasse. */
 .slide-scroll-hint {
@@ -1905,7 +1944,7 @@ main {
   .piliers-vue {
     grid-template-columns: 420px minmax(0, 1fr);
     gap: 46px;
-    align-items: center;
+    align-items: start;
   }
 }
 
@@ -1915,6 +1954,12 @@ main {
   aspect-ratio: 1;
   margin: 0 auto;
 }
+
+/* Pas de « position: sticky » ici, même si l'orbite disparaît en haut d'un mur
+   de onze compétences : coller l'orbite la ferait justement bouger, puisqu'un
+   pôle court raccourcit son conteneur et la décolle d'un coup. C'est
+   « align-items: start » qui la fige, en l'accrochant au début de la rangée —
+   une position que la hauteur du mur ne change jamais. */
 
 /* Un arc décoratif tourne en fond ; les libellés, eux, restent droits */
 .orbite-halo {
@@ -2392,19 +2437,26 @@ main {
 
 /* ---------- Le panneau du pilier sélectionné ---------- */
 
-/* Les quatre panneaux occupent la même case : la hauteur réservée est celle
-   du plus grand, donc elle ne change jamais. En passant d'un pilier à
-   l'autre, l'orbite reste rigoureusement en place.
-   « visibility » plutôt que « display » : le panneau masqué garde sa place
-   dans la grille, tout en sortant de l'ordre de tabulation et de l'arbre
-   d'accessibilité. */
+/* Les cinq panneaux se superposent, mais seul l'actif occupe le flux : les
+   autres sont sortis en position absolue. Réserver la hauteur du plus grand
+   n'est plus tenable — onze compétences contre trois laisseraient un vide de
+   plusieurs centaines de pixels sous les petits pôles. C'est l'orbite qui est
+   rendue immobile, accrochée au début de sa rangée par « align-items: start » :
+   sa position ne dépend plus de la hauteur du mur, donc en changeant de pôle
+   elle ne bouge pas d'un pixel, seul le mur change.
+   « visibility » plutôt que « display » : le panneau masqué reste dans le
+   document — donc indexable — tout en sortant de l'ordre de tabulation et de
+   l'arbre d'accessibilité. */
 .piliers-panneaux {
-  display: grid;
+  position: relative;
   min-width: 0;
 }
 
 .pilier-panneau {
-  grid-area: 1 / 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   min-width: 0;
   opacity: 0;
   visibility: hidden;
@@ -2412,6 +2464,7 @@ main {
 }
 
 .pilier-panneau[data-actif="true"] {
+  position: static;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.28s ease, visibility 0s;
@@ -2447,6 +2500,21 @@ main {
   margin: 0;
   font-size: 1rem;
   color: var(--muted);
+}
+
+/* Rôle du pôle dans la progression : prérequis, cœur ou accélérateur */
+.pole-role {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 90, 31, 0.4);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange);
+  vertical-align: 2px;
 }
 
 /* Part du pilier dans les dix-sept compétences : un anneau plutôt qu'un
@@ -2818,7 +2886,7 @@ main {
   border: 0;
 }
 
-/* Sous 380 px, quatre cartes empilées ne tiennent plus dans la hauteur du
+/* Sous 380 px, cinq cartes empilées ne tiennent plus dans la hauteur du
    chapitre : elles deviennent des lignes compactes. Le détail complet reste
    à un clic, sur la page programme. */
 @media (max-width: 380px) {
@@ -2833,25 +2901,27 @@ main {
   .deck[data-ready="true"] .deroule-num {
     font-size: 1.3rem;
   }
+  /* Les lignes compactes viennent de la règle 640 px ; ici on ne fait que
+     les resserrer encore. */
   .deck[data-ready="true"] .pillars-grille {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 5px;
   }
   .deck[data-ready="true"] .pillar {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 13px;
+    padding: 7px 12px;
+    gap: 10px;
   }
-  .deck[data-ready="true"] .pillar-promesse {
-    display: none;
+  .deck[data-ready="true"] .pillar-num {
+    width: 21px;
+    height: 21px;
+    font-size: 0.6rem;
   }
   .deck[data-ready="true"] .pillar-title {
-    flex: 1;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
   .deck[data-ready="true"] .pillar-compte {
-    flex: none;
-    font-size: 0.55rem;
+    font-size: 0.54rem;
+  }
+  .deck[data-ready="true"] .pillars-lien {
+    margin-top: 11px;
   }
 }

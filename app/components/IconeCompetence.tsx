@@ -199,6 +199,268 @@ const TRACES: Record<string, Trace> = {
       </>
     ),
   },
+  // ---- Pôle 1 : fondations de soi ----
+  vision: {
+    fond: <path d="M9.6 4.6 24 8.6 9.6 12.6z" />,
+    trait: (
+      <>
+        <path d="M9.6 3v26" />
+        <path d="M9.6 4.6 24 8.6 9.6 12.6z" />
+      </>
+    ),
+  },
+  confiance: {
+    fond: <path d="M16 3.4 27 7.6v8c0 6.8-4.6 11.8-11 13.4-6.4-1.6-11-6.6-11-13.4v-8z" />,
+    trait: (
+      <>
+        <path d="M16 3.4 27 7.6v8c0 6.8-4.6 11.8-11 13.4-6.4-1.6-11-6.6-11-13.4v-8z" />
+        <path d="M11.4 15.8 14.8 19.2 20.8 12.4" />
+      </>
+    ),
+  },
+  regard: {
+    fond: <circle cx="16" cy="16" r="4" />,
+    trait: (
+      <>
+        <path d="M2.6 16S8 7.4 16 7.4 29.4 16 29.4 16 24 24.6 16 24.6 2.6 16 2.6 16z" />
+        <circle cx="16" cy="16" r="4" />
+      </>
+    ),
+  },
+  stress: {
+    fond: <circle cx="24.6" cy="9" r="3" />,
+    trait: (
+      <>
+        <path d="M2.6 20.6h4.8l2.6-7 4 14 3.2-11 2.6 4h9.6" />
+        <circle cx="24.6" cy="9" r="3" />
+      </>
+    ),
+  },
+  environnement: {
+    fond: <path d="M16 3.4 29 13.4H3z" />,
+    trait: (
+      <>
+        <path d="M16 3.4 29 13.4H3z" />
+        <path d="M6.2 13.4v14a1.6 1.6 0 0 0 1.6 1.6h16.4a1.6 1.6 0 0 0 1.6-1.6v-14" />
+        <path d="M13 29v-8h6v8" />
+      </>
+    ),
+  },
+  proches: {
+    fond: <path d="M16 27.4S6.4 21.4 6.4 14.8a5.4 5.4 0 0 1 9.6-3.2 5.4 5.4 0 0 1 9.6 3.2c0 6.6-9.6 12.6-9.6 12.6z" />,
+    trait: (
+      <>
+        <path d="M16 27.4S6.4 21.4 6.4 14.8a5.4 5.4 0 0 1 9.6-3.2 5.4 5.4 0 0 1 9.6 3.2c0 6.6-9.6 12.6-9.6 12.6z" />
+        <circle cx="10.4" cy="6" r="2.8" />
+        <circle cx="21.6" cy="6" r="2.8" />
+      </>
+    ),
+  },
+  // ---- Pôle 2 : créer & se démarquer ----
+  branding: {
+    fond: <circle cx="16" cy="12.6" r="5" />,
+    trait: (
+      <>
+        <circle cx="16" cy="12.6" r="9.6" />
+        <circle cx="16" cy="12.6" r="5" />
+        <path d="M10.4 21 8 29.4l8-3.4 8 3.4-2.4-8.4" />
+      </>
+    ),
+  },
+  da: {
+    fond: <circle cx="11" cy="12" r="2.6" />,
+    trait: (
+      <>
+        <path d="M16 3.4c7 0 12.6 5.4 12.6 12 0 4-3 5.6-5.6 5.6h-2.6c-2 0-3.4 1.4-3.4 3.2 0 1 .4 1.6.4 2.4 0 1.4-1 2.4-2.6 2.4-6.6 0-12.4-5.6-12.4-12.8S9 3.4 16 3.4z" />
+        <circle cx="11" cy="12" r="2.6" />
+        <circle cx="19.4" cy="9.6" r="2" />
+      </>
+    ),
+  },
+  storytelling: {
+    fond: <path d="M16 5.4v20.4c-2.6-1.8-6-2.6-11-2.6V5.4c5 0 8.4.8 11 2.6z" />,
+    trait: (
+      <>
+        <path d="M16 5.4v20.4c-2.6-1.8-6-2.6-11-2.6V5.4c5 0 8.4.8 11 2.6z" />
+        <path d="M16 5.4v20.4c2.6-1.8 6-2.6 11-2.6V5.4c-5 0-8.4.8-11 2.6z" />
+      </>
+    ),
+  },
+  copywriting: {
+    fond: <path d="M20.4 5.6 26.4 11.6 24 14 18 8z" />,
+    trait: (
+      <>
+        <path d="M20.4 5.6 26.4 11.6 12.4 25.6 4.6 27.4 6.4 19.6z" />
+        <path d="M18 8 24 14" />
+      </>
+    ),
+  },
+  photo: {
+    fond: <circle cx="16" cy="17.4" r="4.6" />,
+    trait: (
+      <>
+        <path d="M4.6 9.6h5l2.4-3.4h8l2.4 3.4h5a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4.6a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z" />
+        <circle cx="16" cy="17.4" r="4.6" />
+      </>
+    ),
+  },
+  camera: {
+    fond: <path d="M21.6 13.4 29 9.4v13.2l-7.4-4z" />,
+    trait: (
+      <>
+        <rect x="3" y="9.4" width="18.6" height="13.2" rx="2.4" />
+        <path d="M21.6 13.4 29 9.4v13.2l-7.4-4z" />
+        <circle cx="10.4" cy="16" r="2.6" />
+      </>
+    ),
+  },
+  plateformes: {
+    fond: <rect x="21" y="10.6" width="8" height="15.4" rx="2" />,
+    trait: (
+      <>
+        <rect x="3" y="5.6" width="15.6" height="12.4" rx="2.2" />
+        <path d="M7.4 22.4h6.8M10.8 18v4.4" />
+        <rect x="21" y="10.6" width="8" height="15.4" rx="2" />
+        <path d="M24.2 23.6h1.6" />
+      </>
+    ),
+  },
+  // ---- Pôle 3 : vente & revenus ----
+  offre: {
+    fond: <circle cx="10.6" cy="10.6" r="2.4" />,
+    trait: (
+      <>
+        <path d="M16.4 3.4H5.4A2 2 0 0 0 3.4 5.4v11l13 13 12.2-12.2z" />
+        <circle cx="10.6" cy="10.6" r="2.4" />
+      </>
+    ),
+  },
+  prospection: {
+    fond: <path d="M13 19.4 19 19.4 19 27 13 29z" />,
+    trait: (
+      <>
+        <path d="M3 5h26l-10 12v10l-6 2V17z" />
+      </>
+    ),
+  },
+  qualification: {
+    fond: <circle cx="23" cy="22.6" r="5.8" />,
+    trait: (
+      <>
+        <circle cx="12.6" cy="9.6" r="4.6" />
+        <path d="M4 25.4c0-4.8 3.8-8.6 8.6-8.6 1.6 0 3.2.4 4.4 1.2" />
+        <circle cx="23" cy="22.6" r="5.8" />
+        <path d="M20.4 22.6 22.4 24.6 25.8 20.8" />
+      </>
+    ),
+  },
+  negociation: {
+    fond: <path d="M4.4 16.6h9.2a4.6 4.6 0 0 1-9.2 0z" />,
+    trait: (
+      <>
+        <path d="M16 5.4v21.2M11 27h10" />
+        <path d="M5.6 9.6h20.8" />
+        <path d="M9 9.6v7M23 9.6v7" />
+        <path d="M4.4 16.6h9.2a4.6 4.6 0 0 1-9.2 0z" />
+        <path d="M18.4 16.6h9.2a4.6 4.6 0 0 1-9.2 0z" />
+        <circle cx="16" cy="5.4" r="2" />
+      </>
+    ),
+  },
+  suivi: {
+    fond: <path d="M3.6 8 16 16.6 28.4 8z" />,
+    trait: (
+      <>
+        <rect x="3.6" y="8" width="24.8" height="16" rx="2.2" />
+        <path d="M3.6 9.4 16 18 28.4 9.4" />
+        <path d="M24 27.6 28 24l-4-3.6" />
+      </>
+    ),
+  },
+  preuve: {
+    fond: <path d="M16 3.6 19.8 11.4 28.4 12.6 22.2 18.6 23.6 27 16 23z" />,
+    trait: (
+      <path d="M16 3.6 19.8 11.4 28.4 12.6 22.2 18.6 23.6 27 16 23 8.4 27 9.8 18.6 3.6 12.6 12.2 11.4z" />
+    ),
+  },
+  recurrence: {
+    fond: <rect x="4" y="20.6" width="6.4" height="7.4" rx="1.4" />,
+    trait: (
+      <>
+        <rect x="4" y="20.6" width="6.4" height="7.4" rx="1.4" />
+        <rect x="12.8" y="15" width="6.4" height="13" rx="1.4" />
+        <rect x="21.6" y="9" width="6.4" height="19" rx="1.4" />
+        <path d="M6 10.6 12 5l6 3.4L24.8 3" />
+        <path d="M20.6 3h4.6v4.6" />
+      </>
+    ),
+  },
+  // ---- Pôle 4 : systèmes & levier ----
+  automatisation: {
+    fond: <path d="M17.4 7.4 11.4 17.4h4.2l-1.2 7.4 6.6-10.6h-4.4z" />,
+    trait: (
+      <>
+        <path d="M17.4 7.4 11.4 17.4h4.2l-1.2 7.4 6.6-10.6h-4.4z" />
+        <path d="M8.2 23.4A11 11 0 0 1 10.4 7.2" />
+        <path d="M6.4 19.6 8.2 23.8 12.4 22" />
+        <path d="M23.8 8.6A11 11 0 0 1 21.6 24.8" />
+        <path d="M25.6 12.4 23.8 8.2 19.6 10" />
+      </>
+    ),
+  },
+  process: {
+    fond: <rect x="3.4" y="12.4" width="9" height="7.2" rx="1.8" />,
+    trait: (
+      <>
+        <rect x="3.4" y="12.4" width="9" height="7.2" rx="1.8" />
+        <rect x="19.6" y="4" width="9" height="7.2" rx="1.8" />
+        <rect x="19.6" y="20.8" width="9" height="7.2" rx="1.8" />
+        <path d="M12.4 16h3.6v-8.4h3.6M16 16v8.4h3.6" />
+      </>
+    ),
+  },
+  // ---- Pôle 5 : organisation & croissance ----
+  decision: {
+    fond: <circle cx="16" cy="26.4" r="3" />,
+    trait: (
+      <>
+        <circle cx="16" cy="26.4" r="3" />
+        <path d="M16 23.4v-6.8" />
+        <path d="M16 16.6 6.6 8.2M16 16.6l9.4-8.4" />
+        <path d="M4 4.4h4.4v4.4M28 4.4h-4.4v4.4" />
+      </>
+    ),
+  },
+  apprentissage: {
+    fond: <path d="M16 9.6 3.6 14.4 16 19.2 28.4 14.4z" />,
+    trait: (
+      <>
+        <path d="M16 9.6 3.6 14.4 16 19.2 28.4 14.4z" />
+        <path d="M8.6 16.6v7c0 1.8 3.4 3.6 7.4 3.6s7.4-1.8 7.4-3.6v-7" />
+        <path d="M28.4 14.4v7.4" />
+      </>
+    ),
+  },
+  delegation: {
+    fond: <circle cx="16" cy="6.6" r="3.4" />,
+    trait: (
+      <>
+        <circle cx="16" cy="6.6" r="3.4" />
+        <circle cx="6.4" cy="25.4" r="3.4" />
+        <circle cx="25.6" cy="25.4" r="3.4" />
+        <path d="M16 10v5.6M6.4 22v-6.4h19.2V22" />
+      </>
+    ),
+  },
+  partenariat: {
+    fond: <circle cx="11" cy="16" r="6.6" />,
+    trait: (
+      <>
+        <circle cx="11" cy="16" r="6.6" />
+        <circle cx="21" cy="16" r="6.6" />
+      </>
+    ),
+  },
   // Écran de formation : les deux formations offertes
   formation: {
     fond: <path d="M13.4 11.6 20.4 15.6l-7 4z" />,
