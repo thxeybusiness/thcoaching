@@ -85,22 +85,6 @@ const NOSCRIPT_CSS = `
 .slide--contact .footer-word{position:static;transform:none}
 `;
 
-/**
- * Un rafraîchissement depuis une page intérieure ramène à l'accueil, intro
- * comprise. Seul le rafraîchissement est concerné : arriver sur /programme
- * par un lien ou depuis un moteur de recherche n'y change rien.
- *
- * Écrit en JavaScript brut plutôt qu'en composant React : il doit s'exécuter
- * pendant l'analyse du document, avant tout affichage, sinon la page
- * intérieure apparaîtrait un instant avant de laisser place à l'accueil.
- */
-const RETOUR_ACCUEIL = `try{
-  if(location.pathname!=='/'){
-    var n=performance.getEntriesByType('navigation')[0];
-    if(n&&n.type==='reload'){location.replace('/');}
-  }
-}catch(e){}`;
-
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   colorScheme: "dark",
@@ -135,10 +119,6 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        {/* Doit rester le tout premier élément du corps : le script s'exécute
-            pendant l'analyse du document, donc avant que la page intérieure
-            ne s'affiche. */}
-        <script dangerouslySetInnerHTML={{ __html: RETOUR_ACCUEIL }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}

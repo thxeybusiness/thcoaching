@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { gsap } from "gsap";
 import { POLES, NB_COMPETENCES } from "../lib/programme";
 import GrilleCompetences from "./GrilleCompetences";
 
@@ -50,6 +51,67 @@ export default function Poles() {
   useEffect(() => annuler, []);
 
   const boutons = useRef<(HTMLButtonElement | null)[]>([]);
+  const scene = useRef<HTMLDivElement>(null);
+
+  /**
+   * L'orbite se trace et ses repères se posent, une seule fois, à la première
+   * apparition à l'écran. On observe la visibilité plutôt que le défilement :
+   * les chapitres de l'accueil se déplacent latéralement, un déclencheur lié
+   * au défilement vertical ne se produirait jamais.
+   */
+  useEffect(() => {
+    const el = scene.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let ctx: gsap.Context | null = null;
+    const observateur = new IntersectionObserver(
+      (entrees) => {
+        if (!entrees.some((e) => e.isIntersecting)) return;
+        observateur.disconnect();
+        ctx = gsap.context(() => {
+          const trace = el.querySelector<SVGCircleElement>(".orbite-trace");
+          if (trace) {
+            const l = trace.getTotalLength();
+            gsap.fromTo(
+              trace,
+              { strokeDasharray: l, strokeDashoffset: l },
+              {
+                strokeDashoffset: 0,
+                duration: 1.6,
+                ease: "power2.inOut",
+                clearProps: "strokeDasharray,strokeDashoffset",
+              }
+            );
+          }
+          // Surtout pas de « clearProps » ici : il effacerait tout le style
+          // en ligne du repère, y compris son angle « --a », et les cinq
+          // pôles se rassembleraient en haut de l'orbite.
+          gsap.from(el.querySelectorAll(".orbite-point"), {
+            opacity: 0,
+            scale: 0.4,
+            duration: 0.55,
+            stagger: 0.09,
+            ease: "back.out(1.7)",
+          });
+          gsap.from(el.querySelector(".orbite-noyau"), {
+            opacity: 0,
+            scale: 0.7,
+            duration: 0.8,
+            ease: "power3.out",
+            clearProps: "all",
+          });
+        }, el);
+      },
+      { threshold: 0.25 }
+    );
+    observateur.observe(el);
+
+    return () => {
+      observateur.disconnect();
+      ctx?.revert();
+    };
+  }, []);
 
   /**
    * Motif ARIA des onglets : seul l'onglet actif est dans l'ordre de
@@ -71,7 +133,7 @@ export default function Poles() {
   };
 
   return (
-    <div className="piliers-vue">
+    <div className="piliers-vue" ref={scene}>
       <div
         className="orbite"
         role="tablist"

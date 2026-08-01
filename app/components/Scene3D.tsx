@@ -25,6 +25,11 @@ type KF = { p: number; x: number; y: number; s: number; o: number };
 const KEYFRAMES: KF[] = [
   { p: 0.0, x: 2.45, y: 0.15, s: 1.0, o: 1 },
   { p: 0.25, x: 2.7, y: 1.2, s: 0.7, o: 0.22 },
+  // Chapitre « Programme » (p = 0,4) : le logo s'efface complètement. Sa
+  // trajectoire le fait passer au centre de l'écran, donc au milieu de
+  // l'orbite, où il transparaissait derrière le 360°. Position reprise
+  // exactement sur la courbe existante : seule l'opacité change.
+  { p: 0.4, x: -0.96, y: -0.55, s: 0.7, o: 0 },
   { p: 0.5, x: -2.95, y: -1.5, s: 0.7, o: 0.22 },
   { p: 0.75, x: 2.85, y: -1.5, s: 0.72, o: 0.24 },
   // Dernier écran : le logo se couche derrière le wordmark

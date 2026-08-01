@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import Link from "next/link";
 import Hero from "./components/Hero";
 import Scene3DLoader from "./components/Scene3DLoader";
 import CountUp from "./components/CountUp";
@@ -7,6 +6,7 @@ import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
 import LogoEtape from "./components/LogoEtape";
 import IconeCompetence from "./components/IconeCompetence";
+import Poles from "./components/Poles";
 import { POLES, NB_COMPETENCES } from "./lib/programme";
 import { ETAPES } from "./lib/methode";
 
@@ -104,46 +104,33 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 — Le programme */}
-        <section className="slide" id="offre" aria-labelledby="offre-titre">
+        {/* 3 — Le programme, en entier : le 360° et sa couronne de compétences.
+            Le chapitre n'a plus de résumé cliquable renvoyant ailleurs : le
+            détail est ici. */}
+        <section
+          className="slide slide--programme"
+          id="offre"
+          aria-labelledby="offre-titre"
+        >
           <div className="section-glow section-glow--left" aria-hidden="true" />
           <div className="slide-inner">
             <div className="container">
-              <p className="section-label" style={r(0)} data-r>
-                Le programme
-              </p>
-              <h2 className="section-title" id="offre-titre" style={r(1)} data-r>
-                Les fondamentaux,
-                <br />
-                <span className="accent">domaine par domaine.</span>
-              </h2>
-              <p className="section-intro" style={r(2)} data-r>
-                Cinq pôles, {NB_COMPETENCES} compétences : du socle personnel
-                jusqu&apos;au pilotage de ton activité.
-              </p>
+              <div className="programme-tete" style={r(0)} data-r>
+                <h2 className="section-label" id="offre-titre">
+                  Le programme
+                </h2>
+                <p className="programme-cles">
+                  <strong>{POLES.length}</strong> pôles
+                  <i aria-hidden="true" />
+                  <strong>{NB_COMPETENCES}</strong> compétences
+                  <i aria-hidden="true" />
+                  <span className="programme-astuce">
+                    Parcours l&apos;orbite, puis ouvre une compétence
+                  </span>
+                </p>
+              </div>
 
-              <Link href="/programme" className="pillars" style={r(3)} data-r>
-                <span className="pillars-grille">
-                  {POLES.map((p, i) => (
-                    <span key={p.cle} className="pillar">
-                      <span className="pillar-num" aria-hidden="true">
-                        {i + 1}
-                      </span>
-                      <span className="pillar-title">{p.titre}</span>
-                      <span className="pillar-promesse">{p.promesse}</span>
-                      <span className="pillar-compte">
-                        {p.competences.length} compétences
-                      </span>
-                    </span>
-                  ))}
-                </span>
-                <span className="pillars-lien">
-                  Voir le programme en détail
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 12 H18 M12 6 L18 12 L12 18" />
-                  </svg>
-                </span>
-              </Link>
+              <Poles />
             </div>
           </div>
         </section>

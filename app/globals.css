@@ -477,24 +477,11 @@ h3 {
   }
 }
 
-
 .world-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-}
-
-.spline-scene {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.spline-scene canvas {
-  width: 100% !important;
-  height: 100% !important;
 }
 
 .world-canvas canvas {
@@ -532,13 +519,6 @@ main {
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
-}
-
-.hero .hero-inner {
-  position: relative;
-  z-index: 2;
-  padding-top: 72px;
-  max-width: 900px;
 }
 
 .hero-eyebrow,
@@ -581,17 +561,7 @@ main {
   gap: 16px;
 }
 
-
-
-
-
 /* ---------- Marquee ---------- */
-
-
-
-
-
-
 
 /* ---------- Sections ---------- */
 
@@ -655,115 +625,8 @@ main {
   max-width: 620px;
 }
 
-/* ---------- Piliers : un seul bloc, cliquable ---------- */
-/* ---------- Accueil : le programme en quatre cartes ----------
-   L'ancien grand cadre unique était quasi transparent et floutait son fond :
-   le logo 3D transparaissait en bouillie au milieu du bloc, qui restait par
-   ailleurs à moitié vide. Cinq cartes opaques, numérotées comme les repères
-   de l'orbite de la page programme. */
-.pillars {
-  display: block;
-  margin-top: 38px;
-}
-
-.pillars-grille {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-}
-
-.pillar {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 22px 20px 20px;
-  border-radius: 18px;
-  background: #101011;
-  border: 1px solid var(--line);
-  transition: transform 0.3s ease, background 0.3s ease,
-    border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-@media (hover: hover) {
-  .pillar:hover {
-    transform: translateY(-4px);
-    background: #151415;
-    border-color: rgba(255, 90, 31, 0.5);
-    box-shadow: 0 20px 46px -26px rgba(255, 90, 31, 0.5);
-  }
-}
-
-.pillar-num {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  flex: none;
-  border-radius: 50%;
-  border: 1.4px solid var(--orange);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.76rem;
-  line-height: 1;
-  color: var(--orange);
-}
-
-.pillar-title {
-  display: block;
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1.24;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.pillar-promesse {
-  display: block;
-  flex: 1;
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.pillar-compte {
-  display: inline-block;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--orange);
-}
-
-/* Invitation à ouvrir la page détaillée */
-.pillars-lien {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 24px;
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--orange);
-}
-
-.pillars-lien svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform 0.25s ease;
-}
-
-.pillars:hover .pillars-lien svg {
-  transform: translateX(4px);
-}
-
+/* ---------- Piliers : un seul bloc,
+cliquable ---------- */
 /* ---------- Accueil : le déroulé en trois étapes ---------- */
 .section-glow--right {
   width: 44vw;
@@ -895,9 +758,6 @@ main {
     font-size: 0.9rem;
   }
 }
-
-
-
 
 /* ---------- Bonus ---------- */
 /* ---------- Accueil : les bonus en trois cartes ----------
@@ -1092,12 +952,6 @@ main {
   pointer-events: none;
 }
 
-
-
-
-
-
-
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .nav {
@@ -1106,20 +960,6 @@ main {
   }
   .nav-cta {
     padding: 8px 14px;
-  }
-  /* Cinq cartes ne se rangent pas en deux ou trois colonnes sans laisser un
-     trou. Six colonnes fines, chaque carte en occupe deux : trois cartes sur
-     la première ligne, les deux dernières décalées d'une colonne, donc
-     centrées sous elles. */
-  .pillars-grille {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 16px 18px;
-  }
-  .pillar {
-    grid-column: span 2;
-  }
-  .pillar:nth-child(4) {
-    grid-column: 2 / span 2;
   }
   .about-grid {
     grid-template-columns: 1fr;
@@ -1409,11 +1249,6 @@ main {
   font-size: clamp(1.9rem, 4.2vw, 3.2rem);
 }
 
-.deck[data-ready="true"] .pillars {
-  margin-top: 32px;
-  padding: 26px 30px 18px;
-}
-
 .deck[data-ready="true"] .contact-title {
   font-size: clamp(2.3rem, 6vw, 4.2rem);
 }
@@ -1431,9 +1266,6 @@ main {
   }
   .deck[data-ready="true"] .slide-inner {
     padding: 86px 0 112px;
-  }
-  .deck[data-ready="true"] .pillars {
-    padding: 18px 18px 12px;
   }
   .slide--contact .footer-word {
     bottom: 20%;
@@ -1458,34 +1290,6 @@ main {
   .deck[data-ready="true"] .section-label {
     font-size: 0.66rem;
     margin-bottom: 14px;
-  }
-  .deck[data-ready="true"] .pillars {
-    margin-top: 18px;
-  }
-  .deck[data-ready="true"] .pillars-grille {
-    gap: 10px;
-  }
-  .deck[data-ready="true"] .pillar {
-    gap: 8px;
-    padding: 14px 14px 13px;
-  }
-  .deck[data-ready="true"] .pillar-num {
-    width: 24px;
-    height: 24px;
-    font-size: 0.66rem;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    font-size: 0.84rem;
-  }
-  .deck[data-ready="true"] .pillar-promesse {
-    font-size: 0.78rem;
-  }
-  .deck[data-ready="true"] .pillar-compte {
-    font-size: 0.58rem;
-  }
-  .deck[data-ready="true"] .pillars-lien {
-    margin-top: 14px;
-    font-size: 0.78rem;
   }
   .deck[data-ready="true"] .about-grid {
     gap: 26px;
@@ -1522,25 +1326,6 @@ main {
   .deck[data-ready="true"] .section-intro {
     font-size: 0.95rem;
     margin-top: 10px;
-  }
-  .deck[data-ready="true"] .pillars {
-    margin-top: 20px;
-  }
-  .deck[data-ready="true"] .pillars-grille {
-    gap: 12px;
-  }
-  .deck[data-ready="true"] .pillar {
-    gap: 10px;
-    padding: 18px 16px 16px;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    font-size: 0.92rem;
-  }
-  .deck[data-ready="true"] .pillar-promesse {
-    font-size: 0.84rem;
-  }
-  .deck[data-ready="true"] .pillars-lien {
-    margin-top: 18px;
   }
   .deck[data-ready="true"] .hero-title {
     font-size: clamp(1.7rem, 3.6vw + 0.4rem, 2.9rem);
@@ -1606,47 +1391,8 @@ main {
   .deck[data-ready="true"] .slide-inner {
     padding: 80px 0 98px;
   }
-  .deck[data-ready="true"] .pillars-grille {
-    gap: 10px;
-  }
-  .deck[data-ready="true"] .pillar {
-    padding: 14px 14px 13px;
-  }
-  /* Tient sur une seule ligne : sinon la flèche se retrouve isolée à droite */
-  .deck[data-ready="true"] .pillars-lien {
-    font-size: 0.8rem;
-  }
   .deck[data-ready="true"] .section-intro {
     margin-top: 14px;
-  }
-}
-
-/* Sur téléphone, cinq cartes en pavés ne tiennent plus dans la hauteur d'un
-   chapitre : elles deviennent cinq lignes compactes, une par pôle, qui se
-   parcourent d'un coup d'œil. */
-@media (max-width: 640px) {
-  .deck[data-ready="true"] .pillars-grille {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .deck[data-ready="true"] .pillar,
-  .deck[data-ready="true"] .pillar:nth-child(4) {
-    grid-column: auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 13px;
-  }
-  .deck[data-ready="true"] .pillar-promesse {
-    display: none;
-  }
-  .deck[data-ready="true"] .pillar-title {
-    flex: 1;
-    font-size: 0.82rem;
-  }
-  .deck[data-ready="true"] .pillar-compte {
-    flex: none;
-    font-size: 0.56rem;
   }
 }
 
@@ -1762,183 +1508,6 @@ main {
   .deck-hint-piste {
     width: 38px;
   }
-}
-
-/* ================= Page programme ================= */
-.pg {
-  position: relative;
-  z-index: 1;
-  /* « clip » et non « hidden » : les deux rognent les lueurs et le 360°
-     fantôme qui débordent sur les côtés, mais « hidden » ferait de ce bloc un
-     conteneur de défilement. Une ancre interne y ferait alors défiler le bloc
-     lui-même plutôt que la page — le contenu se déplace sans que la fenêtre
-     défile, et les révélations au défilement ne sont jamais déclenchées. */
-  overflow-x: clip;
-}
-
-/* Barre de lecture */
-.pg-progression {
-  position: fixed;
-  z-index: 120;
-  top: 72px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.pg-progression i {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--orange), var(--orange-soft));
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
-/* ---------- Ouverture ---------- */
-.pg-tete {
-  position: relative;
-  padding: 150px 0 60px;
-}
-
-.pg-tete-fond {
-  position: absolute;
-  inset: -20% -10% 0;
-  pointer-events: none;
-  background:
-    radial-gradient(50vw 60vh at 78% 22%, rgba(255, 110, 40, 0.16), transparent 66%),
-    radial-gradient(60vw 40vh at 12% 78%, rgba(255, 90, 31, 0.08), transparent 70%);
-}
-
-.pg-tete-inner {
-  position: relative;
-}
-
-.pg-retour {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 46px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  transition: color 0.2s ease;
-}
-
-.pg-retour:hover {
-  color: #fff;
-}
-
-.pg-retour svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform 0.25s ease;
-}
-
-.pg-retour:hover svg {
-  transform: translateX(-4px);
-}
-
-.pg-titre {
-  font-family: var(--font-display);
-  font-size: clamp(2.1rem, 6vw, 4.4rem);
-  font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.mot-masque {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-  padding-bottom: 0.06em;
-  margin-right: 0.24em;
-}
-
-.mot {
-  display: inline-block;
-}
-
-.pg-chapo {
-  margin: 28px 0 0;
-  max-width: 560px;
-  font-size: 1.14rem;
-  color: var(--muted);
-}
-
-/* Trois chiffres clés */
-.pg-cles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 46px;
-  margin-top: 46px;
-  padding-top: 30px;
-  border-top: 1px solid var(--line);
-}
-
-.pg-cles span {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: 0.92rem;
-  color: var(--muted);
-}
-
-.pg-cles strong {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--orange);
-  letter-spacing: -0.02em;
-}
-
-/* ---------- Sections ---------- */
-.pg-section {
-  position: relative;
-  padding: 60px 0;
-}
-
-.pg-h2 {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  margin: 0 0 16px;
-}
-
-.pg-intro {
-  margin: 0 0 54px;
-  max-width: 520px;
-  color: var(--muted);
-  font-size: 1.05rem;
-}
-
-/* Mot géant en filigrane */
-.pg-fantome {
-  position: absolute;
-  top: 4%;
-  left: -3%;
-  z-index: 0;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(7rem, 20vw, 17rem);
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
-  pointer-events: none;
-  user-select: none;
-  will-change: transform;
-}
-
-/* ---------- Orbite + mur : les quatre piliers en un écran ---------- */
-.pg-section--piliers {
-  padding-bottom: 68px;
 }
 
 /* En dessous de 1180 px : l'orbite, puis l'en-tête du pôle, puis son mur de
@@ -2175,236 +1744,7 @@ main {
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* ---------- Cartes communes ---------- */
-.pg-carte {
-  position: relative;
-  border-radius: 20px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  transition: transform 0.35s ease, border-color 0.35s ease,
-    box-shadow 0.35s ease;
-}
-
-.pg-carte:hover {
-  transform: translateY(-6px);
-  border-color: rgba(255, 90, 31, 0.5);
-  box-shadow: 0 26px 70px -34px rgba(255, 90, 31, 0.5);
-}
-
-/* ---------- Méthode ---------- */
-.methode {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  /* Sans cela, déplier une étape étirerait les deux autres à la même
-     hauteur et laisserait deux grands vides à côté. */
-  align-items: start;
-}
-
-.methode-etape {
-  z-index: 1;
-  padding: 30px 26px 62px;
-}
-
-.etape-logo {
-  width: 52px;
-  height: 52px;
-  display: block;
-  margin-bottom: 22px;
-}
-
-.etape-num {
-  display: block;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  color: var(--orange);
-  margin-bottom: 10px;
-}
-
-.methode-etape h3 {
-  font-size: 1.24rem;
-  margin-bottom: 12px;
-}
-
-.methode-etape {
-  position: relative;
-}
-
-/* Le récit complet se déplie au clic : par défaut, une seule ligne. */
-.etape-court {
-  margin: 0;
-  padding-right: 34px;
-}
-
-.etape-detail {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.46s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s ease, margin-top 0.46s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.methode-etape[data-ouvert="true"] .etape-detail {
-  max-height: 560px;
-  opacity: 1;
-  margin-top: 14px;
-}
-
-.etape-bascule {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: transparent;
-  cursor: pointer;
-  transition: border-color 0.3s ease, background 0.3s ease;
-}
-
-.etape-bascule:hover,
-.etape-bascule:focus-visible {
-  border-color: rgba(255, 90, 31, 0.6);
-  background: rgba(255, 90, 31, 0.08);
-}
-
-.etape-signe {
-  position: relative;
-  width: 12px;
-  height: 12px;
-}
-
-.etape-signe i {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1.5px;
-  border-radius: 2px;
-  background: var(--orange);
-  transition: transform 0.34s cubic-bezier(0.5, 0, 0.2, 1);
-}
-
-.etape-signe i:last-child {
-  transform: rotate(90deg);
-}
-
-.methode-etape[data-ouvert="true"] .etape-signe i:first-child {
-  transform: rotate(135deg);
-}
-
-.methode-etape[data-ouvert="true"] .etape-signe i:last-child {
-  transform: rotate(45deg);
-}
-
-.methode-etape p {
-  margin: 0;
-  font-size: 0.96rem;
-  color: var(--muted);
-}
-
-/* ---------- Bonus ---------- */
-.bonus-cartes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.bonus-carte {
-  padding: 32px 28px 34px;
-}
-
-.bonus-carte h3 {
-  font-size: 1.14rem;
-  margin-bottom: 10px;
-}
-
-.bonus-carte p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--muted);
-}
-
-/* ---------- Fin ---------- */
-.pg-fin {
-  position: relative;
-  text-align: center;
-  padding: 74px 0 104px;
-  border-top: 1px solid var(--line);
-}
-
-.pg-fin-lueur {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 80vw;
-  height: 60vh;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgba(255, 90, 31, 0.18),
-    transparent 62%
-  );
-}
-
-.pg-fin h2 {
-  position: relative;
-  font-size: clamp(1.9rem, 5vw, 3.2rem);
-  margin-bottom: 20px;
-}
-
-.pg-fin p {
-  position: relative;
-  margin: 0 auto 36px;
-  max-width: 470px;
-  color: var(--muted);
-}
-
-.pg-fin .btn {
-  position: relative;
-}
-
-.pg-fin-note {
-  margin: 30px auto 0 !important;
-  font-size: 0.88rem;
-}
-
-@media (max-width: 1080px) {
-  }
-
 @media (max-width: 860px) {
-  .pg-progression {
-    top: 64px;
-  }
-  .pg-tete {
-    padding: 118px 0 46px;
-  }
-  .pg-retour {
-    margin-bottom: 32px;
-  }
-  .pg-section {
-    padding: 46px 0;
-  }
-  .pg-intro {
-    margin-bottom: 38px;
-  }
-  .pg-cles {
-    gap: 12px 30px;
-    margin-top: 34px;
-    padding-top: 24px;
-  }
-  .pg-cles strong {
-    font-size: 1.7rem;
-  }
   .orbite {
     width: min(100%, 340px);
   }
@@ -2417,20 +1757,7 @@ main {
     font-size: 0.66rem;
     letter-spacing: 0.08em;
   }
-  .methode {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  .bonus-cartes {
-    grid-template-columns: 1fr;
-  }
-  .pg-fin {
-    padding: 56px 0 76px;
-  }
 }
-
-@media (max-width: 520px) {
-    }
 
 @media (prefers-reduced-motion: reduce) {
   .orbite-halo {
@@ -2561,38 +1888,6 @@ main {
 }
 
 /* ---------- Le mur de compétences ---------- */
-
-/* Repère d'interaction, posé une seule fois sur la page */
-.comp-repere {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 16px;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.piliers-repere {
-  margin-bottom: 0;
-}
-
-.comp-repere-fleche {
-  flex: none;
-  width: 15px;
-  height: 15px;
-  color: var(--orange);
-}
-
-.comp-repere-fleche svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 
 .comp-grille {
   display: grid;
@@ -3120,27 +2415,117 @@ main {
   .deck[data-ready="true"] .deroule-num {
     font-size: 1.3rem;
   }
-  /* Les lignes compactes viennent de la règle 640 px ; ici on ne fait que
-     les resserrer encore. */
-  .deck[data-ready="true"] .pillars-grille {
-    gap: 5px;
+}
+
+/* Le contenu du chapitre est calé en haut, pas centré comme ailleurs : sa
+   hauteur change avec le pôle choisi, et un bloc centré ferait remonter ou
+   descendre l'orbite à chaque changement. */
+.deck[data-ready="true"] .slide--programme .slide-inner > * {
+  margin-block: 0;
+}
+
+/* ---------- Le chapitre « Programme » de l'accueil ----------
+
+   Il porte désormais la constellation entière, à la place du résumé en cinq
+   cartes qui renvoyait à une page séparée. Un chapitre du deck vaut un écran :
+   tout ce qui l'entoure est donc compressé au maximum pour laisser la hauteur
+   à la scène, qui se dimensionne sur ce qu'il reste. */
+.programme-tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+  flex: none;
+}
+
+.programme-tete .section-label {
+  margin: 0;
+}
+
+.programme-cles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.programme-cles strong {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+/* Séparateurs : un simple point, plutôt qu'un caractère à traduire */
+.programme-cles i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--orange) 70%, transparent);
+}
+
+.programme-astuce {
+  color: color-mix(in srgb, var(--orange) 80%, transparent);
+}
+
+@media (min-width: 1180px) and (min-height: 820px) {
+  /* On grignote sur les marges du chapitre, mais seulement en constellation :
+     en dessous, le mur défile derrière la navigation du deck et a besoin de
+     toute la marge basse pour que sa dernière rangée s'en dégage. */
+  .deck[data-ready="true"] .slide--programme .slide-inner {
+    padding: 76px 0 96px;
   }
-  .deck[data-ready="true"] .pillar {
-    padding: 7px 12px;
-    gap: 10px;
+
+  /* La scène prend toute la hauteur restante du chapitre : la chaîne flexible
+     descend de l'écran jusqu'à elle. Réservé à la constellation — en dessous,
+     le mur est plus haut que l'écran et doit pouvoir dépasser pour défiler. */
+  .deck[data-ready="true"] .slide--programme .slide-inner > .container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
-  .deck[data-ready="true"] .pillar-num {
-    width: 21px;
-    height: 21px;
-    font-size: 0.6rem;
+
+  .deck[data-ready="true"] .slide--programme .piliers-vue {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    /* Doit loger l'en-tête du pôle, posée au-dessus de la scène, sans qu'elle
+       vienne mordre sur la ligne du chapitre. */
+    margin-top: clamp(78px, 10vh, 104px);
   }
-  .deck[data-ready="true"] .pillar-title {
-    font-size: 0.78rem;
+
+  /* En-tête du pôle sur une seule ligne, et resserrée : deux lignes et un
+     grand anneau coûteraient à la scène une cinquantaine de pixels. */
+  .deck[data-ready="true"] .slide--programme .pilier-tete {
+    gap: 14px;
+    bottom: calc(100% + 26px);
   }
-  .deck[data-ready="true"] .pillar-compte {
-    font-size: 0.54rem;
+
+  .deck[data-ready="true"] .slide--programme .pilier-num {
+    font-size: 1.6rem;
   }
-  .deck[data-ready="true"] .pillars-lien {
-    margin-top: 11px;
+
+  .deck[data-ready="true"] .slide--programme .pilier-part {
+    width: 44px;
+    height: 44px;
+  }
+
+  .deck[data-ready="true"] .slide--programme .pilier-part b {
+    font-size: 0.9rem;
+  }
+
+  .deck[data-ready="true"] .slide--programme .pilier-tete > div {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .deck[data-ready="true"] .slide--programme .pilier-titre {
+    margin-bottom: 0;
+    white-space: nowrap;
   }
 }

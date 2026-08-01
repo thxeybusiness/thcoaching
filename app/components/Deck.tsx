@@ -259,6 +259,12 @@ export default function Deck({
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
 
+      // L'orbite du chapitre « Programme » est une liste d'onglets : chez elle,
+      // les flèches et Début/Fin changent de pôle. Sans cette réserve, une même
+      // touche changerait de pôle et de chapitre à la fois.
+      if (e.defaultPrevented) return;
+      if ((e.target as HTMLElement)?.closest?.('[role="tablist"]')) return;
+
       const forward = ["ArrowRight", "ArrowDown", "PageDown"];
       const back = ["ArrowLeft", "ArrowUp", "PageUp"];
       if (forward.includes(e.key)) {
@@ -320,17 +326,28 @@ export default function Deck({
     const el = root.current;
     if (!el) return;
 
+    const inner = el.querySelectorAll<HTMLElement>(".slide-inner")[index];
     const check = () => {
-      const inner = el.querySelectorAll<HTMLElement>(".slide-inner")[index];
       const over = !!inner && inner.scrollHeight > inner.clientHeight + 4;
       el.dataset.overflow = String(over);
     };
     check();
     const id = window.setTimeout(check, 400); // après les révélations
     window.addEventListener("resize", check);
+
+    /* Une seule mesure ne suffit pas : la hauteur du chapitre bouge encore
+       après coup — polices chargées, révélations, et surtout le chapitre
+       « Programme », dont le mur change de hauteur à chaque pôle choisi. */
+    const observateur = new ResizeObserver(check);
+    if (inner) {
+      observateur.observe(inner);
+      for (const enfant of Array.from(inner.children)) observateur.observe(enfant);
+    }
+
     return () => {
       window.clearTimeout(id);
       window.removeEventListener("resize", check);
+      observateur.disconnect();
     };
   }, [index, ready]);
 

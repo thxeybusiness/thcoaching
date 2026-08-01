@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import IconeCompetence from "./IconeCompetence";
 import type { Competence } from "../lib/programme";
 
@@ -50,7 +49,7 @@ export default function GrilleCompetences({
     if (!el || !actif) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    let observateur: IntersectionObserver | null = null;
 
     const ctx = gsap.context(() => {
       const jouer = () => {
@@ -107,19 +106,25 @@ export default function GrilleCompetences({
         }
       };
 
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.88) {
-        jouer();
-      } else {
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 88%",
-          once: true,
-          onEnter: jouer,
-        });
-      }
+      // On attend que le mur soit réellement à l'écran. Un déclencheur lié au
+      // défilement vertical ne conviendrait pas : les chapitres de l'accueil
+      // se déplacent latéralement, celui du programme est déjà à la bonne
+      // hauteur alors qu'il est encore hors champ.
+      observateur = new IntersectionObserver(
+        (entrees) => {
+          if (!entrees.some((e) => e.isIntersecting)) return;
+          observateur?.disconnect();
+          jouer();
+        },
+        { threshold: 0.15 }
+      );
+      observateur.observe(el);
     }, zone);
 
-    return () => ctx.revert();
+    return () => {
+      observateur?.disconnect();
+      ctx.revert();
+    };
   }, [actif, cle]);
 
   return (
