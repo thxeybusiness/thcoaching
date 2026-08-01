@@ -178,6 +178,11 @@ export default function Deck({
     const SEUIL = 45; // cumul nécessaire pour changer d'écran
     const SILENCE = 180; // ms sans événement = fin du geste
     const MAINTIEN = 900; // ms avant d'accepter un glissement maintenu
+    /* Silence exigé, une fois le chapitre parcouru jusqu'au bout, avant
+       d'accepter de passer au suivant. Large à dessein : la traîne d'inertie
+       d'un pavé tactile s'espace en s'éteignant, et on ne veut surtout pas la
+       confondre avec un nouveau geste. */
+    const REPOS_BUTEE = 420;
 
     let cumul = 0;
     let pic = 0;
@@ -185,14 +190,26 @@ export default function Deck({
     let dernier = 0;
     let declenche = 0;
     let timerSilence = 0;
+    /* Vrai dès que le chapitre a défilé de lui-même : tant qu'on n'a pas
+       relâché, arriver en butée ne fait pas changer de chapitre. */
+    let verrouParDefilement = false;
+    let dernierEvenement = 0;
+    /* On vient de quitter un chapitre parcouru jusqu'au bout : ce geste-là ne
+       fait avancer que d'un chapitre, jamais de plusieurs. */
+    let sortieDeButee = false;
 
     const finDuGeste = () => {
       arme = true;
       cumul = 0;
       pic = 0;
+      sortieDeButee = false;
     };
 
     const onWheel = (e: WheelEvent) => {
+      const instant = performance.now();
+      const silenceDepuis = instant - dernierEvenement;
+      dernierEvenement = instant;
+
       // Si le contenu de l'écran déborde, il défile en premier
       const inner = (e.target as HTMLElement)?.closest?.(
         ".slide-inner"
@@ -201,7 +218,28 @@ export default function Deck({
         const enHaut = inner.scrollTop <= 0;
         const enBas =
           inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 1;
-        if ((e.deltaY < 0 && !enHaut) || (e.deltaY > 0 && !enBas)) return;
+        if ((e.deltaY < 0 && !enHaut) || (e.deltaY > 0 && !enBas)) {
+          // Le chapitre défile encore : on le laisse faire, et on retient que
+          // ce geste-là sert à le parcourir.
+          verrouParDefilement = true;
+          return;
+        }
+
+        /* Butée atteinte. Enchaîner sur le chapitre suivant dans la foulée du
+           même geste est brutal : on a parcouru le chapitre, on ne s'attend pas
+           à en changer. Il faut donc relâcher, puis refaire un geste — c'est
+           seulement à ce moment que le verrou tombe. */
+        if (verrouParDefilement) {
+          e.preventDefault();
+          if (silenceDepuis < REPOS_BUTEE) return;
+          verrouParDefilement = false;
+          sortieDeButee = true;
+          cumul = 0;
+          pic = 0;
+          arme = true;
+        }
+      } else {
+        verrouParDefilement = false;
       }
 
       // Toujours neutraliser l'événement : sinon Safari interprète un geste
@@ -226,7 +264,7 @@ export default function Deck({
 
       if (!arme) {
         // Glissement encore maintenu (l'amplitude ne retombe pas) : on ré-arme
-        if (now - declenche > MAINTIEN && ampleur >= pic * 0.55) {
+        if (!sortieDeButee && now - declenche > MAINTIEN && ampleur >= pic * 0.55) {
           arme = true;
           cumul = 0;
         } else {
