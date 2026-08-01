@@ -814,6 +814,22 @@ main {
   );
 }
 
+/* Vague et numéro côte à côte : empilés, ils ajoutaient assez de hauteur
+   pour faire déborder le chapitre. */
+.deroule-tete {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 14px;
+}
+
+.deroule-logo {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: block;
+}
+
 .deroule-num {
   display: block;
   font-family: var(--font-display);
@@ -822,7 +838,6 @@ main {
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px rgba(255, 90, 31, 0.65);
-  margin-bottom: 16px;
 }
 
 .deroule-titre {
@@ -880,64 +895,59 @@ main {
 
 
 /* ---------- Bonus ---------- */
-.bonus {
-  margin-top: 30px;
-  position: relative;
-  border-radius: 24px;
-  padding: 44px;
-  background:
-    linear-gradient(var(--bg-soft), var(--bg-soft)) padding-box,
-    linear-gradient(
-        125deg,
-        rgba(255, 90, 31, 0.9),
-        rgba(255, 140, 26, 0.28) 45%,
-        rgba(255, 90, 31, 0.06)
-      )
-      border-box;
-  border: 1px solid transparent;
-  color: #fff;
-}
-
-.bonus-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 32px;
-}
-
-.bonus-head h3 {
-  font-size: 1.7rem;
-}
-
-.bonus-list {
+/* ---------- Accueil : les bonus en trois cartes ----------
+   C'était une liste à puces dans un grand cadre ; chaque avantage a
+   maintenant son pictogramme, comme les compétences de la page programme. */
+.bonus-cartes-accueil {
   list-style: none;
-  margin: 0;
+  margin: 34px 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  gap: 16px;
 }
 
-.bonus-list li {
+.bonus-carte-accueil {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  padding-top: 20px;
-  border-top: 2px solid var(--orange);
+  align-items: flex-start;
+  gap: 14px;
+  padding: 28px 24px 26px;
+  border-radius: 20px;
+  background: #101011;
+  border: 1px solid var(--line);
+  transition: transform 0.3s ease, background 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.bonus-list strong {
-  font-size: 1.1rem;
+@media (hover: hover) {
+  .bonus-carte-accueil:hover {
+    transform: translateY(-4px);
+    background: #151415;
+    border-color: rgba(255, 90, 31, 0.5);
+    box-shadow: 0 20px 46px -26px rgba(255, 90, 31, 0.5);
+  }
 }
 
-.bonus-list span {
-  font-size: 0.95rem;
+.bonus-carte-accueil .comp-icone {
+  width: 52px;
+  height: 52px;
+}
+
+.bonus-carte-accueil strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.bonus-carte-accueil span {
+  font-size: 0.9rem;
+  line-height: 1.45;
   color: var(--muted);
 }
-
-/* ---------- À propos ---------- */
 
 .about-ghost {
   position: absolute;
@@ -982,6 +992,22 @@ main {
   padding-left: 22px;
 }
 
+/* Pictogramme à gauche du chiffre : au-dessus, les trois repères
+   ajoutaient plus de 130 px et faisaient déborder le chapitre. */
+.stat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 16px;
+}
+
+.stat .comp-icone {
+  grid-row: 1 / 3;
+  width: 38px;
+  height: 38px;
+  flex: none;
+}
+
 .stat strong {
   display: block;
   font-family: var(--font-display);
@@ -992,7 +1018,9 @@ main {
   line-height: 1.1;
 }
 
-.stat span {
+/* Enfant direct seulement : le compteur rend lui aussi un span, à
+   l'intérieur du chiffre, qui héritait de cette petite taille. */
+.stat > span {
   font-size: 0.92rem;
   color: var(--muted);
 }
@@ -1077,13 +1105,6 @@ main {
   .pillars-grille {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px 18px;
-  }
-  .bonus-list {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-  .bonus {
-    padding: 32px 26px;
   }
   .about-grid {
     grid-template-columns: 1fr;
@@ -1378,11 +1399,6 @@ main {
   padding: 26px 30px 18px;
 }
 
-.deck[data-ready="true"] .bonus {
-  margin-top: 36px;
-  padding: 38px;
-}
-
 .deck[data-ready="true"] .contact-title {
   font-size: clamp(2.3rem, 6vw, 4.2rem);
 }
@@ -1403,9 +1419,6 @@ main {
   }
   .deck[data-ready="true"] .pillars {
     padding: 18px 18px 12px;
-  }
-  .deck[data-ready="true"] .bonus {
-    padding: 28px 22px;
   }
   .slide--contact .footer-word {
     bottom: 20%;
@@ -1458,27 +1471,6 @@ main {
   .deck[data-ready="true"] .pillars-lien {
     margin-top: 14px;
     font-size: 0.78rem;
-  }
-  .deck[data-ready="true"] .bonus {
-    margin-top: 24px;
-  }
-  .deck[data-ready="true"] .bonus-head {
-    margin-bottom: 20px;
-  }
-  .deck[data-ready="true"] .bonus-head h3 {
-    font-size: 1.25rem;
-  }
-  .deck[data-ready="true"] .bonus-list {
-    gap: 16px;
-  }
-  .deck[data-ready="true"] .bonus-list strong {
-    font-size: 0.98rem;
-  }
-  .deck[data-ready="true"] .bonus-list span {
-    font-size: 0.86rem;
-  }
-  .deck[data-ready="true"] .bonus-list li {
-    padding-top: 13px;
   }
   .deck[data-ready="true"] .about-grid {
     gap: 26px;
@@ -1535,19 +1527,6 @@ main {
   .deck[data-ready="true"] .pillars-lien {
     margin-top: 18px;
   }
-  .deck[data-ready="true"] .bonus {
-    margin-top: 22px;
-    padding: 26px 28px;
-  }
-  .deck[data-ready="true"] .bonus-head {
-    margin-bottom: 18px;
-  }
-  .deck[data-ready="true"] .bonus-head h3 {
-    font-size: 1.3rem;
-  }
-  .deck[data-ready="true"] .bonus-list {
-    gap: 18px;
-  }
   .deck[data-ready="true"] .hero-title {
     font-size: clamp(1.7rem, 3.6vw + 0.4rem, 2.9rem);
   }
@@ -1593,12 +1572,6 @@ main {
   .deck[data-ready="true"] .contact-sub,
   .deck[data-ready="true"] .about-text p:not(.section-label) {
     font-size: 0.9rem;
-  }
-  .deck[data-ready="true"] .bonus {
-    padding: 20px 20px;
-  }
-  .deck[data-ready="true"] .bonus-list {
-    gap: 12px;
   }
   .deck[data-ready="true"] .stat strong {
     font-size: 1.7rem;
@@ -2849,6 +2822,17 @@ main {
    chapitre : elles deviennent des lignes compactes. Le détail complet reste
    à un clic, sur la page programme. */
 @media (max-width: 380px) {
+  .deck[data-ready="true"] .deroule-logo {
+    width: 24px;
+    height: 24px;
+  }
+  .deck[data-ready="true"] .deroule-tete {
+    gap: 9px;
+    margin-bottom: 9px;
+  }
+  .deck[data-ready="true"] .deroule-num {
+    font-size: 1.3rem;
+  }
   .deck[data-ready="true"] .pillars-grille {
     grid-template-columns: 1fr;
     gap: 8px;

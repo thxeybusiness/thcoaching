@@ -5,6 +5,8 @@ import Scene3DLoader from "./components/Scene3DLoader";
 import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
+import LogoEtape from "./components/LogoEtape";
+import IconeCompetence from "./components/IconeCompetence";
 import { PILIERS, NB_COMPETENCES } from "./lib/programme";
 import { ETAPES } from "./lib/methode";
 
@@ -24,17 +26,27 @@ const SLIDES: SlideMeta[] = [
 
 const bonuses = [
   {
+    icone: "formation",
     title: "2 formations en Marketing Digital",
     text: "ASA & JDS, incluses dans l'accompagnement.",
   },
   {
-    title: "Accès privés & réductions exclusives",
-    text: "Sur des SaaS développés spécialement pour le business.",
+    icone: "acces",
+    title: "Accès privés & réductions",
+    text: "Sur des SaaS développés pour le business.",
   },
   {
+    icone: "groupe",
     title: "Groupe privé d'entraide",
-    text: "Pour progresser ensemble, entre entrepreneurs.",
+    text: "Pour progresser entre entrepreneurs.",
   },
+];
+
+/** Les trois chiffres de la section « à propos », chacun avec son repère. */
+const CHIFFRES = [
+  { icone: "tour", valeur: 360, suffixe: "°", libelle: "vision business & santé" },
+  { icone: "cadeau", valeur: bonuses.length, suffixe: "", libelle: "bonus inclus" },
+  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences travaillées" },
 ];
 
 export default function Home() {
@@ -77,8 +89,11 @@ export default function Home() {
                     style={r(3 + i)}
                     data-r
                   >
-                    <span className="deroule-num" aria-hidden="true">
-                      {e.num}
+                    <span className="deroule-tete">
+                      <LogoEtape actif={i} className="deroule-logo" />
+                      <span className="deroule-num" aria-hidden="true">
+                        {e.num}
+                      </span>
                     </span>
                     <h3 className="deroule-titre">{e.titre}</h3>
                     <p className="deroule-court">{e.court}</p>
@@ -146,19 +161,15 @@ export default function Home() {
                 <span className="accent">en plus du coaching.</span>
               </h2>
 
-              <div className="bonus" style={r(2)} data-r>
-                <div className="bonus-head">
-                  <h3>Inclus en bonus</h3>
-                </div>
-                <ul className="bonus-list">
-                  {bonuses.map((b) => (
-                    <li key={b.title}>
-                      <strong>{b.title}</strong>
-                      <span>{b.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="bonus-cartes-accueil">
+                {bonuses.map((b, i) => (
+                  <li key={b.title} className="bonus-carte-accueil" style={r(2 + i)} data-r>
+                    <IconeCompetence nom={b.icone} />
+                    <strong>{b.title}</strong>
+                    <span>{b.text}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
@@ -200,24 +211,15 @@ export default function Home() {
                 </p>
               </div>
               <div className="stats">
-                <div className="stat" style={r(4)} data-r>
-                  <strong>
-                    <CountUp to={360} suffix="°" />
-                  </strong>
-                  <span>vision business &amp; santé</span>
-                </div>
-                <div className="stat" style={r(5)} data-r>
-                  <strong>
-                    <CountUp to={bonuses.length} />
-                  </strong>
-                  <span>bonus inclus</span>
-                </div>
-                <div className="stat" style={r(6)} data-r>
-                  <strong>
-                    <CountUp to={NB_COMPETENCES} />
-                  </strong>
-                  <span>compétences travaillées</span>
-                </div>
+                {CHIFFRES.map((c, i) => (
+                  <div key={c.libelle} className="stat" style={r(4 + i)} data-r>
+                    <IconeCompetence nom={c.icone} />
+                    <strong>
+                      <CountUp to={c.valeur} suffix={c.suffixe} />
+                    </strong>
+                    <span>{c.libelle}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

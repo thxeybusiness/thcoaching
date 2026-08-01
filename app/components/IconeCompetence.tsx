@@ -199,6 +199,81 @@ const TRACES: Record<string, Trace> = {
       </>
     ),
   },
+  // Écran de formation : les deux formations offertes
+  formation: {
+    fond: <path d="M13.4 11.6 20.4 15.6l-7 4z" />,
+    trait: (
+      <>
+        <rect x="3.4" y="5" width="25.2" height="17.6" rx="2.6" />
+        <path d="M13.4 11.6 20.4 15.6l-7 4z" />
+        <path d="M10.4 27.4h11.2M16 22.6v4.8" />
+      </>
+    ),
+  },
+  // Clé : accès privés et réductions
+  acces: {
+    fond: <circle cx="10.6" cy="10.6" r="3.4" />,
+    trait: (
+      <>
+        <circle cx="10.6" cy="10.6" r="6.4" />
+        <circle cx="10.6" cy="10.6" r="3.4" />
+        <path d="M15.2 15.2 27.4 27.4M21.4 21.4l2.9-2.9M24.3 24.3l2.9-2.9" />
+      </>
+    ),
+  },
+  // Trois personnes : le groupe privé
+  groupe: {
+    fond: <circle cx="16" cy="9.4" r="4.2" />,
+    trait: (
+      <>
+        <circle cx="16" cy="9.4" r="4.2" />
+        <path d="M9.4 24c0-3.6 3-6.6 6.6-6.6s6.6 3 6.6 6.6" />
+        <circle cx="5.6" cy="14.6" r="3.2" />
+        <path d="M1.6 26.4c0-2.8 1.8-5.2 4.4-6" />
+        <circle cx="26.4" cy="14.6" r="3.2" />
+        <path d="M30.4 26.4c0-2.8-1.8-5.2-4.4-6" />
+      </>
+    ),
+  },
+  // Orbite : la vision à 360°
+  tour: {
+    fond: <circle cx="16" cy="16" r="3.2" />,
+    trait: (
+      <>
+        <circle cx="16" cy="16" r="12" />
+        <circle cx="16" cy="16" r="3.2" />
+        <circle cx="16" cy="4" r="2.4" />
+        <circle cx="28" cy="16" r="2.4" />
+        <circle cx="16" cy="28" r="2.4" />
+        <circle cx="4" cy="16" r="2.4" />
+      </>
+    ),
+  },
+  // Cadeau : les bonus inclus
+  cadeau: {
+    fond: <rect x="3.6" y="12.6" width="24.8" height="5.4" rx="1.6" />,
+    trait: (
+      <>
+        <rect x="3.6" y="12.6" width="24.8" height="5.4" rx="1.6" />
+        <path d="M5.8 18v9.4a1.6 1.6 0 0 0 1.6 1.6h17.2a1.6 1.6 0 0 0 1.6-1.6V18" />
+        <path d="M16 12.6V29" />
+        <path d="M16 12.6S14.4 5 10.6 5a3.2 3.2 0 0 0 0 7.6z" />
+        <path d="M16 12.6S17.6 5 21.4 5a3.2 3.2 0 0 1 0 7.6z" />
+      </>
+    ),
+  },
+  // Mur de tuiles : les compétences travaillées
+  grille: {
+    fond: <rect x="3.6" y="3.6" width="11" height="11" rx="2.2" />,
+    trait: (
+      <>
+        <rect x="3.6" y="3.6" width="11" height="11" rx="2.2" />
+        <rect x="17.4" y="3.6" width="11" height="11" rx="2.2" />
+        <rect x="3.6" y="17.4" width="11" height="11" rx="2.2" />
+        <rect x="17.4" y="17.4" width="11" height="11" rx="2.2" />
+      </>
+    ),
+  },
   // Réseau : trois nœuds reliés
   reseau: {
     fond: (
