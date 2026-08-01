@@ -13,9 +13,9 @@ import Intro from "./components/Intro";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
-const SITE_TITLE = "TH Coaching — L'écosystème qui fait tourner ton business";
+const SITE_TITLE = "TH Coaching — Tout un écosystème pour t'aider à bâtir ton business";
 const SITE_DESCRIPTION =
-  "Bâtir l'écosystème qui fait tourner ton business : un business ne tient pas sur une compétence isolée. Cinq pôles et quarante-trois compétences reliées — fondations de soi, création, vente, systèmes, pilotage — chaque pièce alimentant les autres.";
+  "Tu n'avances pas seul : un coach, un programme de cinq pôles et quarante-trois compétences, deux formations, des accès privés à des outils et un groupe d'entrepreneurs. Tout un écosystème réuni autour de toi pour bâtir ton business.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
@@ -67,9 +67,9 @@ const JSON_LD = {
     "@type": "Offer",
     itemOffered: {
       "@type": "Service",
-      name: "Un écosystème complet autour de ton business",
+      name: "Un écosystème complet autour de toi",
       description:
-        "Accompagnement en trois étapes — fondations (acquérir les bases indispensables à toute activité), perfectionnement (les affiner jusqu'au réflexe), étude et développement (identifier le business fait pour ton profil, puis le construire). Cinq pôles reliés entre eux : fondations de soi (vision, mindset, confiance, stress, sommeil, alimentation, sport), créer et se démarquer (personal branding, storytelling, contenu, copywriting, graphisme, photo, vidéo, 3D), vente et revenus (offre, prospection, closing, négociation, gestion client, finances), systèmes et levier (IA, automatisation, process), organisation et croissance (projets, temps, décision, délégation, réseau, partenariats).",
+        "Un coach, un programme, des formations, des outils et un groupe d'entrepreneurs réunis autour de la personne accompagnée. Accompagnement en trois étapes — fondations (acquérir les bases indispensables à toute activité), perfectionnement (les affiner jusqu'au réflexe), étude et développement (identifier le business fait pour ton profil, puis le construire). Cinq pôles travaillés : fondations de soi (vision, mindset, confiance, stress, sommeil, alimentation, sport), créer et se démarquer (personal branding, storytelling, contenu, copywriting, graphisme, photo, vidéo, 3D), vente et revenus (offre, prospection, closing, négociation, gestion client, finances), systèmes et levier (IA, automatisation, process), organisation et croissance (projets, temps, décision, délégation, réseau, partenariats).",
     },
   },
 };
@@ -102,7 +102,7 @@ function Header() {
           <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
         </Link>
         <nav className="nav" aria-label="Navigation principale">
-          <a href="/#offre">Écosystème</a>
+          <a href="/#offre">Programme</a>
           <a href="/#apropos">À propos</a>
           <a href="/#contact" className="nav-cta">
             <span className="nav-cta-long">Réserver un appel</span>

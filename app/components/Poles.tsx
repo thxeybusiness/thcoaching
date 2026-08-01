@@ -137,7 +137,7 @@ export default function Poles() {
       <div
         className="orbite"
         role="tablist"
-        aria-label="Les cinq pôles de l'écosystème"
+        aria-label="Les cinq pôles du programme"
         onKeyDown={auClavier}
       >
         <span className="orbite-halo" aria-hidden="true" />
@@ -151,7 +151,7 @@ export default function Poles() {
 
         <span className="orbite-noyau" aria-hidden="true">
           <span className="orbite-noyau-valeur">360°</span>
-          <span className="orbite-noyau-texte">ton écosystème</span>
+          <span className="orbite-noyau-texte">autour de toi</span>
         </span>
 
         {POLES.map((p, i) => (

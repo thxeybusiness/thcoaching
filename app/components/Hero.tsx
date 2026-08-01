@@ -109,19 +109,19 @@ export default function Hero() {
           </span>
           <h1 className="hero-title">
             <span className="hero-line">
-              <span className="hero-line-inner">Bâtir l&apos;écosystème</span>
+              <span className="hero-line-inner">Tout un écosystème</span>
             </span>
             <span className="hero-line">
-              <span className="hero-line-inner accent">qui fait tourner</span>
+              <span className="hero-line-inner accent">pour t&apos;aider à bâtir</span>
             </span>
             <span className="hero-line">
               <span className="hero-line-inner accent">ton business.</span>
             </span>
           </h1>
           <p className="hero-sub">
-            Un business ne tient pas sur une compétence isolée. On construit
-            l&apos;ensemble : les fondations, la création, la vente, les
-            systèmes et le pilotage — chaque pièce alimentant les autres.
+            Tu n&apos;avances pas seul. Un coach, un programme complet, des
+            formations, des outils et un groupe d&apos;entrepreneurs : tout est
+            réuni autour de toi, du premier jour au projet debout.
           </p>
           <div className="hero-actions">
             <Magnetic>
@@ -131,7 +131,7 @@ export default function Hero() {
             </Magnetic>
             <Magnetic strength={0.22}>
               <a href="#offre" className="btn btn-outline-light">
-                Voir l&apos;écosystème
+                Voir le programme
               </a>
             </Magnetic>
           </div>

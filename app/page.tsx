@@ -18,8 +18,8 @@ const r = (i: number) => ({ "--r-i": i }) as CSSProperties;
 const SLIDES: SlideMeta[] = [
   { id: "accueil", label: "Accueil" },
   { id: "methode", label: "Méthode" },
-  { id: "offre", label: "Écosystème" },
-  { id: "bonus", label: "Bonus" },
+  { id: "offre", label: "Programme" },
+  { id: "bonus", label: "Écosystème" },
   { id: "apropos", label: "À propos" },
   { id: "contact", label: "Contact" },
 ];
@@ -42,11 +42,22 @@ const bonuses = [
   },
 ];
 
+/** Ce qui entoure la personne accompagnée. Le coach n'est pas un bonus : il
+ *  est en tête, et hors du compte. */
+const ENTOURAGE = [
+  {
+    icone: "partenariat",
+    title: "Un coach à tes côtés",
+    text: "Disponible, du premier jour au projet debout.",
+  },
+  ...bonuses,
+];
+
 /** Les trois chiffres de la section « à propos », chacun avec son repère. */
 const CHIFFRES = [
-  { icone: "tour", valeur: 360, suffixe: "°", libelle: "un écosystème complet" },
+  { icone: "tour", valeur: 360, suffixe: "°", libelle: "d'accompagnement" },
   { icone: "cadeau", valeur: bonuses.length, suffixe: "", libelle: "bonus inclus" },
-  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences reliées" },
+  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences travaillées" },
 ];
 
 export default function Home() {
@@ -77,8 +88,8 @@ export default function Home() {
                 <span className="accent">en trois étapes.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
-                Un écosystème se cultive : on pose les fondations, on les rend
-                automatiques, puis on fait pousser le business qui te
+                Tu es accompagné du début à la fin : on pose les bases, on les
+                rend automatiques, puis on construit le business qui te
                 ressemble.
               </p>
 
@@ -105,8 +116,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 — L'écosystème, en entier : le 360° et sa couronne de compétences
-            reliées. Le chapitre n'a plus de résumé cliquable renvoyant
+        {/* 3 — Ce qu'on travaille ensemble : le 360° et sa couronne de
+            compétences. Tout tourne autour de la personne accompagnée — c'est
+            elle, le centre. Le chapitre n'a plus de résumé cliquable renvoyant
             ailleurs : le détail est ici. */}
         <section
           className="slide slide--programme"
@@ -118,12 +130,12 @@ export default function Home() {
             <div className="container">
               <div className="programme-tete" style={r(0)} data-r>
                 <h2 className="section-label" id="offre-titre">
-                  Ton écosystème
+                  Ce qu&apos;on travaille ensemble
                 </h2>
                 <p className="programme-cles">
                   <strong>{POLES.length}</strong> pôles
                   <i aria-hidden="true" />
-                  <strong>{NB_COMPETENCES}</strong> compétences reliées
+                  <strong>{NB_COMPETENCES}</strong> compétences
                   <i aria-hidden="true" />
                   <span className="programme-astuce">
                     Parcours l&apos;orbite, puis ouvre une compétence
@@ -141,16 +153,16 @@ export default function Home() {
           <div className="slide-inner">
             <div className="container">
               <p className="section-label" style={r(0)} data-r>
-                Inclus dans l&apos;accompagnement
+                L&apos;écosystème autour de toi
               </p>
               <h2 className="section-title" id="bonus-titre" style={r(1)} data-r>
-                Ce qui entre aussi
+                Tu n&apos;avances
                 <br />
-                <span className="accent">dans l&apos;écosystème.</span>
+                <span className="accent">jamais seul.</span>
               </h2>
 
               <ul className="bonus-cartes-accueil">
-                {bonuses.map((b, i) => (
+                {ENTOURAGE.map((b, i) => (
                   <li key={b.title} className="bonus-carte-accueil" style={r(2 + i)} data-r>
                     <IconeCompetence nom={b.icone} />
                     <strong>{b.title}</strong>
@@ -188,10 +200,10 @@ export default function Home() {
                   pas au-dessus.
                 </h2>
                 <p style={r(2)} data-r>
-                  Ma conviction : il n&apos;existe pas un business idéal, mais
-                  un écosystème idéal <em>pour toi</em>. C&apos;est pour ça
-                  qu&apos;on ne part jamais d&apos;un modèle tout fait, mais de
-                  ton profil, de tes compétences et de tes contraintes réelles.
+                  Ma conviction : personne ne réussit seul, et il n&apos;existe
+                  pas un business idéal — seulement celui qui te correspond. On
+                  part donc de ton profil, de tes compétences et de tes
+                  contraintes réelles.
                 </p>
                 <p style={r(3)} data-r>
                   Chaque accompagnement est confidentiel, bienveillant et

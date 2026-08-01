@@ -1,10 +1,13 @@
 /**
- * Le thème global du coaching : bâtir, autour de la personne accompagnée, un
- * écosystème dont chaque pièce fait tourner les autres. Source unique partagée
- * par l'intro (un mot = une vague du logo) et les chapitres de l'accueil.
+ * Le thème global du coaching : la personne accompagnée n'avance pas seule.
+ * Tout un écosystème l'entoure — un coach, un programme complet, des
+ * formations, des outils, un groupe — pour l'aider à bâtir son business.
+ * Source unique partagée par l'intro (un mot = une vague du logo) et les
+ * chapitres de l'accueil.
  */
 
-export const PROMESSE = "Bâtir l'écosystème qui fait tourner ton business.";
+export const PROMESSE =
+  "Tout un écosystème pour t'aider à bâtir ton business.";
 
 export type Etape = {
   cle: string;
