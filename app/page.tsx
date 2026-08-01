@@ -18,7 +18,7 @@ const r = (i: number) => ({ "--r-i": i }) as CSSProperties;
 const SLIDES: SlideMeta[] = [
   { id: "accueil", label: "Accueil" },
   { id: "methode", label: "Méthode" },
-  { id: "offre", label: "Programme" },
+  { id: "offre", label: "Écosystème" },
   { id: "bonus", label: "Bonus" },
   { id: "apropos", label: "À propos" },
   { id: "contact", label: "Contact" },
@@ -44,9 +44,9 @@ const bonuses = [
 
 /** Les trois chiffres de la section « à propos », chacun avec son repère. */
 const CHIFFRES = [
-  { icone: "tour", valeur: 360, suffixe: "°", libelle: "vision business & santé" },
+  { icone: "tour", valeur: 360, suffixe: "°", libelle: "un écosystème complet" },
   { icone: "cadeau", valeur: bonuses.length, suffixe: "", libelle: "bonus inclus" },
-  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences travaillées" },
+  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences reliées" },
 ];
 
 export default function Home() {
@@ -77,8 +77,9 @@ export default function Home() {
                 <span className="accent">en trois étapes.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
-                Pas de recette toute faite : on pose les bases, on les rend
-                automatiques, puis on construit le business qui te ressemble.
+                Un écosystème se cultive : on pose les fondations, on les rend
+                automatiques, puis on fait pousser le business qui te
+                ressemble.
               </p>
 
               <ol className="deroule">
@@ -104,9 +105,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 — Le programme, en entier : le 360° et sa couronne de compétences.
-            Le chapitre n'a plus de résumé cliquable renvoyant ailleurs : le
-            détail est ici. */}
+        {/* 3 — L'écosystème, en entier : le 360° et sa couronne de compétences
+            reliées. Le chapitre n'a plus de résumé cliquable renvoyant
+            ailleurs : le détail est ici. */}
         <section
           className="slide slide--programme"
           id="offre"
@@ -117,12 +118,12 @@ export default function Home() {
             <div className="container">
               <div className="programme-tete" style={r(0)} data-r>
                 <h2 className="section-label" id="offre-titre">
-                  Le programme
+                  Ton écosystème
                 </h2>
                 <p className="programme-cles">
                   <strong>{POLES.length}</strong> pôles
                   <i aria-hidden="true" />
-                  <strong>{NB_COMPETENCES}</strong> compétences
+                  <strong>{NB_COMPETENCES}</strong> compétences reliées
                   <i aria-hidden="true" />
                   <span className="programme-astuce">
                     Parcours l&apos;orbite, puis ouvre une compétence
@@ -143,9 +144,9 @@ export default function Home() {
                 Inclus dans l&apos;accompagnement
               </p>
               <h2 className="section-title" id="bonus-titre" style={r(1)} data-r>
-                Ce que tu reçois
+                Ce qui entre aussi
                 <br />
-                <span className="accent">en plus du coaching.</span>
+                <span className="accent">dans l&apos;écosystème.</span>
               </h2>
 
               <ul className="bonus-cartes-accueil">
@@ -188,7 +189,7 @@ export default function Home() {
                 </h2>
                 <p style={r(2)} data-r>
                   Ma conviction : il n&apos;existe pas un business idéal, mais
-                  un business idéal <em>pour toi</em>. C&apos;est pour ça
+                  un écosystème idéal <em>pour toi</em>. C&apos;est pour ça
                   qu&apos;on ne part jamais d&apos;un modèle tout fait, mais de
                   ton profil, de tes compétences et de tes contraintes réelles.
                 </p>

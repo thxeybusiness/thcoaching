@@ -99,7 +99,7 @@ export default function Hero() {
   return (
     <section className="slide slide--hero" id="accueil" ref={root}>
       <span className="hero-ghost" aria-hidden="true">
-        Performance
+        Écosystème
       </span>
 
       <div className="slide-inner">
@@ -109,19 +109,19 @@ export default function Hero() {
           </span>
           <h1 className="hero-title">
             <span className="hero-line">
-              <span className="hero-line-inner">Bâtir le business</span>
+              <span className="hero-line-inner">Bâtir l&apos;écosystème</span>
             </span>
             <span className="hero-line">
-              <span className="hero-line-inner accent">qui te correspond</span>
+              <span className="hero-line-inner accent">qui fait tourner</span>
             </span>
             <span className="hero-line">
-              <span className="hero-line-inner accent">vraiment.</span>
+              <span className="hero-line-inner accent">ton business.</span>
             </span>
           </h1>
           <p className="hero-sub">
-            On acquiert les fondamentaux, on les perfectionne jusqu&apos;au
-            réflexe, puis une étude approfondie détermine le business
-            réellement fait pour toi — avant de le construire.
+            Un business ne tient pas sur une compétence isolée. On construit
+            l&apos;ensemble : les fondations, la création, la vente, les
+            systèmes et le pilotage — chaque pièce alimentant les autres.
           </p>
           <div className="hero-actions">
             <Magnetic>
@@ -131,7 +131,7 @@ export default function Hero() {
             </Magnetic>
             <Magnetic strength={0.22}>
               <a href="#offre" className="btn btn-outline-light">
-                Voir le programme
+                Voir l&apos;écosystème
               </a>
             </Magnetic>
           </div>

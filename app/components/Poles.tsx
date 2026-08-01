@@ -137,18 +137,21 @@ export default function Poles() {
       <div
         className="orbite"
         role="tablist"
-        aria-label="Les cinq pôles"
+        aria-label="Les cinq pôles de l'écosystème"
         onKeyDown={auClavier}
       >
         <span className="orbite-halo" aria-hidden="true" />
         <svg className="orbite-anneau" viewBox="0 0 400 400" aria-hidden="true">
           <circle className="orbite-piste" cx="200" cy="200" r="150" />
+          {/* Les pôles ne sont pas cinq sujets côte à côte : chacun tient les
+              autres. Le maillage le dit sans un mot. */}
+          <path className="orbite-maillage" d="M200.0 50.0 L288.17 321.35 L57.34 153.65 L342.66 153.65 L111.83 321.35 L200.0 50.0 Z" />
           <circle className="orbite-trace" cx="200" cy="200" r="150" />
         </svg>
 
         <span className="orbite-noyau" aria-hidden="true">
           <span className="orbite-noyau-valeur">360°</span>
-          <span className="orbite-noyau-texte">d&apos;accompagnement</span>
+          <span className="orbite-noyau-texte">ton écosystème</span>
         </span>
 
         {POLES.map((p, i) => (

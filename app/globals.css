@@ -1543,6 +1543,16 @@ cliquable ---------- */
   stroke: rgba(255, 255, 255, 0.08);
 }
 
+/* Le maillage : chaque pôle relié à ceux qui ne lui sont pas voisins. Très
+   discret — il doit se deviner, pas se lire avant les libellés. */
+.orbite-maillage {
+  fill: none;
+  stroke: color-mix(in srgb, var(--orange) 26%, transparent);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+  opacity: 0.55;
+}
+
 .orbite-trace {
   stroke: var(--orange);
   stroke-linecap: round;
@@ -1862,6 +1872,12 @@ cliquable ---------- */
   gap: 14px;
 }
 
+/* Les fils n'ont de sens que sur la couronne : dans le mur en grille, les
+   tuiles ne sont plus disposées en cercle autour de quoi que ce soit. */
+.comp-fils {
+  display: none;
+}
+
 /* Hors constellation, les deux enveloppes de placement radial n'existent pas
    pour la mise en page : la tuile redevient une case de la grille. Le bloc
    constellation, écrit plus bas dans la feuille, reprend la main quand il
@@ -2140,33 +2156,38 @@ cliquable ---------- */
     grid-area: 1 / 1;
   }
 
-  /* Plus large qu'ailleurs : les libellés des pôles s'écartent d'autant du
-     360°, qu'ils chevauchaient à 380 px. */
+  /* Plus large qu'ailleurs, pour que les libellés des pôles s'écartent du
+     360°. Tout ce qu'elle contient est dimensionné dans le même rapport : en
+     changeant sa taille, on ne change pas sa géométrie interne — seulement la
+     place qu'elle laisse aux fils de la couronne. */
   .orbite {
-    width: 55cqh;
+    width: 50cqh;
     z-index: 2;
   }
 
   .orbite-pastille {
-    width: 2.92cqh;
-    height: 2.92cqh;
-    font-size: 1.23cqh;
+    width: 2.65cqh;
+    height: 2.65cqh;
+    font-size: 1.12cqh;
   }
 
   .orbite-noyau-valeur {
-    font-size: 5.67cqh;
+    font-size: 5.15cqh;
   }
 
+  /* Comme pour les noms de compétences : la taille suit l'échelle de la
+     scène, mais ne descend jamais sous un seuil lisible. À 6 px, ces libellés
+     n'étaient plus que des traits gris. */
   .orbite-noyau-texte {
-    font-size: 1.17cqh;
+    font-size: clamp(0.58rem, 1.06cqh, 0.75rem);
   }
 
   .orbite-nom {
-    font-size: 1.17cqh;
+    font-size: clamp(0.62rem, 1.06cqh, 0.8rem);
   }
 
   .orbite-compte {
-    font-size: 1.04cqh;
+    font-size: clamp(0.55rem, 0.95cqh, 0.7rem);
   }
 
   .piliers-panneaux {
@@ -2203,6 +2224,49 @@ cliquable ---------- */
     gap: 0;
   }
 
+  /* Les fils occupent toute la scène et passent sous les tuiles. */
+  .comp-fils {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .comp-fil {
+    stroke: color-mix(in srgb, var(--orange) 42%, transparent);
+    stroke-width: 1;
+    stroke-linecap: round;
+    /* La sève circule : chaque fil s'éclaire à son tour, lentement. Rien ne
+       se déplace — seule l'intensité varie, la géométrie reste figée. */
+    animation: seve 5.2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.42s);
+  }
+
+  @keyframes seve {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    45% {
+      opacity: 0.85;
+    }
+  }
+
+  /* Mouvement réduit : les fils restent, mais figés à mi-intensité. */
+  @media (prefers-reduced-motion: reduce) {
+    .comp-fil {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+
+  .comp-point:has(.competence[data-ouvert="true"]) {
+    z-index: 3;
+  }
+
   /* L'enveloppe se réduit à un point posé sur l'ellipse. Une rotation ne
      conviendrait pas ici : elle ne sait tracer qu'un cercle. */
   .comp-point {
@@ -2236,10 +2300,6 @@ cliquable ---------- */
     height: var(--noeud-ouvert-h);
     margin: calc(var(--noeud-ouvert-h) / -2) 0 0
       calc(var(--noeud-ouvert-l) / -2);
-  }
-
-  .comp-point:has(.competence[data-ouvert="true"]) {
-    z-index: 3;
   }
 
   .comp-face {

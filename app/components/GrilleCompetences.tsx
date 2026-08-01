@@ -13,6 +13,14 @@ import type { Competence } from "../lib/programme";
 const VITESSE = 1.8;
 const t = (secondes: number) => secondes / VITESSE;
 
+/** Écarts laissés par le fil, de part et d'autre, en pixels. Serrés : sur les
+ *  rayons du haut et du bas, la couronne passe au plus près de l'orbite et il
+ *  ne reste qu'une quinzaine de pixels à tenir. */
+const ECART_ORBITE = 13;
+const ECART_TUILE = 10;
+/** En deçà, le fil n'est plus qu'un point : mieux vaut ne pas le tracer. */
+const LONGUEUR_MINI = 6;
+
 /**
  * Le mur de compétences d'un pilier.
  *
@@ -38,6 +46,7 @@ export default function GrilleCompetences({
 }) {
   const [ouvert, setOuvert] = useState<number | null>(null);
   const zone = useRef<HTMLDivElement>(null);
+  const fils = useRef<SVGSVGElement>(null);
 
   // On repart d'un mur fermé quand on quitte le pilier
   useEffect(() => {
@@ -127,8 +136,90 @@ export default function GrilleCompetences({
     };
   }, [actif, cle]);
 
+  /**
+   * Les fils qui relient le centre à chaque compétence.
+   *
+   * Ils sont posés d'après la géométrie réellement mesurée, pas d'après des
+   * proportions écrites à l'avance : la couronne est une ellipse et l'orbite un
+   * cercle, si bien qu'une même fraction du rayon dégage l'orbite sur les côtés
+   * mais la traverse en haut et en bas. On lit donc la position de l'orbite et
+   * de chaque tuile, et on tend le fil entre les deux.
+   */
+  useEffect(() => {
+    const grille = zone.current;
+    const svg = fils.current;
+    if (!grille || !svg || !actif) return;
+
+    const tracer = () => {
+      // Hors constellation, le mur est une grille : les fils n'ont pas de sens
+      // et la feuille de style les masque déjà.
+      if (getComputedStyle(svg).display === "none") return;
+
+      const cadre = grille.getBoundingClientRect();
+      const orbite = grille
+        .closest(".piliers-vue")
+        ?.querySelector(".orbite")
+        ?.getBoundingClientRect();
+      if (!cadre.width || !orbite) return;
+
+      svg.setAttribute("viewBox", `0 0 ${cadre.width} ${cadre.height}`);
+      const cx = cadre.width / 2;
+      const cy = cadre.height / 2;
+      const rOrbite = orbite.width / 2;
+
+      const tuiles = grille.querySelectorAll<HTMLElement>(".competence");
+      svg.querySelectorAll<SVGLineElement>(".comp-fil").forEach((fil, i) => {
+        const t = tuiles[i]?.getBoundingClientRect();
+        if (!t) return;
+        const dx = t.left + t.width / 2 - cadre.left - cx;
+        const dy = t.top + t.height / 2 - cadre.top - cy;
+        const distance = Math.hypot(dx, dy);
+        if (!distance) return;
+        const ux = dx / distance;
+        const uy = dy / distance;
+
+        // Où le rayon entre dans la tuile : intersection avec son rectangle.
+        const versBord = Math.min(
+          Math.abs(ux) > 1e-3 ? t.width / 2 / Math.abs(ux) : Infinity,
+          Math.abs(uy) > 1e-3 ? t.height / 2 / Math.abs(uy) : Infinity
+        );
+
+        const depart = rOrbite + ECART_ORBITE;
+        const arrivee = distance - versBord - ECART_TUILE;
+        // Trop à l'étroit pour un fil lisible : on l'efface plutôt que de
+        // laisser un trait qui mord sur l'orbite ou sur la tuile.
+        const visible = arrivee - depart > LONGUEUR_MINI;
+        fil.style.display = visible ? "" : "none";
+        if (!visible) return;
+
+        fil.setAttribute("x1", String(cx + ux * depart));
+        fil.setAttribute("y1", String(cy + uy * depart));
+        fil.setAttribute("x2", String(cx + ux * arrivee));
+        fil.setAttribute("y2", String(cy + uy * arrivee));
+      });
+    };
+
+    tracer();
+    const observateur = new ResizeObserver(tracer);
+    observateur.observe(grille);
+    return () => observateur.disconnect();
+  }, [actif, competences.length]);
+
   return (
     <div className="comp-grille" ref={zone}>
+      {/* Les fils qui relient le centre à chaque compétence. Leurs
+          coordonnées sont posées à la mesure (voir l'effet plus haut) : le
+          repère est celui de la scène, en pixels, donc sans déformation. */}
+      <svg className="comp-fils" ref={fils} aria-hidden="true">
+        {competences.map((c, i) => (
+          <line
+            key={c.titre}
+            className="comp-fil"
+            style={{ "--i": i } as CSSProperties}
+          />
+        ))}
+      </svg>
+
       {competences.map((c, i) => (
         // En grand écran, ces deux enveloppes posent la tuile sur la couronne
         // autour du 360° : la première pivote de son angle, la seconde la

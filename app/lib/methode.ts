@@ -1,10 +1,10 @@
 /**
- * Le thème global du coaching : bâtir le business qui correspond vraiment à
- * la personne accompagnée. Source unique partagée par l'intro (un mot = une
- * vague du logo), l'accueil et la page programme.
+ * Le thème global du coaching : bâtir, autour de la personne accompagnée, un
+ * écosystème dont chaque pièce fait tourner les autres. Source unique partagée
+ * par l'intro (un mot = une vague du logo) et les chapitres de l'accueil.
  */
 
-export const PROMESSE = "Bâtir le business qui te correspond vraiment.";
+export const PROMESSE = "Bâtir l'écosystème qui fait tourner ton business.";
 
 export type Etape = {
   cle: string;
@@ -15,7 +15,7 @@ export type Etape = {
   titre: string;
   /** Une ligne, pour l'accueil */
   court: string;
-  /** Le détail, pour la page programme */
+  /** Le détail, en version longue */
   texte: string;
 };
 
