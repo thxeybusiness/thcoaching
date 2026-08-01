@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import IconeCompetence from "./IconeCompetence";
@@ -125,33 +125,46 @@ export default function GrilleCompetences({
   return (
     <div className="comp-grille" ref={zone}>
       {competences.map((c, i) => (
-        <button
+        // En grand écran, ces deux enveloppes posent la tuile sur la couronne
+        // autour du 360° : la première pivote de son angle, la seconde la
+        // redresse. En dessous elles sont en « display: contents » et la tuile
+        // redevient une simple case de grille.
+        <span
           key={c.titre}
-          type="button"
-          className="competence"
-          data-ouvert={ouvert === i}
-          aria-expanded={ouvert === i}
-          aria-controls={`${cle}-${i}-detail`}
-          onClick={() => setOuvert(ouvert === i ? null : i)}
+          className="comp-point"
+          style={
+            { "--a": `${(i * 360) / competences.length}deg` } as CSSProperties
+          }
         >
-          <span className="comp-index" aria-hidden="true">
-            {num}.{i + 1}
-          </span>
+          <span className="comp-redresse">
+            <button
+              type="button"
+              className="competence"
+              data-ouvert={ouvert === i}
+              aria-expanded={ouvert === i}
+              aria-controls={`${cle}-${i}-detail`}
+              onClick={() => setOuvert(ouvert === i ? null : i)}
+            >
+              <span className="comp-index" aria-hidden="true">
+                {num}.{i + 1}
+              </span>
 
-          <span className="comp-face">
-            <IconeCompetence nom={c.icone} />
-            <span className="comp-nom">{c.titre}</span>
-          </span>
+              <span className="comp-face">
+                <IconeCompetence nom={c.icone} />
+                <span className="comp-nom">{c.titre}</span>
+              </span>
 
-          <span className="comp-dos" id={`${cle}-${i}-detail`}>
-            {c.texte}
-          </span>
+              <span className="comp-dos" id={`${cle}-${i}-detail`}>
+                {c.texte}
+              </span>
 
-          <span className="comp-signe" aria-hidden="true">
-            <i />
-            <i />
+              <span className="comp-signe" aria-hidden="true">
+                <i />
+                <i />
+              </span>
+            </button>
           </span>
-        </button>
+        </span>
       ))}
     </div>
   );

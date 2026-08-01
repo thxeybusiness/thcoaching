@@ -21,7 +21,12 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg);
-  overflow-x: hidden;
+  /* « clip » et non « hidden » : les deux empêchent le débordement latéral,
+     mais « hidden » fait du document un conteneur de défilement. Le corps en
+     devenait un second, et « scrollIntoView » répartissait alors le défilement
+     entre les deux : le contenu se déplaçait sans que la fenêtre défile
+     d'autant, et les révélations au défilement rataient leur déclenchement. */
+  overflow-x: clip;
   /* Un balayage horizontal au pavé tactile déclenchait la navigation
      « page précédente » du navigateur et faisait quitter le site. */
   overscroll-behavior: none;
@@ -35,7 +40,7 @@ body {
   background: var(--bg);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {
@@ -1763,7 +1768,12 @@ main {
 .pg {
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  /* « clip » et non « hidden » : les deux rognent les lueurs et le 360°
+     fantôme qui débordent sur les côtés, mais « hidden » ferait de ce bloc un
+     conteneur de défilement. Une ancre interne y ferait alors défiler le bloc
+     lui-même plutôt que la page — le contenu se déplace sans que la fenêtre
+     défile, et les révélations au défilement ne sont jamais déclenchées. */
+  overflow-x: clip;
 }
 
 /* Barre de lecture */
@@ -1931,21 +1941,14 @@ main {
   padding-bottom: 68px;
 }
 
-/* Au-delà de 1140 px, l'orbite et le mur tiennent côte à côte : on choisit
-   un pilier et son contenu s'échange à côté, sans faire défiler. */
+/* En dessous de 1180 px : l'orbite, puis l'en-tête du pôle, puis son mur de
+   compétences, empilés. Au-dessus, tout se réorganise en constellation (voir
+   plus bas). */
 .piliers-vue {
   display: grid;
   gap: 34px;
   align-items: start;
   margin-top: 26px;
-}
-
-@media (min-width: 1140px) {
-  .piliers-vue {
-    grid-template-columns: 420px minmax(0, 1fr);
-    gap: 46px;
-    align-items: start;
-  }
 }
 
 .orbite {
@@ -2597,6 +2600,18 @@ main {
   gap: 14px;
 }
 
+/* Hors constellation, les deux enveloppes de placement radial n'existent pas
+   pour la mise en page : la tuile redevient une case de la grille.
+   Bornée à l'intervalle complémentaire de la constellation : sans cela, cette
+   règle — écrite plus bas dans la feuille, à spécificité égale — l'emporterait
+   sur elle. */
+@media (max-width: 1179.98px) {
+  .comp-point,
+  .comp-redresse {
+    display: contents;
+  }
+}
+
 .competence {
   position: relative;
   aspect-ratio: 0.92;
@@ -2812,6 +2827,169 @@ main {
 
 .orbite-contenu[data-actif="true"] .orbite-compte {
   color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Constellation : le 360° au centre, les compétences autour ----------
+
+   Au-delà de 1180 px, le pôle sélectionné n'est plus un mur posé à côté de
+   l'orbite : ses compétences forment une couronne autour du 360°, sur un rayon
+   fixe. Deux conséquences heureuses — la scène est un carré de taille
+   constante, donc changer de pôle ne déplace rigoureusement rien, et un pôle
+   de trois compétences occupe le même espace qu'un pôle de onze, simplement
+   plus aéré. */
+@media (min-width: 1180px) {
+  .piliers-vue {
+    /* Côté de la scène. Le conteneur plafonne à 1112 px de contenu : 960 px
+       laissent une respiration de chaque côté. */
+    --scene: 960px;
+    /* Rayon de la couronne : 40 % du côté, soit 384 px. */
+    --couronne: 10%;
+    --noeud-l: 158px;
+    --noeud-h: 176px;
+    --noeud-ouvert-l: 232px;
+    --noeud-ouvert-h: 248px;
+
+    /* L'orbite et la couronne partagent la même case de grille : elles ont
+       donc forcément le même centre, sans calcul d'aucune sorte. */
+    justify-items: center;
+    align-items: center;
+    gap: 0;
+    /* Place pour l'en-tête du pôle, posée au-dessus de la scène, et pour la
+       tuile du haut quand elle s'ouvre et déborde du carré. */
+    margin-top: 150px;
+  }
+
+  .piliers-vue > * {
+    grid-area: 1 / 1;
+  }
+
+  /* Plus large qu'ailleurs : les libellés des pôles s'écartent d'autant du
+     360°, qu'ils chevauchaient à 380 px. */
+  .orbite {
+    width: 460px;
+    z-index: 2;
+  }
+
+  .orbite-noyau-valeur {
+    font-size: 3.4rem;
+  }
+
+  .piliers-panneaux {
+    width: var(--scene);
+    height: var(--scene);
+  }
+
+  /* Tous les panneaux se superposent sur la scène — y compris l'actif : la
+     hauteur ne vient plus du contenu mais du carré, elle ne bouge jamais. */
+  .pilier-panneau,
+  .pilier-panneau[data-actif="true"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* L'en-tête du pôle se pose juste au-dessus de la scène, centrée. */
+  .pilier-tete {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 52px);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 100%;
+    margin-bottom: 0;
+    align-items: center;
+    text-align: left;
+  }
+
+  .comp-grille {
+    position: absolute;
+    inset: 0;
+    display: block;
+    gap: 0;
+  }
+
+  /* Même principe que les repères de l'orbite : l'enveloppe occupe tout le
+     carré et pivote, l'ancre tombe donc pile sur la couronne quelle que soit
+     la taille ; la seconde enveloppe redresse la tuile. */
+  .comp-point {
+    display: block;
+    position: absolute;
+    inset: 0;
+    transform: rotate(var(--a));
+    pointer-events: none;
+  }
+
+  .comp-redresse {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: var(--couronne);
+    width: 0;
+    height: 0;
+    transform: rotate(calc(-1 * var(--a)));
+    pointer-events: auto;
+  }
+
+  /* La tuile est centrée par ses marges négatives, jamais par un transform :
+     l'animation d'entrée en pilote un, et les deux se contrarieraient. */
+  .competence {
+    position: absolute;
+    left: 0;
+    top: 0;
+    aspect-ratio: auto;
+    width: var(--noeud-l);
+    height: var(--noeud-h);
+    margin: calc(var(--noeud-h) / -2) 0 0 calc(var(--noeud-l) / -2);
+    border-radius: 22px;
+    transition: width 0.34s ease, height 0.34s ease, margin 0.34s ease,
+      border-color 0.32s ease, transform 0.32s ease, box-shadow 0.32s ease;
+  }
+
+  /* Ouverte, la tuile grandit autour de son propre centre : elle ne quitte
+     pas la couronne, elle s'y épaissit. */
+  .competence[data-ouvert="true"] {
+    width: var(--noeud-ouvert-l);
+    height: var(--noeud-ouvert-h);
+    margin: calc(var(--noeud-ouvert-h) / -2) 0 0
+      calc(var(--noeud-ouvert-l) / -2);
+  }
+
+  .comp-point:has(.competence[data-ouvert="true"]) {
+    z-index: 3;
+  }
+
+  .comp-face {
+    padding: 26px 12px 16px;
+  }
+
+  .comp-nom {
+    font-size: 0.86rem;
+  }
+
+  .comp-index {
+    top: 13px;
+    left: 14px;
+    font-size: 0.6rem;
+  }
+
+  .comp-dos {
+    padding: 42px 20px 22px;
+    font-size: 0.82rem;
+    line-height: 1.46;
+  }
+}
+
+@media (min-width: 1180px) and (hover: hover) {
+  .competence:hover {
+    width: var(--noeud-ouvert-l);
+    height: var(--noeud-ouvert-h);
+    margin: calc(var(--noeud-ouvert-h) / -2) 0 0
+      calc(var(--noeud-ouvert-l) / -2);
+    transform: none;
+  }
+
+  .comp-point:has(.competence:hover) {
+    z-index: 3;
+  }
 }
 
 @media (max-width: 860px) {
