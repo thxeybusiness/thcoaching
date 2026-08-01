@@ -2601,15 +2601,12 @@ main {
 }
 
 /* Hors constellation, les deux enveloppes de placement radial n'existent pas
-   pour la mise en page : la tuile redevient une case de la grille.
-   Bornée à l'intervalle complémentaire de la constellation : sans cela, cette
-   règle — écrite plus bas dans la feuille, à spécificité égale — l'emporterait
-   sur elle. */
-@media (max-width: 1179.98px) {
-  .comp-point,
-  .comp-redresse {
-    display: contents;
-  }
+   pour la mise en page : la tuile redevient une case de la grille. Le bloc
+   constellation, écrit plus bas dans la feuille, reprend la main quand il
+   s'applique. */
+.comp-point,
+.comp-redresse {
+  display: contents;
 }
 
 .competence {
@@ -2832,22 +2829,40 @@ main {
 /* ---------- Constellation : le 360° au centre, les compétences autour ----------
 
    Au-delà de 1180 px, le pôle sélectionné n'est plus un mur posé à côté de
-   l'orbite : ses compétences forment une couronne autour du 360°, sur un rayon
-   fixe. Deux conséquences heureuses — la scène est un carré de taille
-   constante, donc changer de pôle ne déplace rigoureusement rien, et un pôle
-   de trois compétences occupe le même espace qu'un pôle de onze, simplement
-   plus aéré. */
-@media (min-width: 1180px) {
+   l'orbite : ses compétences forment une couronne autour du 360°.
+
+   La scène est un carré dont le côté est plafonné par la largeur du conteneur
+   ET par la hauteur de la fenêtre : la constellation tient donc toujours d'un
+   seul coup d'œil, sans avoir à faire défiler. Tout ce qu'elle contient —
+   orbite, tuiles, textes — est exprimé en « cqh », soit un centième de ce
+   côté : la scène se réduit d'un bloc, sans jamais se déformer.
+
+   Deux conséquences heureuses : à hauteur de fenêtre donnée le côté ne change
+   plus, donc changer de pôle ne déplace rigoureusement rien, et un pôle de
+   trois compétences occupe le même espace qu'un pôle de onze, simplement plus
+   aéré. */
+@media (min-width: 1180px) and (min-height: 820px) {
   .piliers-vue {
-    /* Côté de la scène. Le conteneur plafonne à 1112 px de contenu : 960 px
-       laissent une respiration de chaque côté. */
-    --scene: 960px;
-    /* Rayon de la couronne : 40 % du côté, soit 384 px. */
-    --couronne: 10%;
-    --noeud-l: 158px;
-    --noeud-h: 176px;
-    --noeud-ouvert-l: 232px;
-    --noeud-ouvert-h: 248px;
+    /* Côté de la scène. 224 px sont réservés autour : l'en-tête du site,
+       celle du pôle, l'espace qui les sépare, et de quoi laisser une tuile du
+       bas s'ouvrir sans sortir de la fenêtre. */
+    height: min(960px, 1112px, calc(100dvh - 224px));
+    container-type: size;
+
+    /* Rayons de la couronne, en pourcentage de la scène : le premier se
+       résout sur sa largeur, le second sur sa hauteur. La couronne est donc
+       une ellipse, aussi large que le conteneur le permet et aussi haute que
+       la fenêtre le permet — c'est ce qui laisse aux tuiles leur largeur. */
+    --rayon-l: 40%;
+    --rayon-h: 40%;
+    --noeud-l: 22cqh;
+    --noeud-h: 18.3cqh;
+    /* La tuile ouverte ne descend pas sous une taille où sa description
+       deviendrait illisible, même si la scène, elle, se réduit. Elle grandit
+       surtout en largeur : c'est la hauteur qui manque, et une tuile du bas
+       qui s'épaissit sortirait de la fenêtre. */
+    --noeud-ouvert-l: max(240px, 27cqh);
+    --noeud-ouvert-h: max(196px, 21cqh);
 
     /* L'orbite et la couronne partagent la même case de grille : elles ont
        donc forcément le même centre, sans calcul d'aucune sorte. */
@@ -2856,7 +2871,7 @@ main {
     gap: 0;
     /* Place pour l'en-tête du pôle, posée au-dessus de la scène, et pour la
        tuile du haut quand elle s'ouvre et déborde du carré. */
-    margin-top: 150px;
+    margin-top: clamp(104px, 16vh, 150px);
   }
 
   .piliers-vue > * {
@@ -2866,17 +2881,36 @@ main {
   /* Plus large qu'ailleurs : les libellés des pôles s'écartent d'autant du
      360°, qu'ils chevauchaient à 380 px. */
   .orbite {
-    width: 460px;
+    width: 55cqh;
     z-index: 2;
   }
 
+  .orbite-pastille {
+    width: 2.92cqh;
+    height: 2.92cqh;
+    font-size: 1.23cqh;
+  }
+
   .orbite-noyau-valeur {
-    font-size: 3.4rem;
+    font-size: 5.67cqh;
+  }
+
+  .orbite-noyau-texte {
+    font-size: 1.17cqh;
+  }
+
+  .orbite-nom {
+    font-size: 1.17cqh;
+  }
+
+  .orbite-compte {
+    font-size: 1.04cqh;
   }
 
   .piliers-panneaux {
-    width: var(--scene);
-    height: var(--scene);
+    justify-self: stretch;
+    width: 100%;
+    height: 100cqh;
   }
 
   /* Tous les panneaux se superposent sur la scène — y compris l'actif : la
@@ -2891,7 +2925,7 @@ main {
   .pilier-tete {
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 52px);
+    bottom: calc(100% + clamp(22px, 5vh, 52px));
     transform: translateX(-50%);
     width: max-content;
     max-width: 100%;
@@ -2907,26 +2941,15 @@ main {
     gap: 0;
   }
 
-  /* Même principe que les repères de l'orbite : l'enveloppe occupe tout le
-     carré et pivote, l'ancre tombe donc pile sur la couronne quelle que soit
-     la taille ; la seconde enveloppe redresse la tuile. */
+  /* L'enveloppe se réduit à un point posé sur l'ellipse. Une rotation ne
+     conviendrait pas ici : elle ne sait tracer qu'un cercle. */
   .comp-point {
     display: block;
     position: absolute;
-    inset: 0;
-    transform: rotate(var(--a));
-    pointer-events: none;
-  }
-
-  .comp-redresse {
-    display: block;
-    position: absolute;
-    left: 50%;
-    top: var(--couronne);
+    left: calc(50% + var(--rayon-l) * sin(var(--a)));
+    top: calc(50% - var(--rayon-h) * cos(var(--a)));
     width: 0;
     height: 0;
-    transform: rotate(calc(-1 * var(--a)));
-    pointer-events: auto;
   }
 
   /* La tuile est centrée par ses marges négatives, jamais par un transform :
@@ -2939,7 +2962,7 @@ main {
     width: var(--noeud-l);
     height: var(--noeud-h);
     margin: calc(var(--noeud-h) / -2) 0 0 calc(var(--noeud-l) / -2);
-    border-radius: 22px;
+    border-radius: 2.3cqh;
     transition: width 0.34s ease, height 0.34s ease, margin 0.34s ease,
       border-color 0.32s ease, transform 0.32s ease, box-shadow 0.32s ease;
   }
@@ -2958,27 +2981,45 @@ main {
   }
 
   .comp-face {
-    padding: 26px 12px 16px;
+    padding: 2.7cqh 1.3cqh 1.7cqh;
   }
 
+  /* Le pictogramme laisse plus de place au nom que dans le mur en grille :
+     une tuile de couronne est deux fois plus petite. Il est borné par la
+     hauteur de la scène et non par la largeur de la tuile, qui est la
+     dimension la plus généreuse des deux. */
+  .comp-face .comp-icone {
+    width: min(50%, 8.6cqh);
+  }
+
+  /* Les textes suivent l'échelle de la scène, mais jamais en dessous d'une
+     taille lisible : sous ce plancher c'est la tuile qui s'élargit. */
   .comp-nom {
-    font-size: 0.86rem;
+    font-size: clamp(0.69rem, 1.5cqh, 0.95rem);
+    line-height: 1.2;
   }
 
   .comp-index {
-    top: 13px;
-    left: 14px;
-    font-size: 0.6rem;
+    top: 1.4cqh;
+    left: 1.5cqh;
+    font-size: 1.05cqh;
   }
 
   .comp-dos {
-    padding: 42px 20px 22px;
-    font-size: 0.82rem;
-    line-height: 1.46;
+    padding: 4.4cqh 2.1cqh 2.3cqh;
+    font-size: clamp(0.77rem, 1.42cqh, 0.9rem);
+    line-height: 1.42;
+  }
+
+  .comp-signe {
+    top: 1.5cqh;
+    right: 1.5cqh;
+    width: 1.55cqh;
+    height: 1.55cqh;
   }
 }
 
-@media (min-width: 1180px) and (hover: hover) {
+@media (min-width: 1180px) and (min-height: 820px) and (hover: hover) {
   .competence:hover {
     width: var(--noeud-ouvert-l);
     height: var(--noeud-ouvert-h);
