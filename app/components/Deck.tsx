@@ -210,11 +210,21 @@ export default function Deck({
       const silenceDepuis = instant - dernierEvenement;
       dernierEvenement = instant;
 
+      /* Un geste horizontal ne veut dire qu'une chose : changer de chapitre.
+         Il ne fait jamais défiler le contenu, et n'a donc rien à voir avec le
+         verrou de butée, qui ne concerne que l'axe du défilement. Sans cette
+         réserve, arrivé en bas d'un chapitre, balayer vers la droite ne faisait
+         plus rien. */
+      const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
       // Si le contenu de l'écran déborde, il défile en premier
       const inner = (e.target as HTMLElement)?.closest?.(
         ".slide-inner"
       ) as HTMLElement | null;
-      if (inner && inner.scrollHeight > inner.clientHeight + 1) {
+      if (horizontal) {
+        verrouParDefilement = false;
+        sortieDeButee = false;
+      } else if (inner && inner.scrollHeight > inner.clientHeight + 1) {
         const enHaut = inner.scrollTop <= 0;
         const enBas =
           inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 1;
