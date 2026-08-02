@@ -2683,9 +2683,9 @@ cliquable ---------- */
   width: min(100%, 62dvh);
   aspect-ratio: 1;
   margin-inline: auto;
-  /* Posé un cran plus bas que le centre de la rangée : la carte du haut
-     frôlait l'en-tête, alors que le bas de la scène avait de la marge. */
-  transform: translateY(4%);
+  /* Posée plus bas que le centre de la rangée : centrée, la carte du haut
+     frôlait l'en-tête alors que le bas de la scène avait de la marge. */
+  transform: translateY(5.5%);
   /* Les libellés se dimensionnent sur le carré, pas sur la fenêtre */
   container-type: size;
   /* Rayon de l'anneau, en part du carré : 150 sur 400 */
