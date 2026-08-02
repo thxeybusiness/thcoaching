@@ -23,7 +23,10 @@ type KF = { p: number; x: number; y: number; s: number; o: number };
  * texture de fond.
  */
 const KEYFRAMES: KF[] = [
-  { p: 0.0, x: 2.45, y: 0.15, s: 1.0, o: 1 },
+  /* Accueil : la droite de l'écran porte désormais l'écosystème dessiné — le
+     noyau et ses cinq appuis. Le logo se retire donc en bas à gauche, sous
+     l'accroche, où il n'est plus qu'une lueur d'ambiance. */
+  { p: 0.0, x: -3.5, y: -2.05, s: 0.7, o: 0.24 },
   { p: 0.25, x: 2.7, y: 1.2, s: 0.7, o: 0.22 },
   // Chapitre « Programme » (p = 0,4) : le logo s'efface complètement. Sa
   // trajectoire le fait passer au centre de l'écran, donc au milieu de
