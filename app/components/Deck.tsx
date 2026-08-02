@@ -12,6 +12,10 @@ import { setDeckProgress } from "../lib/deck";
 
 export type SlideMeta = { id: string; label: string };
 
+/** Temps de voyage d'un chapitre à l'autre, en secondes. Les écrans qui
+ *  jouent une séquence à leur arrivée s'y accordent. */
+export const DUREE_VOYAGE = 0.72;
+
 /** useLayoutEffect côté client, useEffect au rendu serveur (évite l'avertissement). */
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -67,7 +71,7 @@ export default function Deck({
       animating.current = true;
       gsap.to(xRef, {
         current: target,
-        duration: instant || reduce ? 0 : 0.72,
+        duration: instant || reduce ? 0 : DUREE_VOYAGE,
         ease: "power2.inOut",
         onUpdate: () => {
           el.style.setProperty("--deck-x", String(xRef.current));

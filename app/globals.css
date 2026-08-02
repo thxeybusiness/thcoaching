@@ -2613,3 +2613,82 @@ cliquable ---------- */
     white-space: nowrap;
   }
 }
+
+/* ---------- Le premier écran, joué comme un plan de film ----------
+
+   Tous les éléments ajoutés ici sont décoratifs : ils n'existent que pour la
+   séquence. Le contenu, lui, reste visible sans JavaScript — aucune règle ne
+   le met à zéro. */
+
+/* La mention et son trait, qui se tire au début du plan */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-trait {
+  display: block;
+  width: 34px;
+  height: 2px;
+  flex: none;
+  background: var(--orange);
+  transform-origin: left center;
+}
+
+.hero-eyebrow-texte .mot-anim {
+  display: inline-block;
+}
+
+/* Le titre bascule en perspective : chaque caractère se relève du sol. La
+   perspective ne peut pas venir d'un parent — les lignes sont en
+   `overflow: hidden`, ce qui aplatit tout contexte 3D hérité —, elle est donc
+   posée sur le caractère lui-même par la séquence (`transformPerspective`). */
+.hero-line-inner .char {
+  transform-origin: 50% 100%;
+}
+
+/* Le balayage de lumière qui traverse l'écran au lancement */
+.hero-balayage {
+  position: absolute;
+  inset: -20% -40%;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: skewX(-14deg);
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    color-mix(in srgb, var(--orange) 13%, transparent) 50%,
+    transparent 58%
+  );
+}
+
+.hero-sub .mot-anim {
+  display: inline-block;
+}
+
+/* L'onde qui part du bouton principal une fois le plan terminé */
+.hero-cta {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-onde {
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 999px;
+  border: 2px solid var(--orange);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mouvement réduit : la séquence n'est pas jouée du tout (le composant sort
+   avant), et ces éléments décoratifs ne doivent alors rien montrer. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-balayage,
+  .hero-onde {
+    display: none;
+  }
+}
