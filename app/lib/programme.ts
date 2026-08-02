@@ -1,6 +1,11 @@
 /**
- * Le contenu du programme, source unique partagée par l'accueil et la page
- * détaillée. Cinq pôles, quarante-trois compétences.
+ * Le contenu du programme, source unique de l'accueil. Cinq pôles,
+ * quarante-trois compétences.
+ *
+ * Ces compétences ne sont pas la finalité de l'accompagnement : elles en sont
+ * le SOCLE. Une fois acquises, elles servent à monter n'importe quel projet —
+ * un business, une entreprise, une activité. Toute reformulation doit garder
+ * cet ordre : d'abord la base, ensuite ce qu'on en fait.
  */
 
 export type Competence = { titre: string; texte: string; icone: string };

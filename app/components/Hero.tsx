@@ -119,9 +119,9 @@ export default function Hero() {
             </span>
           </h1>
           <p className="hero-sub">
-            Tu n&apos;avances pas seul. Un coach, un programme complet, des
-            formations, des outils et un groupe d&apos;entrepreneurs : tout est
-            réuni autour de toi, du premier jour au projet debout.
+            D&apos;abord le socle : 43 compétences qui servent n&apos;importe
+            quel projet. Ton business se monte ensuite dessus — et tu n&apos;es
+            pas seul : coach, formations, outils et groupe d&apos;entrepreneurs.
           </p>
           <div className="hero-actions">
             <Magnetic>

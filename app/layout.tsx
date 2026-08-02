@@ -15,7 +15,7 @@ const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
 const SITE_TITLE = "TH Coaching — Tout un écosystème pour t'aider à bâtir ton business";
 const SITE_DESCRIPTION =
-  "Tu n'avances pas seul : un coach, un programme de cinq pôles et quarante-trois compétences, deux formations, des accès privés à des outils et un groupe d'entrepreneurs. Tout un écosystème réuni autour de toi pour bâtir ton business.";
+  "D'abord le socle : quarante-trois compétences réparties en cinq pôles, la base commune à n'importe quel projet. C'est dessus que se monte ensuite ton business, ton entreprise, ton activité — entouré d'un coach, de deux formations, d'accès privés à des outils et d'un groupe d'entrepreneurs.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thcoaching.business"),
@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   keywords: [
     "écosystème business",
+    "socle de compétences",
+    "créer son entreprise",
     "coaching business",
     "coach entrepreneur",
     "performance",
@@ -67,9 +69,9 @@ const JSON_LD = {
     "@type": "Offer",
     itemOffered: {
       "@type": "Service",
-      name: "Un écosystème complet autour de toi",
+      name: "Le socle de compétences, puis le projet qui se monte dessus",
       description:
-        "Un coach, un programme, des formations, des outils et un groupe d'entrepreneurs réunis autour de la personne accompagnée. Accompagnement en trois étapes — fondations (acquérir les bases indispensables à toute activité), perfectionnement (les affiner jusqu'au réflexe), étude et développement (identifier le business fait pour ton profil, puis le construire). Cinq pôles travaillés : fondations de soi (vision, mindset, confiance, stress, sommeil, alimentation, sport), créer et se démarquer (personal branding, storytelling, contenu, copywriting, graphisme, photo, vidéo, 3D), vente et revenus (offre, prospection, closing, négociation, gestion client, finances), systèmes et levier (IA, automatisation, process), organisation et croissance (projets, temps, décision, délégation, réseau, partenariats).",
+        "Les quarante-trois compétences travaillées ne sont pas une fin : c'est le socle commun à tout projet, sur lequel se construit ensuite un business, une entreprise ou une activité. Un coach, des formations, des outils et un groupe d'entrepreneurs entourent la personne accompagnée. Accompagnement en trois étapes — fondations (acquérir les bases indispensables à toute activité), perfectionnement (les affiner jusqu'au réflexe), étude et développement (identifier le business fait pour ton profil, puis le construire). Cinq pôles travaillés : fondations de soi (vision, mindset, confiance, stress, sommeil, alimentation, sport), créer et se démarquer (personal branding, storytelling, contenu, copywriting, graphisme, photo, vidéo, 3D), vente et revenus (offre, prospection, closing, négociation, gestion client, finances), systèmes et levier (IA, automatisation, process), organisation et croissance (projets, temps, décision, délégation, réseau, partenariats).",
     },
   },
 };

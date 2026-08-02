@@ -88,9 +88,8 @@ export default function Home() {
                 <span className="accent">en trois étapes.</span>
               </h2>
               <p className="section-intro" style={r(2)} data-r>
-                Tu es accompagné du début à la fin : on pose les bases, on les
-                rend automatiques, puis on construit le business qui te
-                ressemble.
+                On pose le socle, on le rend automatique, et c&apos;est dessus
+                qu&apos;on monte ton projet.
               </p>
 
               <ol className="deroule">
@@ -116,10 +115,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 — Ce qu'on travaille ensemble : le 360° et sa couronne de
-            compétences. Tout tourne autour de la personne accompagnée — c'est
-            elle, le centre. Le chapitre n'a plus de résumé cliquable renvoyant
-            ailleurs : le détail est ici. */}
+        {/* 3 — La base : le 360° et sa couronne de compétences. Ces
+            quarante-trois compétences ne sont pas la finalité, c'est le socle
+            commun — une fois acquis, il sert à monter n'importe quel projet.
+            Tout tourne autour de la personne accompagnée : c'est elle, le
+            centre. */}
         <section
           className="slide slide--programme"
           id="offre"
@@ -130,7 +130,7 @@ export default function Home() {
             <div className="container">
               <div className="programme-tete" style={r(0)} data-r>
                 <h2 className="section-label" id="offre-titre">
-                  Ce qu&apos;on travaille ensemble
+                  La base de tout projet
                 </h2>
                 <p className="programme-cles">
                   <strong>{POLES.length}</strong> pôles
