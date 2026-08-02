@@ -2685,87 +2685,129 @@ cliquable ---------- */
   margin-inline: auto;
   /* Les libellés se dimensionnent sur le carré, pas sur la fenêtre */
   container-type: size;
-  /* Rayon de l'anneau des appuis, en part du carré */
-  --rayon: 37%;
+  /* Rayon de l'anneau, en part du carré : 150 sur 400 */
+  --rayon: 37.5%;
 }
 
-/* Les deux anneaux, qui tournent lentement en sens contraire */
+/* Le halo tournant, exactement comme sur l'orbite du chapitre
+   « Programme » : un arc de dégradé conique, masqué en anneau. */
+.hero-halo {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 62%,
+    rgba(255, 90, 31, 0.28) 78%,
+    rgba(255, 140, 26, 0.05) 88%,
+    transparent 96%
+  );
+  /* L'anneau est à 37,5 % du carré, soit 60 % du rayon de ce dégradé
+     (boîte de 88 %, étendue au coin le plus éloigné) : l'arc tombe donc
+     exactement dessus. */
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 53%,
+    #000 58%,
+    #000 64%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    circle,
+    transparent 53%,
+    #000 58%,
+    #000 64%,
+    transparent 70%
+  );
+  animation: orbite-tour 26s linear infinite;
+  will-change: transform;
+}
+
+/* L'anneau et le maillage, dans le repère de 400 défini par le module
+   « ecosysteme » : mêmes épaisseurs et mêmes teintes que l'orbite. */
 .hero-anneau {
   position: absolute;
-  border-radius: 50%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
   pointer-events: none;
 }
 
-.hero-anneau--exterieur {
-  inset: 13%;
-  border: 1px dashed color-mix(in srgb, var(--orange) 42%, transparent);
+.hero-piste {
+  fill: none;
+  /* Un peu plus marqué que sur l'orbite du chapitre « Programme » : ici
+     l'anneau est deux fois plus grand, donc deux fois plus dilué. */
+  stroke: rgba(255, 255, 255, 0.17);
+  stroke-width: 1.2;
+  /* Le tour complet, pour que la séquence puisse le tracer */
+  stroke-dasharray: 943;
 }
 
-.hero-anneau--interieur {
-  inset: 27%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  /* Une lueur douce derrière le noyau, pour détacher la scène du fond.
-     Un dégradé radial, jamais un flou : Safari le rend mal et il coûte cher. */
-  background: radial-gradient(
-    circle at 50% 50%,
-    color-mix(in srgb, var(--orange) 11%, transparent),
-    transparent 72%
-  );
+.hero-maillage {
+  fill: none;
+  stroke: color-mix(in srgb, var(--orange) 38%, transparent);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1427;
+  opacity: 0.62;
 }
 
-/* L'onde qui part du noyau et traverse l'anneau */
-.hero-onde-eco {
-  position: absolute;
-  inset: 13%;
-  border-radius: 50%;
-  border: 1px solid var(--orange);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Un lien du centre vers chaque appui. Posé à l'horizontale puis tourné :
-   l'origine à gauche fait qu'il se tend du centre vers l'extérieur. */
-.hero-fil {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--rayon);
-  height: 1px;
-  transform-origin: 0 50%;
-  transform: rotate(var(--a));
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--orange) 48%, transparent),
-    color-mix(in srgb, var(--orange) 6%, transparent)
-  );
-  pointer-events: none;
-}
-
-/* Le noyau : la personne accompagnée. Tout part de là. */
+/* Le noyau : la personne accompagnée, au centre du maillage. Même
+   traitement que le « 360° » de l'orbite — chiffre en display, lueur
+   orange, légende en petites capitales espacées. */
 .hero-noyau {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 27%;
-  aspect-ratio: 1;
   transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--orange) 42%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  /* Un fond sombre interrompt le maillage derrière le texte : dégradé
+     radial, jamais de flou. */
+  padding: 6cqmin 7cqmin;
   background: radial-gradient(
-    circle at 50% 32%,
-    color-mix(in srgb, var(--orange) 30%, transparent),
-    rgba(10, 9, 8, 0.94) 72%
+    circle at 50% 50%,
+    rgba(10, 9, 8, 0.96) 42%,
+    rgba(10, 9, 8, 0.72) 62%,
+    transparent 76%
   );
 }
 
-.hero-noyau-texte {
+.hero-noyau-valeur {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(0.95rem, 3.4cqmin, 1.6rem);
-  letter-spacing: 0.02em;
+  font-size: clamp(1.9rem, 9cqmin, 3.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
   color: #fff;
+  text-shadow: 0 0 40px rgba(255, 90, 31, 0.55);
+}
+
+.hero-noyau-texte {
+  font-size: clamp(0.56rem, 1.9cqmin, 0.7rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* L'onde qui part du noyau */
+.hero-onde-eco {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34cqmin;
+  aspect-ratio: 1;
+  margin: -17cqmin 0 0 -17cqmin;
+  border-radius: 50%;
+  border: 1px solid var(--orange);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .hero-appuis {
@@ -2774,50 +2816,73 @@ cliquable ---------- */
   padding: 0;
 }
 
-/* Chaque appui est posé sur l'anneau par son angle. Le `translate` le
-   recentre sur le point calculé. */
+/* Chaque appui est posé sur l'anneau par son angle — rayon 150 dans un
+   carré de 400, soit 37,5 %. Le `translate` le recentre sur ce point. */
 .hero-appui {
   position: absolute;
   left: calc(50% + var(--rayon) * cos(var(--a)));
   top: calc(50% + var(--rayon) * sin(var(--a)));
-  width: 27%;
+  width: 25%;
   transform: translate(-50%, -50%);
 }
 
-.hero-appui-corps {
+/* La carte reprend la tuile de compétence : même rayon, même panneau, même
+   filet, même lueur qui monte du bas. */
+.hero-carte {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 3cqmin;
+  width: 100%;
+  aspect-ratio: 0.94;
+  padding: 4cqmin 2.5cqmin;
+  border-radius: clamp(12px, 4cqmin, 20px);
+  border: 1px solid var(--line);
+  /* Opaque, contrairement aux tuiles du chapitre « Programme » : ici le
+     maillage passe derrière les cartes et le traverserait autrement. */
+  background: linear-gradient(rgba(15, 13, 12, 0.93), rgba(15, 13, 12, 0.93)),
+    var(--panel);
+  overflow: hidden;
   text-align: center;
 }
 
-.hero-appui-pastille {
-  display: grid;
-  place-items: center;
-  width: clamp(44px, 56%, 74px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--orange) 34%, transparent);
+.hero-carte::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: radial-gradient(
-    circle at 50% 30%,
-    rgba(48, 33, 24, 0.96),
-    rgba(16, 13, 11, 0.96)
+    circle at 50% 118%,
+    color-mix(in srgb, var(--orange) 26%, transparent),
+    transparent 66%
   );
 }
 
-.hero-appui-pastille .comp-icone {
-  width: 52%;
-  height: auto;
+.hero-carte-index {
+  position: absolute;
+  top: 3.4cqmin;
+  left: 4cqmin;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(0.52rem, 1.7cqmin, 0.68rem);
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.26);
 }
 
-.hero-appui-nom {
-  font-size: clamp(0.7rem, 2.2cqmin, 0.92rem);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1.25;
-  color: rgba(255, 255, 255, 0.82);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+.hero-carte .comp-icone {
+  position: relative;
+  width: 42%;
+}
+
+.hero-carte-nom {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.68rem, 2.4cqmin, 0.95rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 /* Sous 1000 px il n'y a plus deux colonnes : l'anneau se déplie en une
@@ -2838,9 +2903,9 @@ cliquable ---------- */
     gap: 8px;
   }
 
+  .hero-halo,
   .hero-anneau,
   .hero-onde-eco,
-  .hero-fil,
   .hero-noyau {
     display: none;
   }
@@ -2855,29 +2920,33 @@ cliquable ---------- */
     transform: none;
   }
 
-  .hero-appui-corps {
+  /* La carte redevient une pastille en ligne : le pictogramme, le nom, et
+     rien d'autre. Le numéro n'a plus de sens hors de l'anneau. */
+  .hero-carte {
     flex-direction: row;
+    aspect-ratio: auto;
     gap: 8px;
-    padding: 7px 13px 7px 8px;
+    padding: 7px 14px 7px 9px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
   }
 
-  .hero-appui-pastille {
-    width: 26px;
-    border: 0;
-    background: none;
+  .hero-carte::before,
+  .hero-carte-index {
+    display: none;
   }
 
-  .hero-appui-nom {
-    font-size: 0.78rem;
+  .hero-carte .comp-icone {
+    width: 22px;
+  }
+
+  .hero-carte-nom {
+    font-size: 0.8rem;
     white-space: nowrap;
   }
 }
 
-/* Petit écran ET peu de hauteur : la rangée d'appuis se resserre, sinon les
-   trois lignes de pastilles poussent les boutons hors du chapitre. */
+/* Petit écran ET peu de hauteur : la rangée d'appuis se resserre, sinon ses
+   trois lignes poussent les boutons hors du chapitre. */
 @media (max-width: 1000px) and (max-height: 760px) {
   .hero-compo {
     gap: 12px;
@@ -2895,17 +2964,17 @@ cliquable ---------- */
     gap: 6px;
   }
 
-  .hero-appui-corps {
+  .hero-carte {
     gap: 6px;
-    padding: 5px 10px 5px 6px;
+    padding: 5px 11px 5px 7px;
   }
 
-  .hero-appui-pastille {
-    width: 20px;
+  .hero-carte .comp-icone {
+    width: 18px;
   }
 
-  .hero-appui-nom {
-    font-size: 0.72rem;
+  .hero-carte-nom {
+    font-size: 0.74rem;
   }
 }
 

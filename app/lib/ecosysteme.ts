@@ -17,3 +17,36 @@ export const APPUIS: Appui[] = [
   { icone: "acces", nom: "Outils & accès", angle: 126 },
   { icone: "groupe", nom: "Groupe privé", angle: 198 },
 ];
+
+/**
+ * La scène est dessinée dans un carré de 400, centre (200, 200), les cinq
+ * appuis posés sur un anneau de rayon 150 — le même repère que l'orbite du
+ * chapitre « Programme », pour que les deux se ressemblent.
+ */
+export const SCENE = 400;
+export const CENTRE = SCENE / 2;
+export const RAYON = 150;
+
+const point = (angle: number) => {
+  const r = (angle * Math.PI) / 180;
+  return [CENTRE + RAYON * Math.cos(r), CENTRE + RAYON * Math.sin(r)] as const;
+};
+
+/**
+ * Le maillage : une étoile à cinq branches qui relie chaque appui aux deux
+ * qui ne lui sont pas voisins. C'est la figure du chapitre « Programme »,
+ * reprise ici — un écosystème, c'est ce qui se tient entre les appuis, pas
+ * cinq rayons partant d'un centre.
+ */
+export const MAILLAGE = (() => {
+  const n = APPUIS.length;
+  const ordre = Array.from({ length: n + 1 }, (_, i) => (i * 2) % n);
+  return (
+    ordre
+      .map((i, k) => {
+        const [x, y] = point(APPUIS[i].angle);
+        return `${k === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`;
+      })
+      .join(" ") + " Z"
+  );
+})();

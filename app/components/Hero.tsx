@@ -6,7 +6,7 @@ import Magnetic from "./Magnetic";
 import IconeCompetence from "./IconeCompetence";
 import { DUREE_VOYAGE } from "./Deck";
 import { INTRO_FIN } from "../lib/intro";
-import { APPUIS } from "../lib/ecosysteme";
+import { APPUIS, CENTRE, MAILLAGE, RAYON, SCENE } from "../lib/ecosysteme";
 
 /**
  * Premier écran du deck, joué comme un plan de film.
@@ -32,6 +32,11 @@ const d = (secondes: number) => secondes / VITESSE;
  *  version éclairée — la vague de lumière fait l'aller-retour entre les deux. */
 const OMBRE = "0 2px 26px rgba(0, 0, 0, 0.85)";
 const OMBRE_LUMIERE = "0 0 18px rgba(255, 216, 176, 0.6)";
+
+/** Longueurs des deux tracés de la scène, pour les dessiner au lancement.
+ *  L'anneau est un cercle ; le maillage, cinq cordes d'angle 144°. */
+const TOUR = 2 * Math.PI * RAYON;
+const ETOILE = 5 * 2 * RAYON * Math.sin((144 * Math.PI) / 360);
 
 /** Découpe un texte en mots — et, si demandé, chaque mot en caractères. */
 function decouper(el: HTMLElement, enCaracteres: boolean) {
@@ -197,68 +202,64 @@ export default function Hero() {
 
         // ---- La moitié droite : l'écosystème se construit ----
 
-        // L'anneau s'ouvre
+        // L'anneau se trace, d'un seul tour
         tl.fromTo(
-          ".hero-anneau",
-          { scale: 0.72, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: d(1.3),
-            stagger: d(0.1),
-            ease: "power3.out",
-          },
-          d(0.5)
+          ".hero-piste",
+          { strokeDashoffset: TOUR },
+          { strokeDashoffset: 0, duration: d(1.5), ease: "power2.inOut" },
+          d(0.45)
         );
 
-        // Le noyau se pose au centre — c'est de lui que part tout le reste
+        // Le noyau se pose au centre
         tl.fromTo(
           ".hero-noyau",
-          { scale: 0.3, opacity: 0 },
+          { scale: 0.4, opacity: 0 },
           { scale: 1, opacity: 1, duration: d(0.9), ease: "back.out(1.7)" },
-          d(0.72)
-        );
-        tl.fromTo(
-          ".hero-noyau-texte",
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: d(0.6) },
-          d(1.0)
+          d(0.7)
         );
 
-        // Les liens se tendent du centre vers l'extérieur
-        tl.fromTo(
-          ".hero-fil",
-          { scaleX: 0, opacity: 0 },
-          {
-            scaleX: 1,
-            opacity: 1,
-            duration: d(0.75),
-            stagger: d(0.09),
-            ease: "power3.out",
-          },
-          d(1.0)
-        );
-
-        // Puis chaque appui apparaît au bout de son lien
+        // Puis chaque appui arrive à sa place sur l'anneau
         tl.fromTo(
           ".hero-appui",
-          { scale: 0.35, opacity: 0 },
+          { scale: 0.4, opacity: 0, y: 18 },
           {
             scale: 1,
             opacity: 1,
-            duration: d(0.85),
-            stagger: d(0.09),
-            ease: "back.out(1.8)",
+            y: 0,
+            duration: d(0.9),
+            stagger: d(0.1),
+            ease: "back.out(1.7)",
           },
-          d(1.22)
+          d(1.0)
         );
 
-        // Une onde part du noyau et traverse l'anneau
+        // Le maillage se tisse entre eux, une fois qu'ils sont tous là
+        tl.fromTo(
+          ".hero-maillage",
+          { strokeDashoffset: ETOILE, opacity: 0 },
+          {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: d(1.5),
+            ease: "power2.inOut",
+          },
+          d(1.5)
+        );
+
+        // Le halo tournant prend enfin le relais
+        tl.fromTo(
+          ".hero-halo",
+          { opacity: 0 },
+          { opacity: 1, duration: d(1.2), ease: "power2.out" },
+          d(1.7)
+        );
+
+        // Une onde part du noyau
         tl.fromTo(
           ".hero-onde-eco",
-          { scale: 0.34, opacity: 0.55 },
-          { scale: 1.06, opacity: 0, duration: d(1.5), ease: "power2.out" },
-          d(1.7)
+          { scale: 0.5, opacity: 0.6 },
+          { scale: 2.4, opacity: 0, duration: d(1.6), ease: "power2.out" },
+          d(1.85)
         );
 
         return tl;
@@ -270,43 +271,30 @@ export default function Hero() {
       /* Le plan une fois joué, l'écran continue de respirer. On lance ces
          boucles à part de la séquence, pour qu'elles survivent à ses rejeux. */
 
-      // L'anneau tourne, très lentement, dans les deux sens
-      gsap.to(".hero-anneau--exterieur", {
-        rotate: 360,
-        duration: 150,
-        repeat: -1,
-        ease: "none",
-      });
-      gsap.to(".hero-anneau--interieur", {
-        rotate: -360,
-        duration: 190,
-        repeat: -1,
-        ease: "none",
-      });
-
-      // Chaque appui flotte, décalé de son voisin
-      gsap.to(".hero-appui-corps", {
-        y: -7,
-        duration: 3.4,
+      /* Le halo tourne tout seul (animation CSS, comme sur l'orbite du
+         chapitre « Programme »). Restent les cartes, qui flottent en
+         décalé, et l'onde qui repart du noyau de temps à autre. */
+      gsap.to(".hero-carte", {
+        y: -8,
+        duration: 3.6,
         yoyo: true,
         repeat: -1,
         ease: "sine.inOut",
-        stagger: { each: 0.55, from: "start" },
-        delay: INTRO_FIN + 3,
+        stagger: { each: 0.6, from: "start" },
+        delay: INTRO_FIN + 3.4,
       });
 
-      // Et l'onde repart du noyau de temps à autre
       gsap.fromTo(
         ".hero-onde-eco",
-        { scale: 0.34, opacity: 0.5 },
+        { scale: 0.5, opacity: 0.45 },
         {
-          scale: 1.06,
+          scale: 2.4,
           opacity: 0,
-          duration: 2.4,
+          duration: 2.6,
           ease: "power2.out",
           repeat: -1,
-          repeatDelay: 3.6,
-          delay: INTRO_FIN + 5,
+          repeatDelay: 4.2,
+          delay: INTRO_FIN + 5.5,
         }
       );
 
@@ -379,44 +367,45 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* L'écosystème, dessiné. Le noyau, c'est la personne
-                accompagnée ; les cinq appuis sont ce qui l'entoure. */}
+            {/* L'écosystème, dessiné dans la langue du chapitre
+                « Programme » : un anneau, un maillage en étoile entre les
+                appuis, et des cartes. Au centre, la personne accompagnée. */}
             <div className="hero-eco">
-              <i
-                className="hero-anneau hero-anneau--exterieur"
-                aria-hidden="true"
-              />
-              <i
-                className="hero-anneau hero-anneau--interieur"
-                aria-hidden="true"
-              />
-              <i className="hero-onde-eco" aria-hidden="true" />
+              <span className="hero-halo" aria-hidden="true" />
 
-              {APPUIS.map((a) => (
-                <i
-                  key={`fil-${a.icone}`}
-                  className="hero-fil"
-                  aria-hidden="true"
-                  style={{ "--a": `${a.angle}deg` } as CSSProperties}
+              <svg
+                className="hero-anneau"
+                viewBox={`0 0 ${SCENE} ${SCENE}`}
+                aria-hidden="true"
+              >
+                <circle
+                  className="hero-piste"
+                  cx={CENTRE}
+                  cy={CENTRE}
+                  r={RAYON}
                 />
-              ))}
+                <path className="hero-maillage" d={MAILLAGE} />
+              </svg>
 
               <div className="hero-noyau">
-                <span className="hero-noyau-texte">Toi</span>
+                <span className="hero-onde-eco" aria-hidden="true" />
+                <strong className="hero-noyau-valeur">Toi</strong>
+                <span className="hero-noyau-texte">au centre</span>
               </div>
 
               <ul className="hero-appuis">
-                {APPUIS.map((a) => (
+                {APPUIS.map((a, i) => (
                   <li
                     key={a.icone}
                     className="hero-appui"
                     style={{ "--a": `${a.angle}deg` } as CSSProperties}
                   >
-                    <span className="hero-appui-corps">
-                      <span className="hero-appui-pastille">
-                        <IconeCompetence nom={a.icone} />
+                    <span className="hero-carte">
+                      <span className="hero-carte-index" aria-hidden="true">
+                        {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="hero-appui-nom">{a.nom}</span>
+                      <IconeCompetence nom={a.icone} />
+                      <strong className="hero-carte-nom">{a.nom}</strong>
                     </span>
                   </li>
                 ))}
