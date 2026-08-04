@@ -2991,3 +2991,13 @@ cliquable ---------- */
     display: none;
   }
 }
+
+/* Un repère qui n'est pas un chiffre. « Plusieurs » à l'échelle du compteur
+   déborderait de sa colonne : le mot se pose une échelle en dessous, et
+   garde la ligne de base des deux chiffres qui l'encadrent. La règle est
+   répétée sous le préfixe du deck pour reprendre la main sur les réglages
+   par hauteur d'écran, qui visent `.stat strong`. */
+.stat--mot strong,
+.deck[data-ready="true"] .stat--mot strong {
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 1.9rem);
+}

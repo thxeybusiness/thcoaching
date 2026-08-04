@@ -53,10 +53,22 @@ const ENTOURAGE = [
   ...bonuses,
 ];
 
-/** Les trois chiffres de la section « à propos », chacun avec son repère. */
-const CHIFFRES = [
+/**
+ * Les trois repères de la section « à propos ». Deux sont des chiffres, qui
+ * défilent à l'arrivée ; le troisième est un mot — le nombre de bonus n'est
+ * pas figé, on ne l'annonce donc pas comme un compte.
+ */
+type Repere = {
+  icone: string;
+  libelle: string;
+  valeur?: number;
+  suffixe?: string;
+  mot?: string;
+};
+
+const CHIFFRES: Repere[] = [
   { icone: "tour", valeur: 360, suffixe: "°", libelle: "d'accompagnement" },
-  { icone: "cadeau", valeur: bonuses.length, suffixe: "", libelle: "bonus inclus" },
+  { icone: "cadeau", mot: "Plusieurs", libelle: "bonus inclus" },
   { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences travaillées" },
 ];
 
@@ -212,10 +224,17 @@ export default function Home() {
               </div>
               <div className="stats">
                 {CHIFFRES.map((c, i) => (
-                  <div key={c.libelle} className="stat" style={r(4 + i)} data-r>
+                  <div
+                    key={c.libelle}
+                    className={c.mot ? "stat stat--mot" : "stat"}
+                    style={r(4 + i)}
+                    data-r
+                  >
                     <IconeCompetence nom={c.icone} />
                     <strong>
-                      <CountUp to={c.valeur} suffix={c.suffixe} />
+                      {c.mot ?? (
+                        <CountUp to={c.valeur ?? 0} suffix={c.suffixe} />
+                      )}
                     </strong>
                     <span>{c.libelle}</span>
                   </div>
