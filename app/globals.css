@@ -1654,8 +1654,9 @@ cliquable ---------- */
   cursor: pointer;
 }
 
-/* Repère numéroté, centré exactement sur l'anneau : les quatre piliers se
-   lisent comme un parcours, 1 en haut puis dans le sens des aiguilles.
+/* Repère numéroté, centré exactement sur l'anneau. Il porte le rang du pôle
+   dans le parcours, qui n'est pas sa place sur l'anneau : les numéros ne se
+   suivent donc pas dans le sens des aiguilles.
    Son fond opaque interrompt le trait de l'anneau, le chiffre reste net.
    On atténue les éléments un par un plutôt que le bouton entier : sinon le
    fond qui interrompt l'anneau derrière le libellé s'atténue avec eux. */

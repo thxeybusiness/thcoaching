@@ -180,8 +180,10 @@ export default function Poles() {
                 onFocus={() => choisir(i)}
                 onClick={() => choisir(i)}
               >
+                {/* Le rang dans le parcours, et non la place sur l'anneau :
+                    les deux ne coïncident pas. */}
                 <i className="orbite-pastille" aria-hidden="true">
-                  {i + 1}
+                  {Number(p.num)}
                 </i>
                 <span className="orbite-textes">
                   <span className="orbite-nom">{p.court}</span>

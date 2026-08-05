@@ -12,6 +12,12 @@ export type Competence = { titre: string; texte: string; icone: string };
 
 export type Pole = {
   cle: string;
+  /**
+   * Rang dans le parcours. Il ne suit pas l'ordre de la liste, qui est celui
+   * des pôles autour de l'orbite : la place sur l'anneau et le numéro sont
+   * deux informations distinctes, et les compétences portent ce numéro
+   * (« 03.7 »), pas le rang de leur pôle dans la liste.
+   */
   num: string;
   /** Nom complet, utilisé sur la page détaillée */
   titre: string;
@@ -24,9 +30,10 @@ export type Pole = {
   competences: Competence[];
 };
 
-const POLES_BRUTS: Omit<Pole, "num">[] = [
+export const POLES: Pole[] = [
   {
     cle: "fondations",
+    num: "01",
     titre: "Fondations de soi",
     court: "Fondations",
     role: "Prérequis",
@@ -101,7 +108,84 @@ const POLES_BRUTS: Omit<Pole, "num">[] = [
     ],
   },
   {
+    cle: "creer",
+    num: "03",
+    titre: "Créer & se démarquer",
+    court: "Créer",
+    role: "Cœur",
+    promesse: "Produire, et se rendre reconnaissable",
+    competences: [
+      {
+        titre: "Personal branding",
+        icone: "branding",
+        texte:
+          "Construire une identité claire : positionnement, valeurs, ton et promesse qu'on reconnaît d'un coup d'œil.",
+      },
+      {
+        titre: "Direction artistique",
+        icone: "da",
+        texte:
+          "Définir un univers visuel cohérent — couleurs, typographies, références — et s'y tenir sur tous les supports.",
+      },
+      {
+        titre: "Storytelling",
+        icone: "storytelling",
+        texte:
+          "Structurer un récit qui retient l'attention : tension, transformation, preuve, et une raison de rester jusqu'au bout.",
+      },
+      {
+        titre: "Création de contenu",
+        icone: "contenu",
+        texte:
+          "Stratégie éditoriale, storytelling, formats adaptés à chaque plateforme, régularité de publication.",
+      },
+      {
+        titre: "Copywriting",
+        icone: "copywriting",
+        texte:
+          "Écrire pour faire agir : accroches, argumentaires, appels à l'action, sans promesses creuses.",
+      },
+      {
+        titre: "Graphisme",
+        icone: "graphisme",
+        texte:
+          "Identité visuelle, composition, typographie, couleurs ; maîtrise des outils de design.",
+      },
+      {
+        titre: "Photo et prise de vue",
+        icone: "photo",
+        texte:
+          "Cadrage, lumière et réglages pour produire soi-même des visuels nets et exploitables.",
+      },
+      {
+        titre: "Prise de parole face caméra",
+        icone: "camera",
+        texte:
+          "Être à l'aise devant l'objectif : posture, voix, rythme, et un discours qui tient sans script.",
+      },
+      {
+        titre: "Montage vidéo",
+        icone: "video",
+        texte:
+          "Narration par l'image, rythme, montage, sound design et étalonnage.",
+      },
+      {
+        titre: "3D",
+        icone: "cube",
+        texte:
+          "Modélisation, texturing, éclairage et rendu, pour des visuels différenciants.",
+      },
+      {
+        titre: "Adaptation aux plateformes et algorithmes",
+        icone: "plateformes",
+        texte:
+          "Comprendre ce que chaque plateforme met en avant, et adapter format, durée et accroche en conséquence.",
+      },
+    ],
+  },
+  {
     cle: "vente",
+    num: "05",
     titre: "Vente & revenus",
     court: "Vente",
     role: "Cœur",
@@ -176,7 +260,36 @@ const POLES_BRUTS: Omit<Pole, "num">[] = [
     ],
   },
   {
+    cle: "systemes",
+    num: "04",
+    titre: "Systèmes & levier",
+    court: "Systèmes",
+    role: "Accélérateur",
+    promesse: "Automatiser ce qui se répète",
+    competences: [
+      {
+        titre: "Maîtrise de l'IA",
+        icone: "ia",
+        texte:
+          "Compréhension des modèles, prompting efficace, automatisation de tâches et intégration de l'IA dans ses workflows.",
+      },
+      {
+        titre: "Automatisation",
+        icone: "automatisation",
+        texte:
+          "Repérer les tâches répétitives et les confier à des outils qui tournent sans intervention.",
+      },
+      {
+        titre: "Systèmes et process",
+        icone: "process",
+        texte:
+          "Écrire ses manières de faire pour qu'elles soient reproductibles, transmissibles et améliorables.",
+      },
+    ],
+  },
+  {
     cle: "organisation",
+    num: "02",
     titre: "Organisation & croissance",
     court: "Organisation",
     role: "Accélérateur",
@@ -226,119 +339,7 @@ const POLES_BRUTS: Omit<Pole, "num">[] = [
       },
     ],
   },
-  {
-    cle: "systemes",
-    titre: "Systèmes & levier",
-    court: "Systèmes",
-    role: "Accélérateur",
-    promesse: "Automatiser ce qui se répète",
-    competences: [
-      {
-        titre: "Maîtrise de l'IA",
-        icone: "ia",
-        texte:
-          "Compréhension des modèles, prompting efficace, automatisation de tâches et intégration de l'IA dans ses workflows.",
-      },
-      {
-        titre: "Automatisation",
-        icone: "automatisation",
-        texte:
-          "Repérer les tâches répétitives et les confier à des outils qui tournent sans intervention.",
-      },
-      {
-        titre: "Systèmes et process",
-        icone: "process",
-        texte:
-          "Écrire ses manières de faire pour qu'elles soient reproductibles, transmissibles et améliorables.",
-      },
-    ],
-  },
-  {
-    cle: "creer",
-    titre: "Créer & se démarquer",
-    court: "Créer",
-    role: "Cœur",
-    promesse: "Produire, et se rendre reconnaissable",
-    competences: [
-      {
-        titre: "Personal branding",
-        icone: "branding",
-        texte:
-          "Construire une identité claire : positionnement, valeurs, ton et promesse qu'on reconnaît d'un coup d'œil.",
-      },
-      {
-        titre: "Direction artistique",
-        icone: "da",
-        texte:
-          "Définir un univers visuel cohérent — couleurs, typographies, références — et s'y tenir sur tous les supports.",
-      },
-      {
-        titre: "Storytelling",
-        icone: "storytelling",
-        texte:
-          "Structurer un récit qui retient l'attention : tension, transformation, preuve, et une raison de rester jusqu'au bout.",
-      },
-      {
-        titre: "Création de contenu",
-        icone: "contenu",
-        texte:
-          "Stratégie éditoriale, storytelling, formats adaptés à chaque plateforme, régularité de publication.",
-      },
-      {
-        titre: "Copywriting",
-        icone: "copywriting",
-        texte:
-          "Écrire pour faire agir : accroches, argumentaires, appels à l'action, sans promesses creuses.",
-      },
-      {
-        titre: "Graphisme",
-        icone: "graphisme",
-        texte:
-          "Identité visuelle, composition, typographie, couleurs ; maîtrise des outils de design.",
-      },
-      {
-        titre: "Photo et prise de vue",
-        icone: "photo",
-        texte:
-          "Cadrage, lumière et réglages pour produire soi-même des visuels nets et exploitables.",
-      },
-      {
-        titre: "Prise de parole face caméra",
-        icone: "camera",
-        texte:
-          "Être à l'aise devant l'objectif : posture, voix, rythme, et un discours qui tient sans script.",
-      },
-      {
-        titre: "Montage vidéo",
-        icone: "video",
-        texte:
-          "Narration par l'image, rythme, montage, sound design et étalonnage.",
-      },
-      {
-        titre: "3D",
-        icone: "cube",
-        texte:
-          "Modélisation, texturing, éclairage et rendu, pour des visuels différenciants.",
-      },
-      {
-        titre: "Adaptation aux plateformes et algorithmes",
-        icone: "plateformes",
-        texte:
-          "Comprendre ce que chaque plateforme met en avant, et adapter format, durée et accroche en conséquence.",
-      },
-    ],
-  },
 ];
-
-/**
- * Le numéro d'un pôle suit sa position dans le parcours : réordonner la
- * liste ci-dessus suffit, il n'y a jamais à renuméroter à la main — et les
- * repères des compétences (« 02.7 ») suivent avec.
- */
-export const POLES: Pole[] = POLES_BRUTS.map((p, i) => ({
-  ...p,
-  num: String(i + 1).padStart(2, "0"),
-}));
 
 export const NB_COMPETENCES = POLES.reduce(
   (n, p) => n + p.competences.length,
