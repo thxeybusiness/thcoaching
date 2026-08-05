@@ -394,15 +394,17 @@ export default function Hero() {
               </div>
 
               <ul className="hero-appuis">
-                {APPUIS.map((a, i) => (
+                {APPUIS.map((a) => (
                   <li
                     key={a.icone}
                     className="hero-appui"
                     style={{ "--a": `${a.angle}deg` } as CSSProperties}
                   >
                     <span className="hero-carte">
+                      {/* Le rang de l'appui, et non sa place sur l'anneau :
+                          les deux ne coïncident pas. */}
                       <span className="hero-carte-index" aria-hidden="true">
-                        {String(i + 1).padStart(2, "0")}
+                        {a.num}
                       </span>
                       <IconeCompetence nom={a.icone} />
                       <strong className="hero-carte-nom">{a.nom}</strong>

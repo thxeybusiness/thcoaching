@@ -8,14 +8,26 @@
  * Les libellés sont volontairement courts — ce sont des repères sur un
  * schéma, pas des phrases. Le détail est raconté au chapitre « Écosystème ».
  */
-export type Appui = { icone: string; nom: string; angle: number };
+export type Appui = {
+  icone: string;
+  nom: string;
+  /** Position sur l'anneau, en degrés, 0 pointant vers la droite. */
+  angle: number;
+  /**
+   * Rang de l'appui. Comme pour les pôles du chapitre « Programme », il ne
+   * suit pas la place sur l'anneau : les deux sont deux informations
+   * distinctes, et les numéros ne se lisent donc pas dans l'ordre en
+   * tournant.
+   */
+  num: string;
+};
 
 export const APPUIS: Appui[] = [
-  { icone: "partenariat", nom: "Un coach", angle: -90 },
-  { icone: "grille", nom: "43 compétences", angle: -18 },
-  { icone: "formation", nom: "2 formations", angle: 54 },
-  { icone: "acces", nom: "Outils & accès", angle: 126 },
-  { icone: "groupe", nom: "Groupe privé", angle: 198 },
+  { icone: "partenariat", nom: "Un coach", angle: -90, num: "01" },
+  { icone: "grille", nom: "43 compétences", angle: -18, num: "03" },
+  { icone: "formation", nom: "2 formations", angle: 54, num: "05" },
+  { icone: "acces", nom: "Outils & accès", angle: 126, num: "04" },
+  { icone: "groupe", nom: "Groupe privé", angle: 198, num: "02" },
 ];
 
 /**
