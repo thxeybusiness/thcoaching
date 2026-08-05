@@ -25,7 +25,7 @@ export type Appui = {
 export const APPUIS: Appui[] = [
   { icone: "partenariat", nom: "Un coach", angle: -90, num: "01" },
   { icone: "grille", nom: "43 compétences", angle: -18, num: "03" },
-  { icone: "formation", nom: "2 formations", angle: 54, num: "05" },
+  { icone: "formation", nom: "Formations & logiciels", angle: 54, num: "05" },
   { icone: "acces", nom: "Outils & accès", angle: 126, num: "04" },
   { icone: "groupe", nom: "Groupe privé", angle: 198, num: "02" },
 ];
