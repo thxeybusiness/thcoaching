@@ -316,6 +316,124 @@ export function monterIntro3D(
     caisse.rotation.y = 0.18 - i * 0.34;
   });
 
+  // ---- L'architecture : ce qu'on ne remarque que si ça manque ----
+  const plinthe = bloc(new THREE.BoxGeometry(16, 0.16, 0.08), 0x2a1e18, 0.95);
+  plinthe.position.set(0, SOL_Y + 0.08, -5.06);
+  plinthe.castShadow = false;
+
+  const plintheCote = bloc(new THREE.BoxGeometry(0.08, 0.16, 10), 0x2a1e18, 0.95);
+  plintheCote.position.set(-7.26, SOL_Y + 0.08, -0.6);
+  plintheCote.castShadow = false;
+
+  // Une porte, entrouverte : la pièce donne sur quelque part
+  const porte = bloc(new THREE.BoxGeometry(1.05, 2.35, 0.07), 0x2f2019, 0.9);
+  porte.position.set(5.1, SOL_Y + 1.18, -5.0);
+  porte.rotation.y = -0.16;
+  const poignee = bloc(new THREE.SphereGeometry(0.045, 10, 8), 0x8a6a44, 0.4, 0.7);
+  poignee.position.set(4.7, SOL_Y + 1.15, -4.9);
+
+  const interrupteur = bloc(new THREE.BoxGeometry(0.14, 0.2, 0.03), 0x3a2c24, 0.9);
+  interrupteur.position.set(4.05, SOL_Y + 1.5, -5.04);
+  interrupteur.castShadow = false;
+
+  // ---- Le poste de travail, dans le détail ----
+  const sousMain = bloc(new THREE.BoxGeometry(1.3, 0.012, 0.5), 0x241a15, 0.95);
+  sousMain.position.set(-0.6, SOL_Y + 1.1, -1.45);
+  sousMain.castShadow = false;
+
+  const souris = bloc(new THREE.SphereGeometry(0.055, 12, 8), 0x1a1512, 0.7);
+  souris.position.set(-0.05, SOL_Y + 1.13, -1.4);
+  souris.scale.set(1, 0.62, 1.45);
+
+  const potCrayons = bloc(new THREE.CylinderGeometry(0.075, 0.065, 0.19, 14, 1, true), 0x3f2a1c, 0.85);
+  potCrayons.position.set(-1.6, SOL_Y + 1.2, -1.72);
+  [-0.02, 0.02, 0.05].forEach((dx, i) => {
+    const crayon = bloc(
+      new THREE.CylinderGeometry(0.009, 0.009, 0.26, 6),
+      [0xff8c2e, 0xd8cdbd, 0x6b3a22][i],
+      0.7
+    );
+    crayon.position.set(-1.6 + dx, SOL_Y + 1.31, -1.72 + dx);
+    crayon.rotation.z = dx * 3;
+  });
+
+  const telephone = bloc(new THREE.BoxGeometry(0.16, 0.02, 0.31), 0x14100e, 0.5, 0.4);
+  telephone.position.set(0.95, SOL_Y + 1.11, -1.28);
+  telephone.rotation.y = 0.34;
+
+  const photo = bloc(new THREE.BoxGeometry(0.22, 0.28, 0.03), 0x5a3a24, 0.9);
+  photo.position.set(-1.98, SOL_Y + 1.25, -2.0);
+  photo.rotation.y = 0.42;
+
+  /* Trois pense-bêtes sur le bord de l'écran : le seul orange de la pièce
+     avec le logo, et il n'est pas là par hasard. */
+  [0, 1, 2].forEach((i) => {
+    const note = bloc(new THREE.BoxGeometry(0.11, 0.11, 0.006), 0xff8c2e, 0.95);
+    note.position.set(-0.18, SOL_Y + 1.95 - i * 0.14, -2.02);
+    note.rotation.z = 0.1 - i * 0.09;
+  });
+
+  /* Le câble de l'écran : il tombe derrière le bureau. Une courbe suffit —
+     c'est la seule chose de la pièce qui ne soit pas une arête droite, et
+     c'est précisément pour ça qu'elle se remarque. */
+  const courbe = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.85, SOL_Y + 1.14, -2.12),
+    new THREE.Vector3(-0.95, SOL_Y + 0.86, -2.3),
+    new THREE.Vector3(-1.1, SOL_Y + 0.3, -2.24),
+    new THREE.Vector3(-1.25, SOL_Y + 0.04, -2.5),
+  ]);
+  const cable = bloc(new THREE.TubeGeometry(courbe, 24, 0.012, 6, false), 0x14100e, 0.7);
+  cable.castShadow = false;
+
+  // Le caisson à tiroirs, rangé sous le plateau
+  const caisson = bloc(new THREE.BoxGeometry(0.6, 0.82, 0.9), 0x2e2018, 0.9);
+  caisson.position.set(1.35, SOL_Y + 0.41, -1.9);
+  [0, 1, 2].forEach((i) => {
+    const tiroir = bloc(new THREE.BoxGeometry(0.5, 0.02, 0.03), 0x8a6a44, 0.5, 0.6);
+    tiroir.position.set(1.35, SOL_Y + 0.18 + i * 0.26, -1.46);
+  });
+
+  // ---- Le reste de la pièce ----
+  const corbeille = bloc(new THREE.CylinderGeometry(0.17, 0.13, 0.34, 14, 1, true), 0x2a201a, 0.9);
+  corbeille.position.set(-1.9, SOL_Y + 0.17, -2.7);
+  const boulette = bloc(new THREE.SphereGeometry(0.06, 8, 6), 0xcfc3b2, 0.98);
+  boulette.position.set(-1.72, SOL_Y + 0.06, -2.42);
+
+  // Le radiateur sous la fenêtre, avec ses ailettes
+  const radiateur = bloc(new THREE.BoxGeometry(0.14, 0.5, 1.7), 0x39281f, 0.85);
+  radiateur.position.set(-7.0, SOL_Y + 0.4, -1.4);
+  for (let i = 0; i < 7; i++) {
+    const ailette = bloc(new THREE.BoxGeometry(0.17, 0.46, 0.05), 0x422f24, 0.85);
+    ailette.position.set(-6.98, SOL_Y + 0.4, -2.1 + i * 0.23);
+    ailette.castShadow = false;
+  }
+
+  // Un panneau de liège et ses papiers épinglés
+  const liege = bloc(new THREE.BoxGeometry(1.5, 1.0, 0.04), 0x5c4028, 0.98);
+  liege.position.set(-4.05, SOL_Y + 1.85, -5.03);
+  liege.castShadow = false;
+  [
+    [-0.4, 0.2, 0.32, 0.26],
+    [0.1, 0.3, 0.26, 0.2],
+    [0.35, -0.15, 0.3, 0.34],
+    [-0.25, -0.28, 0.22, 0.22],
+  ].forEach((f, i) => {
+    const papier = bloc(
+      new THREE.BoxGeometry(f[2], f[3], 0.008),
+      i === 1 ? 0xff8c2e : 0xd8cdbd,
+      0.95
+    );
+    papier.position.set(-4.05 + f[0], SOL_Y + 1.85 + f[1], -5.0);
+    papier.rotation.z = 0.12 - i * 0.07;
+    papier.castShadow = false;
+  });
+
+  /* L'écran éclaire ce qu'il a devant lui : une lumière froide et faible,
+     seule note non chaude de la pièce. */
+  const lueurEcran = new THREE.PointLight(0xbfd0e8, 1.1, 3.2, 2);
+  lueurEcran.position.set(-0.85, SOL_Y + 1.75, -1.8);
+  lieu.add(lueurEcran);
+
   /* ---- La fenêtre : un store, et la lumière qui passe entre ses lames ----
      Ce sont ces lames qui donnent l'heure et l'ambiance. Elles bougent très
      lentement, comme une lumière d'extérieur qui change. */
