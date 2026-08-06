@@ -250,6 +250,72 @@ export function monterIntro3D(
   const tasse = bloc(new THREE.CylinderGeometry(0.08, 0.07, 0.12, 14), 0x6b3f26, 0.8);
   tasse.position.set(0.75, SOL_Y + 1.16, -1.45);
 
+  // ---- Ce qui traîne sur le bureau : c'est ça qui dit qu'on y travaille ----
+  const clavier = bloc(new THREE.BoxGeometry(0.72, 0.03, 0.26), 0x1a1512, 0.85);
+  clavier.position.set(-0.7, SOL_Y + 1.11, -1.42);
+  clavier.rotation.y = 0.06;
+
+  const carnet = bloc(new THREE.BoxGeometry(0.3, 0.025, 0.4), 0x7a4526, 0.9);
+  carnet.position.set(0.28, SOL_Y + 1.11, -1.5);
+  carnet.rotation.y = -0.22;
+
+  const feuille = bloc(new THREE.BoxGeometry(0.26, 0.006, 0.35), 0xd8cdbd, 0.95);
+  feuille.position.set(0.29, SOL_Y + 1.13, -1.48);
+  feuille.rotation.y = -0.16;
+
+  const stylo = bloc(new THREE.CylinderGeometry(0.011, 0.011, 0.17, 8), 0x22201d, 0.5, 0.5);
+  stylo.position.set(0.44, SOL_Y + 1.14, -1.36);
+  stylo.rotation.set(0, 0.5, Math.PI / 2);
+
+  // Une pile de livres, posée au coin du plateau
+  [0, 1, 2].forEach((i) => {
+    const l = bloc(
+      new THREE.BoxGeometry(0.34 - i * 0.02, 0.045, 0.25),
+      [0x59331f, 0x2b2a24, 0x6b3a22][i],
+      0.95
+    );
+    l.position.set(1.72, SOL_Y + 1.13 + i * 0.047, -1.62);
+    l.rotation.y = 0.1 - i * 0.09;
+  });
+
+  // ---- Le tapis : il pose le bureau au sol ----
+  const tapis = bloc(new THREE.BoxGeometry(4.6, 0.02, 2.6), 0x33231d, 0.98);
+  tapis.position.set(0.15, SOL_Y + 0.011, -1.35);
+  tapis.castShadow = false;
+
+  // ---- Le lampadaire du coin droit : la pièce était vide de ce côté ----
+  const socleLamp = bloc(new THREE.CylinderGeometry(0.22, 0.24, 0.04, 16), 0x1e1613, 0.7, 0.3);
+  socleLamp.position.set(3.5, SOL_Y + 0.02, -2.6);
+  const tige = bloc(new THREE.CylinderGeometry(0.028, 0.028, 2.1, 10), 0x1e1613, 0.6, 0.35);
+  tige.position.set(3.5, SOL_Y + 1.07, -2.6);
+  const chapeau = bloc(new THREE.CylinderGeometry(0.3, 0.22, 0.34, 18, 1, true), 0x6b4028, 0.75);
+  chapeau.position.set(3.5, SOL_Y + 2.24, -2.6);
+
+  const lampadaire = new THREE.PointLight(0xffb070, 3.4, 7, 2);
+  lampadaire.position.set(3.5, SOL_Y + 2.1, -2.6);
+  lieu.add(lampadaire);
+
+  // ---- Un cadre au mur, et une horloge ----
+  const cadreMur = bloc(new THREE.BoxGeometry(0.9, 1.2, 0.05), 0x2a1d16, 0.9);
+  cadreMur.position.set(2.6, SOL_Y + 2.6, -5.05);
+  const toile = bloc(new THREE.BoxGeometry(0.78, 1.08, 0.02), 0x4a2a18, 0.95);
+  toile.position.set(2.6, SOL_Y + 2.6, -5.01);
+
+  const horloge = bloc(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 20), 0x241a16, 0.85);
+  horloge.position.set(0.6, SOL_Y + 3.2, -5.05);
+  horloge.rotation.x = Math.PI / 2;
+
+  // ---- Deux caisses au sol : le coin qui n'est jamais rangé ----
+  [0, 1].forEach((i) => {
+    const caisse = bloc(
+      new THREE.BoxGeometry(0.62 - i * 0.08, 0.46, 0.5),
+      0x5a3a24,
+      0.98
+    );
+    caisse.position.set(-4.3 + i * 0.16, SOL_Y + 0.23 + i * 0.46, -3.4);
+    caisse.rotation.y = 0.18 - i * 0.34;
+  });
+
   /* ---- La fenêtre : un store, et la lumière qui passe entre ses lames ----
      Ce sont ces lames qui donnent l'heure et l'ambiance. Elles bougent très
      lentement, comme une lumière d'extérieur qui change. */
@@ -269,6 +335,22 @@ export function monterIntro3D(
     return t;
   })();
   aRanger.push(texLame);
+
+  /* Le cadre de la fenêtre et ses lattes, sur le mur de gauche : sans elle,
+     les lames de lumière tombaient de nulle part. */
+  const chassis = bloc(new THREE.BoxGeometry(0.12, 3.2, 2.6), 0x241a15, 0.9);
+  chassis.position.set(-7.24, SOL_Y + 2.5, -1.4);
+  chassis.castShadow = false;
+
+  const vitre = bloc(new THREE.BoxGeometry(0.04, 2.9, 2.3), 0x3a2415, 0.4, 0.2);
+  vitre.position.set(-7.16, SOL_Y + 2.5, -1.4);
+  vitre.castShadow = false;
+
+  for (let i = 0; i < 9; i++) {
+    const latte = bloc(new THREE.BoxGeometry(0.05, 0.16, 2.28), 0x2e211a, 0.9);
+    latte.position.set(-7.1, SOL_Y + 1.2 + i * 0.32, -1.4);
+    latte.rotation.z = 0.34;
+  }
 
   const lames = new THREE.Group();
   for (let i = 0; i < 6; i++) {
