@@ -369,6 +369,29 @@ h3 {
   overflow: visible;
 }
 
+/* La scène 3D occupe la place du logo plat, avec de la marge autour : une
+   vague qui arrive de biais déborde de la silhouette finale. */
+.intro-scene3d {
+  position: absolute;
+  z-index: 1;
+  width: clamp(300px, 41vw, 520px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.intro-scene3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Le logo plat s'efface dès que le volume a pris la main. Il reste dans le
+   document : c'est lui qui donne sa largeur à la zone, et l'éclat part de
+   sa position. */
+.intro[data-volume="true"] .intro-logo-svg {
+  visibility: hidden;
+}
+
 /* Chaque vague s'allume avec son pilier */
 .intro-wave {
   transition: filter 0.45s ease;

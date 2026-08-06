@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { ETAPES } from "../lib/methode";
 import { cadence as t, INTRO_FIN } from "../lib/intro";
+import type { SceneIntro } from "../lib/intro3d";
 
 /**
  * Intro : les trois étapes du déroulé allument le logo.
@@ -14,7 +15,20 @@ import { cadence as t, INTRO_FIN } from "../lib/intro";
  *    après l'autre — chaque mot allume la vague correspondante
  * 3. Au troisième mot, un éclat couvre l'écran ; le décor s'efface derrière
  *    lui et le site apparaît pendant que l'éclat retombe.
+ *
+ * Le logo est en volume quand c'est possible : chaque vague arrive de loin,
+ * bascule à sa place et s'allume avec son mot. Mais l'intro ne dure qu'une
+ * seconde et Three.js pèse 81 ko — on ne l'attend donc qu'un court instant.
+ * Passé ce délai, l'intro joue sa version plate, à l'identique. En pratique
+ * la 3D apparaît dès la deuxième visite, le moteur étant alors en cache.
  */
+
+/** Ce qu'on accorde au moteur 3D pour se charger avant de s'en passer. */
+const ATTENTE_3D = 600;
+
+/** Au-delà, la machine ne suit pas : on joue l'intro à plat. Le budget d'une
+ *  image à 60 Hz est de 16 ms ; on tolère le double, pas plus. */
+const MS_PAR_IMAGE_MAX = 32;
 
 const WAVE_PATHS = [
   "M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z",
@@ -45,6 +59,7 @@ const ALLUME = "#ff8c2e";
 
 export default function Intro() {
   const root = useRef<HTMLDivElement>(null);
+  const scene3d = useRef<HTMLDivElement>(null);
   const chemin = usePathname();
   const [done, setDone] = useState(false);
   // Uniquement à l'arrivée sur l'accueil : sur une page intérieure, un rideau
@@ -61,20 +76,64 @@ export default function Intro() {
       return;
     }
 
-    const ctx = gsap.context(() => {
+    let ctx: gsap.Context | undefined;
+    let scene: SceneIntro | undefined;
+    let annule = false;
+
+    /* On laisse au moteur 3D un court instant pour arriver. S'il n'y est
+       pas, on joue sans lui : l'intro ne doit jamais faire attendre. */
+    /* Filet de sécurité : le rideau se lève à l'heure, quoi qu'il arrive.
+       Une machine qui rame ferait traîner la ligne de temps de GSAP, qui
+       lisse les longues images — et le visiteur resterait devant un écran
+       noir. Ce minuteur, lui, ne dépend d'aucune image. */
+    const secours = setTimeout(() => setDone(true), (INTRO_FIN + 0.8) * 1000);
+
+    const course = Promise.race([
+      import("../lib/intro3d").then((m) => m.monterIntro3D),
+      new Promise<null>((r) => setTimeout(() => r(null), ATTENTE_3D)),
+    ]).catch(() => null);
+
+    course.then((monter) => {
+      if (annule) return;
+      if (monter && scene3d.current) {
+        try {
+          scene = monter(scene3d.current);
+        } catch {
+          scene = undefined; // WebGL indisponible : on reste en plat
+        }
+      }
+
+      /* La scène se chronomètre pendant qu'elle joue : si la machine ne
+         suit pas, on la retire en cours de route et le logo plat reprend
+         sa place. Mieux vaut une intro sans volume qu'une intro qui traîne. */
+      scene?.mesurer().then((ms) => {
+        if (annule || ms <= MS_PAR_IMAGE_MAX) return;
+        scene?.detruire();
+        scene = undefined;
+        root.current?.removeAttribute("data-volume");
+      });
+      const enVolume = !!scene;
+      if (enVolume) root.current?.setAttribute("data-volume", "true");
+      jouer(enVolume);
+    });
+
+    function jouer(enVolume: boolean) {
+    ctx = gsap.context(() => {
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
         onComplete: () => setDone(true),
       });
 
       // 1. Le logo, vagues éteintes, dans un décor qui s'éveille
-      tl.from(".intro-logo-svg", {
-        opacity: 0,
-        scale: 0.92,
-        duration: t(0.5),
-        transformOrigin: "50% 50%",
-      })
-        .from(".intro-fond", { opacity: 0, duration: t(1.1) }, 0)
+      if (!enVolume) {
+        tl.from(".intro-logo-svg", {
+          opacity: 0,
+          scale: 0.92,
+          duration: t(0.5),
+          transformOrigin: "50% 50%",
+        });
+      }
+      tl.from(".intro-fond", { opacity: 0, duration: t(1.1) }, 0)
         .fromTo(
           ".intro-rayons",
           { opacity: 0, scale: 0.85 },
@@ -85,6 +144,49 @@ export default function Intro() {
       // 2. Un mot = une vague qui s'allume
       PILIERS.forEach((_, i) => {
         const debut = t(0.34 + i * 0.44);
+
+        if (enVolume && scene) {
+          const pivot = scene.vagues[i];
+          const matiere = scene.matieres[i];
+          /* La vague arrive de loin, de côté et de biais, puis se pose à
+             plat : c'est la bascule qui donne le volume, pas le voyage. */
+          tl.fromTo(
+            pivot.position,
+            { z: -2.6 - i * 0.5, x: -1.5 },
+            { z: 0, x: 0, duration: t(0.62), ease: "power3.out" },
+            debut
+          )
+            .fromTo(
+              pivot.rotation,
+              { y: 1.25, x: 0.45, z: -0.22 },
+              { y: 0, x: 0, z: 0, duration: t(0.72), ease: "back.out(1.35)" },
+              debut
+            )
+            // Elle s'allume en arrivant : braise, puis orange de la marque
+            .to(
+              matiere.color,
+              {
+                r: 1,
+                g: 0.352,
+                b: 0.122,
+                duration: t(0.34),
+                ease: "power2.out",
+              },
+              debut + t(0.1)
+            )
+            .fromTo(
+              matiere,
+              { emissiveIntensity: 0 },
+              {
+                emissiveIntensity: 0.85,
+                duration: t(0.16),
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.out",
+              },
+              debut + t(0.14)
+            );
+        }
 
         tl.to(
           `.intro-wave-${i}`,
@@ -178,9 +280,31 @@ export default function Intro() {
           { opacity: 0, scale: 1.6, duration: t(0.42), ease: "power2.out" },
           OUVERTURE
         );
+      // L'ensemble s'incline pendant toute l'intro, puis pousse vers la
+      // caméra au moment de l'éclat : le logo sort par l'avant.
+      if (enVolume && scene) {
+        tl.fromTo(
+          scene.groupe.rotation,
+          { y: -0.34, x: -0.16 },
+          /* On garde un peu de biais à l'arrivée : de face, la lumière clé
+             frappe la grande face de plein fouet et la lave. */
+          { y: -0.28, x: -0.12, duration: t(1.5), ease: "power2.out" },
+          0
+        ).to(
+          scene.groupe.position,
+          { z: 1.4, duration: t(0.5), ease: "power2.in" },
+          ECLAT
+        );
+      }
     }, root);
+    }
 
-    return () => ctx.revert();
+    return () => {
+      annule = true;
+      clearTimeout(secours);
+      ctx?.revert();
+      scene?.detruire();
+    };
   }, [surAccueil]);
 
   if (done) return null;
@@ -196,6 +320,9 @@ export default function Intro() {
         <span className="intro-logo-zone">
           <span className="intro-rayons" />
           <span className="intro-halo" />
+          {/* La scène 3D se pose exactement sur le logo plat : quand elle
+              existe, la feuille de style masque le SVG. */}
+          <span ref={scene3d} className="intro-scene3d" />
           <svg className="intro-logo-svg" viewBox="0 0 120 120">
             {WAVE_PATHS.map((d, i) => (
               <path
