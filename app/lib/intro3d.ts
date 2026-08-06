@@ -51,7 +51,7 @@ export type SceneIntro = {
   /** Les trois vagues, de haut en bas — une par pilier. */
   vagues: THREE.Object3D[];
   /** Leurs matériaux, un par vague : elles s'allument séparément. */
-  matieres: THREE.MeshPhysicalMaterial[];
+  matieres: THREE.MeshStandardMaterial[];
   /** Les trois mots, posés dans la scène et non par-dessus. */
   mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[];
   /** L'ensemble, pour l'incliner ou le pousser vers la caméra. */
@@ -146,7 +146,7 @@ export function monterIntro3D(
   // ---- Les trois vagues, chacune dans son pivot ----
   const groupe = new THREE.Group();
   const geos: THREE.BufferGeometry[] = [];
-  const matieres: THREE.MeshPhysicalMaterial[] = [];
+  const matieres: THREE.MeshStandardMaterial[] = [];
   const vagues: THREE.Object3D[] = [];
 
   VAGUES.forEach((v) => {
@@ -164,13 +164,16 @@ export function monterIntro3D(
     geo.computeBoundingBox();
     geos.push(geo);
 
-    const matiere = new THREE.MeshPhysicalMaterial({
+    /* Une matière mate : pas de vernis, pas de métal. Elle reçoit en
+       revanche presque toute la lumière d'environnement — une surface mate
+       la répand au lieu de la réfléchir, et la brider éteignait l'orange.
+       Sans vernis ni reflets, `MeshStandardMaterial` suffit : c'est un
+       nuanceur plus court que le modèle physique complet. */
+    const matiere = new THREE.MeshStandardMaterial({
       color: ETEINTE,
-      metalness: 0.28,
-      roughness: 0.36,
-      clearcoat: 0.55,
-      clearcoatRoughness: 0.22,
-      envMapIntensity: 0.55,
+      metalness: 0,
+      roughness: 0.58,
+      envMapIntensity: 0.95,
       emissive: LUEUR,
       emissiveIntensity: 0,
     });
