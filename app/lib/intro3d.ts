@@ -74,7 +74,46 @@ export function monterIntro3D(
   hote.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 200);
+
+  /* Un décor, et non un fond.
+   *
+   * Le logo flottait au-dessus d'un dégradé CSS : deux mondes qui ne se
+   * répondaient pas. Ici le ciel est une sphère où la caméra se trouve, le
+   * sol une vraie surface qui reçoit la lumière, et une brume les relie —
+   * c'est elle qui efface l'horizon et fait tenir l'ensemble. */
+  const cielTexture = (() => {
+    const c = document.createElement("canvas");
+    c.width = 8;
+    c.height = 256;
+    const g = c.getContext("2d")!;
+    const d = g.createLinearGradient(0, 0, 0, 256);
+    d.addColorStop(0, "#050403");
+    d.addColorStop(0.3, "#0e0907");
+    d.addColorStop(0.47, "#22120a");
+    d.addColorStop(0.55, "#3d1c0c");
+    d.addColorStop(0.63, "#22130c");
+    d.addColorStop(0.82, "#0d0907");
+    d.addColorStop(1, "#060505");
+    g.fillStyle = d;
+    g.fillRect(0, 0, 8, 256);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+
+  const ciel = new THREE.Mesh(
+    new THREE.SphereGeometry(60, 32, 24),
+    new THREE.MeshBasicMaterial({
+      map: cielTexture,
+      side: THREE.BackSide,
+      fog: false, // le ciel EST le lointain : la brume n'a pas à le manger
+    })
+  );
+  scene.add(ciel);
+
+  // La brume commence tôt : c'est elle qui efface la ligne d'horizon
+  scene.fog = new THREE.Fog(0x22120a, 7, 23);
 
   /* Un environnement fabriqué sur place : un dégradé équirectangulaire, clair
      en haut et chaud en bas. Il ne se voit jamais — il ne sert qu'aux reflets.
@@ -162,45 +201,69 @@ export function monterIntro3D(
   // ---- Les trois mots, posés dans la scène ----
   const mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[] = [];
 
+  /* La toile est taillée sur la mesure du mot, pas l'inverse : à largeur
+     fixe, « Perfectionnement » débordait et se retrouvait amputé de ses
+     premières lettres. La hauteur du plan reste la même pour les trois, sa
+     largeur suit celle du texte. */
+  const HAUTEUR_MOT = 0.3;
+  const CORPS = 72;
+  const MARGE = 24;
+
   libelles.slice(0, 3).forEach((libelle, i) => {
+    const lettres = libelle.toUpperCase().split("").join(" ");
+    const police = `700 ${CORPS}px ui-monospace, Menlo, Consolas, monospace`;
+
+    const mesure = document.createElement("canvas").getContext("2d")!;
+    mesure.font = police;
+    const largeurTexte = Math.ceil(mesure.measureText(lettres).width);
+
     const c = document.createElement("canvas");
-    c.width = 1024;
-    c.height = 160;
+    c.width = largeurTexte + MARGE * 2;
+    c.height = Math.round(CORPS * 1.7);
     const g = c.getContext("2d")!;
-    g.font = "700 68px ui-monospace, Menlo, Consolas, monospace";
+    g.font = police;
     g.textAlign = "right";
     g.textBaseline = "middle";
-    g.fillStyle = "#f4f2ef";
-    // Une lettre sur deux espacée : la chasse fixe seule serait trop serrée
-    g.fillText(libelle.toUpperCase().split("").join(" "), 1010, 86);
+    g.fillStyle = "#f7f3ee";
+    g.fillText(lettres, c.width - MARGE, c.height / 2);
 
     const tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
 
+    const largeur = (HAUTEUR_MOT * c.width) / c.height;
     const plan = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.05, 0.32),
+      new THREE.PlaneGeometry(largeur, HAUTEUR_MOT),
       new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
         opacity: 0,
         depthWrite: false,
         toneMapped: false,
+        fog: true, // les mots sont dans le décor, la brume les touche aussi
       })
     );
-    plan.position.set(-1.55, 0.63 - i * 0.63, 0.16);
+    // Alignés à droite sur une même marge, quelle que soit leur longueur
+    plan.position.set(-0.75 - largeur / 2, 0.63 - i * 0.63, 0.16);
     plan.userData.repos = plan.position.clone();
     scene.add(plan);
     mots.push(plan);
   });
 
-  // ---- Le sol : il reçoit l'ombre et donne l'assise ----
+  /* Le sol : une vraie surface, et non un simple receveur d'ombre. En
+     transparent, l'ombre se détachait sur le fond CSS comme une dalle
+     posée dans le vide. Avec une matière et la brume, elle s'éteint dans
+     le lointain et le logo se met enfin à reposer sur quelque chose. */
   const sol = new THREE.Mesh(
-    new THREE.PlaneGeometry(30, 30),
-    new THREE.ShadowMaterial({ opacity: 0.2 })
+    new THREE.PlaneGeometry(120, 120),
+    new THREE.MeshStandardMaterial({
+      color: 0x2b1a12,
+      roughness: 0.92,
+      metalness: 0.05,
+    })
   );
   sol.rotation.x = -Math.PI / 2;
-  sol.position.y = -1.55;
+  sol.position.y = -1.62;
   sol.receiveShadow = true;
   scene.add(sol);
 
@@ -209,7 +272,7 @@ export function monterIntro3D(
      face du logo, qui resterait dans un rouge sombre alors que la matière est
      orange. Une face plate ne s'éclaire que si la lumière la regarde. */
   const cle = new THREE.DirectionalLight(0xfff0e0, 2.15);
-  cle.position.set(3.8, 4.6, 6.2);
+  cle.position.set(3.2, 7.2, 4.4);
   cle.castShadow = true;
   cle.shadow.mapSize.set(1024, 1024);
   cle.shadow.camera.left = -3.4;
@@ -311,6 +374,9 @@ export function monterIntro3D(
       });
       sol.geometry.dispose();
       (sol.material as THREE.Material).dispose();
+      ciel.geometry.dispose();
+      (ciel.material as THREE.Material).dispose();
+      cielTexture.dispose();
       envTexture.dispose();
       renderer.dispose();
       renderer.domElement.remove();
