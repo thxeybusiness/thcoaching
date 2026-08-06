@@ -369,13 +369,12 @@ h3 {
   overflow: visible;
 }
 
-/* La scène 3D occupe la place du logo plat, avec de la marge autour : une
-   vague qui arrive de biais déborde de la silhouette finale. */
+/* La scène 3D prend tout l'écran : les trois mots y sont posés en volume,
+   avec les vagues, et non écrits par-dessus. */
 .intro-scene3d {
-  position: absolute;
-  z-index: 1;
-  width: clamp(300px, 41vw, 520px);
-  aspect-ratio: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -385,10 +384,10 @@ h3 {
   height: 100%;
 }
 
-/* Le logo plat s'efface dès que le volume a pris la main. Il reste dans le
-   document : c'est lui qui donne sa largeur à la zone, et l'éclat part de
-   sa position. */
-.intro[data-volume="true"] .intro-logo-svg {
+/* Le décor plat s'efface dès que le volume a pris la main : logo, mots et
+   halo sont alors dans la scène. Il reste dans le document — si la machine
+   ne suit pas, la séquence le rend à sa place en cours de route. */
+.intro[data-volume="true"] .intro-inner {
   visibility: hidden;
 }
 

@@ -1,27 +1,49 @@
 import * as THREE from "three";
-import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 /**
- * La scène 3D de l'intro : les trois vagues du logo, en volume.
+ * La scène 3D de l'intro : les trois vagues du logo, en volume, et les trois
+ * mots posés dans l'espace avec elles.
  *
  * Le module est chargé à la volée par l'intro, et seulement si le navigateur
  * le rapporte à temps — l'intro dure une seconde, elle ne doit jamais
  * attendre après lui. Sans lui, l'intro joue sa version plate.
  *
- * Comme sur le reste du site, la géométrie est fabriquée depuis le SVG de la
- * marque : aucun fichier de modèle à télécharger.
+ * La géométrie est fabriquée depuis les courbes du logo : aucun fichier de
+ * modèle à télécharger, et la forme reste celle de la marque au point de
+ * contrôle près.
  */
 
-const LOGO = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z'/><path d='M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z'/><path d='M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z'/></svg>`;
+/** Les trois vagues, par les quatre ordonnées qui les décrivent dans le
+ *  repère du logo (viewBox 120 × 120, y vers le bas). */
+const VAGUES = [
+  [20, 14, 34, 40],
+  [49, 43, 63, 69],
+  [78, 72, 92, 98],
+];
 
-/** La vague éteinte, et la vague allumée.
- *
- * L'éteinte n'est pas noire mais une braise : un matériau quasi noir prend
- * toute la lumière de la lisière froide et vire au gris — on croirait du
- * plastique, pas du métal éteint. */
+function formeVague(v: number[]) {
+  const f = new THREE.Shape();
+  f.moveTo(12, v[0]);
+  f.bezierCurveTo(44, v[0] - 16, 76, v[0] + 14, 108, v[1]);
+  f.lineTo(108, v[2]);
+  f.bezierCurveTo(76, v[2] + 20, 44, v[2] - 10, 12, v[3]);
+  f.closePath();
+  return f;
+}
+
+/** La vague éteinte, la vague allumée, et la lueur propre à la matière. */
 export const ETEINTE = 0x4a1c08;
 export const ALLUMEE = 0xff5a1f;
+const LUEUR = 0xff8c2e;
+
+/**
+ * Part d'émission conservée au repos.
+ *
+ * Sans elle, tout ce qui tombe dans l'ombre — sur un objet en volume, la
+ * moitié de la surface — repart vers le grenat : ce n'est pas la couleur qui
+ * perd, c'est le noir qui gagne.
+ */
+export const EMISSIF_REPOS = 0.12;
 
 export type SceneIntro = {
   /** Durée médiane d'une image, mesurée sur de vraies images. Voir plus bas. */
@@ -30,113 +52,191 @@ export type SceneIntro = {
   vagues: THREE.Object3D[];
   /** Leurs matériaux, un par vague : elles s'allument séparément. */
   matieres: THREE.MeshPhysicalMaterial[];
+  /** Les trois mots, posés dans la scène et non par-dessus. */
+  mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[];
   /** L'ensemble, pour l'incliner ou le pousser vers la caméra. */
   groupe: THREE.Group;
   detruire: () => void;
 };
 
-export function monterIntro3D(hote: HTMLElement): SceneIntro {
+export function monterIntro3D(
+  hote: HTMLElement,
+  libelles: string[]
+): SceneIntro {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.72;
-  /* Les trois vagues s'ombrent les unes les autres : sans ça elles flottent
-     côte à côte et le volume ne se lit pas. Carte réduite de moitié par
-     rapport au rendu fixe — à cette taille, personne ne verra la
-     différence, et l'intro doit rester légère. */
+  /* Pas de mappage filmique : ACES tire l'orange de la marque (#ff5a1f, très
+     saturé) vers un rouge sombre. Sur un logo, la fidélité de la couleur
+     passe avant le rendu cinéma — la luminosité se règle aux lumières. */
+  renderer.toneMapping = THREE.NoToneMapping;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   hote.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
 
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environnement = pmrem.fromScene(new RoomEnvironment(), 0.04);
-  scene.environment = environnement.texture;
+  /* Un environnement fabriqué sur place : un dégradé équirectangulaire, clair
+     en haut et chaud en bas. Il ne se voit jamais — il ne sert qu'aux reflets.
+     Sombre, il éteignait l'orange : sur une matière un peu métallique, c'est
+     l'environnement qui fait la couleur. */
+  function environnement() {
+    const c = document.createElement("canvas");
+    c.width = 32;
+    c.height = 128;
+    const g = c.getContext("2d")!;
+    const d = g.createLinearGradient(0, 0, 0, 128);
+    d.addColorStop(0, "#fff1e2");
+    d.addColorStop(0.36, "#c49a7c");
+    d.addColorStop(0.58, "#4a3a31");
+    d.addColorStop(1, "#c25a22");
+    g.fillStyle = d;
+    g.fillRect(0, 0, 32, 128);
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const cible = pmrem.fromEquirectangular(tex);
+    tex.dispose();
+    pmrem.dispose();
+    return cible.texture;
+  }
+  const envTexture = environnement();
+  scene.environment = envTexture;
 
-  // ---- Les trois vagues ----
+  // ---- Les trois vagues, chacune dans son pivot ----
   const groupe = new THREE.Group();
   const geos: THREE.BufferGeometry[] = [];
   const matieres: THREE.MeshPhysicalMaterial[] = [];
   const vagues: THREE.Object3D[] = [];
 
-  new SVGLoader().parse(LOGO).paths.forEach((p) => {
-    SVGLoader.createShapes(p).forEach((forme) => {
-      const geo = new THREE.ExtrudeGeometry(forme, {
-        depth: 26,
-        bevelEnabled: true,
-        bevelThickness: 0.7,
-        bevelSize: 0.55,
-        bevelSegments: 2,
-        curveSegments: 24,
-      });
-      geo.translate(-60, -59, -13);
-      geo.scale(1, -1, 1); // repère SVG (y vers le bas) → repère 3D
-      geo.computeVertexNormals();
-      geos.push(geo);
-
-      const matiere = new THREE.MeshPhysicalMaterial({
-        color: ETEINTE,
-        metalness: 0.55,
-        roughness: 0.42,
-        clearcoat: 0.2,
-        clearcoatRoughness: 0.45,
-        envMapIntensity: 0.3,
-        emissive: ALLUMEE,
-        emissiveIntensity: 0,
-      });
-      matieres.push(matiere);
-
-      /* Chaque vague est posée dans son propre pivot, centré sur elle : sans
-         ça une rotation la ferait tourner autour du centre du logo et la
-         vague du haut décrirait un grand arc au lieu de basculer sur place. */
-      geo.computeBoundingBox();
-      const centre = new THREE.Vector3();
-      geo.boundingBox!.getCenter(centre);
-
-      const maille = new THREE.Mesh(geo, matiere);
-      maille.position.copy(centre).negate();
-      maille.castShadow = true;
-      maille.receiveShadow = true;
-
-      const pivot = new THREE.Group();
-      pivot.position.copy(centre);
-      pivot.add(maille);
-      vagues.push(pivot);
-      groupe.add(pivot);
+  VAGUES.forEach((v) => {
+    const geo = new THREE.ExtrudeGeometry(formeVague(v), {
+      depth: 26,
+      bevelEnabled: true,
+      bevelThickness: 0.7,
+      bevelSize: 0.55,
+      bevelSegments: 2,
+      curveSegments: 24,
     });
+    geo.translate(-60, -59, -13);
+    geo.scale(1, -1, 1); // repère SVG (y vers le bas) → repère 3D
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    geos.push(geo);
+
+    const matiere = new THREE.MeshPhysicalMaterial({
+      color: ETEINTE,
+      metalness: 0.28,
+      roughness: 0.36,
+      clearcoat: 0.55,
+      clearcoatRoughness: 0.22,
+      envMapIntensity: 0.55,
+      emissive: LUEUR,
+      emissiveIntensity: 0,
+    });
+    matieres.push(matiere);
+
+    const centre = new THREE.Vector3();
+    geo.boundingBox!.getCenter(centre);
+
+    const maille = new THREE.Mesh(geo, matiere);
+    maille.position.copy(centre).negate();
+    maille.castShadow = true;
+    maille.receiveShadow = true;
+
+    /* Chaque vague pivote sur elle-même : sans pivot propre, une rotation la
+       ferait décrire un grand arc autour du centre du logo. */
+    const pivot = new THREE.Group();
+    pivot.position.copy(centre);
+    pivot.userData.repos = centre.clone();
+    pivot.add(maille);
+    vagues.push(pivot);
+    groupe.add(pivot);
   });
 
   groupe.scale.setScalar(0.021);
+  groupe.position.x = 0.85; // le logo à droite, les mots à sa gauche
   scene.add(groupe);
 
+  // ---- Les trois mots, posés dans la scène ----
+  const mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[] = [];
+
+  libelles.slice(0, 3).forEach((libelle, i) => {
+    const c = document.createElement("canvas");
+    c.width = 1024;
+    c.height = 160;
+    const g = c.getContext("2d")!;
+    g.font = "700 68px ui-monospace, Menlo, Consolas, monospace";
+    g.textAlign = "right";
+    g.textBaseline = "middle";
+    g.fillStyle = "#f4f2ef";
+    // Une lettre sur deux espacée : la chasse fixe seule serait trop serrée
+    g.fillText(libelle.toUpperCase().split("").join(" "), 1010, 86);
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+
+    const plan = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.05, 0.32),
+      new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        toneMapped: false,
+      })
+    );
+    plan.position.set(-1.55, 0.63 - i * 0.63, 0.16);
+    plan.userData.repos = plan.position.clone();
+    scene.add(plan);
+    mots.push(plan);
+  });
+
+  // ---- Le sol : il reçoit l'ombre et donne l'assise ----
+  const sol = new THREE.Mesh(
+    new THREE.PlaneGeometry(30, 30),
+    new THREE.ShadowMaterial({ opacity: 0.2 })
+  );
+  sol.rotation.x = -Math.PI / 2;
+  sol.position.y = -1.55;
+  sol.receiveShadow = true;
+  scene.add(sol);
+
   // ---- Lumières ----
-  const cle = new THREE.DirectionalLight(0xfff2e6, 2.3);
-  cle.position.set(4.6, 6.2, 1.8);
+  /* La clé est nettement en avant : posée au-dessus, elle raserait la grande
+     face du logo, qui resterait dans un rouge sombre alors que la matière est
+     orange. Une face plate ne s'éclaire que si la lumière la regarde. */
+  const cle = new THREE.DirectionalLight(0xfff0e0, 2.15);
+  cle.position.set(3.8, 4.6, 6.2);
   cle.castShadow = true;
-  cle.shadow.mapSize.set(512, 512);
-  cle.shadow.camera.left = -2.6;
-  cle.shadow.camera.right = 2.6;
-  cle.shadow.camera.top = 2.6;
-  cle.shadow.camera.bottom = -2.6;
+  cle.shadow.mapSize.set(1024, 1024);
+  cle.shadow.camera.left = -3.4;
+  cle.shadow.camera.right = 3.4;
+  cle.shadow.camera.top = 3.4;
+  cle.shadow.camera.bottom = -3.4;
   cle.shadow.camera.near = 0.5;
-  cle.shadow.camera.far = 16;
+  cle.shadow.camera.far = 22;
   cle.shadow.bias = -0.0006;
   cle.shadow.normalBias = 0.02;
   scene.add(cle);
 
-  /* Lisière plus douce et moins froide qu'au rendu fixe : à cette taille et
-     sur une vague éteinte, elle grisait tout. */
-  const lisiere = new THREE.DirectionalLight(0xd8dcf0, 1.1);
-  lisiere.position.set(-5, 1.2, -3.4);
+  // La lisière reste chaude : une lisière froide grise l'orange de la marque
+  const lisiere = new THREE.DirectionalLight(0xffc79c, 0.9);
+  lisiere.position.set(-5.2, 1.4, -3.2);
   scene.add(lisiere);
 
-  const bas = new THREE.PointLight(0xff4a12, 9, 12, 2);
-  bas.position.set(-1.2, -2.8, 2.2);
-  scene.add(bas);
+  const braise = new THREE.PointLight(0xff6a2a, 6, 14, 2);
+  braise.position.set(-1.4, -2.4, 2.6);
+  scene.add(braise);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+  // Un rebond depuis la place du spectateur : il débouche les creux
+  const rebond = new THREE.DirectionalLight(0xffd0aa, 0.85);
+  rebond.position.set(-2.6, 0.4, 6.4);
+  scene.add(rebond);
+
+  scene.add(new THREE.AmbientLight(0xffc39a, 0.82));
 
   // ---- Cadrage ----
   const cadrer = () => {
@@ -144,12 +244,14 @@ export function monterIntro3D(hote: HTMLElement): SceneIntro {
     const h = hote.clientHeight || 1;
     renderer.setSize(l, h, false);
     camera.aspect = l / h;
-    /* Le logo occupe une part fixe de la boîte, quelle que soit sa forme :
-       on recule sur la contrainte la plus serrée des deux. */
-    const fov = (camera.fov * Math.PI) / 180;
-    const parHauteur = 1.05 / Math.tan(fov / 2);
-    const parLargeur = 1.26 / Math.tan(fov / 2) / camera.aspect;
-    camera.position.set(0, 0, Math.max(parHauteur, parLargeur) / 0.82);
+    /* Sous un certain rapport, les mots ne tiennent plus à côté du logo :
+       on recule, et le logo revient au centre. */
+    const etroit = camera.aspect < 1.15;
+    groupe.position.x = etroit ? 0 : 0.85;
+    mots.forEach((m) => {
+      m.visible = !etroit;
+    });
+    camera.position.set(0, 0, etroit ? 6.4 : 8.4);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   };
@@ -172,13 +274,10 @@ export function monterIntro3D(hote: HTMLElement): SceneIntro {
   /**
    * Combien coûte une image, pour de vrai ?
    *
-   * Pas en chronométrant `render()` : l'appel empile des commandes et rend
-   * la main avant que quoi que ce soit ne soit tracé — on mesurerait
-   * quelques microsecondes sur une machine à genoux. On regarde donc
-   * l'écart entre images réellement affichées.
-   *
-   * L'intro ne dure qu'une seconde : la mesure se fait pendant qu'elle joue,
-   * et l'appelant retire le volume en cours de route s'il est trop cher.
+   * Pas en chronométrant `render()` : l'appel empile des commandes et rend la
+   * main avant que quoi que ce soit ne soit tracé — on mesurerait quelques
+   * microsecondes sur une machine à genoux. On regarde donc l'écart entre
+   * images réellement affichées.
    */
   const mesurer = () =>
     new Promise<number>((resoudre) => {
@@ -198,14 +297,21 @@ export function monterIntro3D(hote: HTMLElement): SceneIntro {
     mesurer,
     vagues,
     matieres,
+    mots,
     groupe,
     detruire() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", cadrer);
       geos.forEach((g) => g.dispose());
       matieres.forEach((m) => m.dispose());
-      environnement.texture.dispose();
-      pmrem.dispose();
+      mots.forEach((m) => {
+        m.geometry.dispose();
+        m.material.map?.dispose();
+        m.material.dispose();
+      });
+      sol.geometry.dispose();
+      (sol.material as THREE.Material).dispose();
+      envTexture.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     },

@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ETAPES } from "../lib/methode";
 import { cadence as t, INTRO_FIN } from "../lib/intro";
 import type { SceneIntro } from "../lib/intro3d";
+import { EMISSIF_REPOS } from "../lib/intro3d";
 
 /**
  * Intro : les trois étapes du déroulé allument le logo.
@@ -97,7 +98,7 @@ export default function Intro() {
       if (annule) return;
       if (monter && scene3d.current) {
         try {
-          scene = monter(scene3d.current);
+          scene = monter(scene3d.current, PILIERS.map((p) => p.mot));
         } catch {
           scene = undefined; // WebGL indisponible : on reste en plat
         }
@@ -148,6 +149,7 @@ export default function Intro() {
         if (enVolume && scene) {
           const pivot = scene.vagues[i];
           const matiere = scene.matieres[i];
+          const mot = scene.mots[i];
           /* La vague arrive de loin, de côté et de biais, puis se pose à
              plat : c'est la bascule qui donne le volume, pas le voyage. */
           tl.fromTo(
@@ -178,14 +180,36 @@ export default function Intro() {
               matiere,
               { emissiveIntensity: 0 },
               {
-                emissiveIntensity: 0.85,
+                emissiveIntensity: 0.55,
                 duration: t(0.16),
                 yoyo: true,
                 repeat: 1,
                 ease: "power2.out",
               },
               debut + t(0.14)
+            )
+            /* La lueur ne retombe pas à zéro : sans elle, la moitié de la
+               surface qui est dans l'ombre repart vers le grenat. */
+            .to(
+              matiere,
+              { emissiveIntensity: EMISSIF_REPOS, duration: t(0.2) },
+              debut + t(0.46)
             );
+
+          // Le mot glisse avec sa vague, dans la scène
+          if (mot) {
+            tl.fromTo(
+              mot.material,
+              { opacity: 0 },
+              { opacity: 0.92, duration: t(0.42), ease: "power2.out" },
+              debut + t(0.06)
+            ).fromTo(
+              mot.position,
+              { x: mot.userData.repos.x - 0.5 },
+              { x: mot.userData.repos.x, duration: t(0.6), ease: "power3.out" },
+              debut + t(0.06)
+            );
+          }
         }
 
         tl.to(
@@ -241,9 +265,16 @@ export default function Intro() {
       tl.call(
         () => {
           // L'éclat part du logo, où qu'il soit à l'écran
-          const logo = root.current?.querySelector(".intro-logo-svg");
           const el = root.current;
-          if (!logo || !el) return;
+          if (!el) return;
+          if (el.dataset.volume === "true") {
+            // En volume, le logo est au centre de la scène plein écran
+            el.style.setProperty("--fx", "56%");
+            el.style.setProperty("--fy", "50%");
+            return;
+          }
+          const logo = el.querySelector(".intro-logo-svg");
+          if (!logo) return;
           const r = logo.getBoundingClientRect();
           el.style.setProperty(
             "--fx",
@@ -316,13 +347,14 @@ export default function Intro() {
       <div className="intro-vignette" />
       <div className="intro-flash" />
 
+      {/* La scène 3D, plein écran, hors du décor plat : celui-ci est masqué
+          dès qu'elle prend la main, et un enfant hériterait du masquage. */}
+      <span ref={scene3d} className="intro-scene3d" />
+
       <div className="intro-inner">
         <span className="intro-logo-zone">
           <span className="intro-rayons" />
           <span className="intro-halo" />
-          {/* La scène 3D se pose exactement sur le logo plat : quand elle
-              existe, la feuille de style masque le SVG. */}
-          <span ref={scene3d} className="intro-scene3d" />
           <svg className="intro-logo-svg" viewBox="0 0 120 120">
             {WAVE_PATHS.map((d, i) => (
               <path
