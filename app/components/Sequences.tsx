@@ -8,7 +8,6 @@ import {
   decouperTout,
   dessinerIcones,
   releverTitre,
-  vague,
 } from "../lib/anime";
 import { INTRO_FIN } from "../lib/intro";
 
@@ -42,13 +41,6 @@ function preparer(el: HTMLElement) {
   );
 }
 
-/** Les lignes d'un grand titre, pour la vague de lumière. */
-function lignesTitre(el: HTMLElement) {
-  return Array.from(
-    el.querySelectorAll<HTMLElement>(".section-title, .contact-title")
-  );
-}
-
 /** L'ouverture partagée : la mention, puis le titre qui se relève. */
 function ouverture(el: HTMLElement, tl: gsap.core.Timeline, depart = 0) {
   tl.fromTo(
@@ -58,7 +50,6 @@ function ouverture(el: HTMLElement, tl: gsap.core.Timeline, depart = 0) {
     depart
   );
   releverTitre(tl, el.querySelectorAll(".section-title .char"), depart + 0.16);
-  vague(tl, lignesTitre(el), depart + 0.72, 0.18);
 }
 
 const PLANS: Record<string, Plan> = {
@@ -240,7 +231,6 @@ const PLANS: Record<string, Plan> = {
       0
     );
     releverTitre(tl, el.querySelectorAll(".contact-title .char"), 0.16);
-    vague(tl, lignesTitre(el), 0.78, 0.18);
 
     tl.fromTo(
       el.querySelectorAll(".contact-sub .mot-anim"),

@@ -6,8 +6,8 @@ import { DUREE_VOYAGE } from "./deck";
  *
  * Chaque chapitre du deck entre comme un plan de film plutôt que de
  * s'afficher. Les gestes qui reviennent d'un chapitre à l'autre — découper un
- * texte, relever un titre caractère par caractère, faire courir une vague de
- * lumière dans les lettres — sont écrits ici une seule fois.
+ * texte, relever un titre caractère par caractère, dessiner un pictogramme —
+ * sont écrits ici une seule fois.
  */
 
 /**
@@ -20,10 +20,6 @@ export const DELAI_RETOUR = DUREE_VOYAGE - 0.34;
 
 /** Un retour se joue plus vif qu'une découverte. */
 export const VIVACITE_RETOUR = 1.4;
-
-/** L'ombre portée des grands titres, et sa version éclairée. */
-export const OMBRE = "0 2px 26px rgba(0, 0, 0, 0.85)";
-export const OMBRE_LUMIERE = "0 0 18px rgba(255, 216, 176, 0.6)";
 
 /** Emballe un nœud de texte en mots — et, si demandé, en caractères. */
 function emballer(texte: Text, enCaracteres: boolean) {
@@ -109,37 +105,6 @@ export function releverTitre(
     },
     depart
   );
-}
-
-/**
- * Une vague de lumière court dans les lettres, ligne après ligne : chaque
- * caractère s'éclaire un court instant, l'un après l'autre, et retombe.
- * C'est un éclat qui suit la forme des lettres — là où une bande de lumière
- * posée par-dessus dessinerait un rectangle.
- */
-export function vague(
-  tl: gsap.core.Timeline,
-  lignes: HTMLElement[],
-  depart: number,
-  entreLignes = 0.2
-) {
-  lignes.forEach((ligne, i) => {
-    const chars = ligne.querySelectorAll(".char");
-    if (!chars.length) return;
-    tl.fromTo(
-      chars,
-      { textShadow: OMBRE },
-      {
-        textShadow: OMBRE_LUMIERE,
-        duration: 0.2,
-        stagger: 0.016,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: 1,
-      },
-      depart + i * entreLignes
-    );
-  });
 }
 
 /**

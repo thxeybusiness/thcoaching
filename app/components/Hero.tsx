@@ -5,12 +5,7 @@ import { gsap } from "gsap";
 import Magnetic from "./Magnetic";
 import IconeCompetence from "./IconeCompetence";
 import { INTRO_FIN } from "../lib/intro";
-import {
-  DELAI_RETOUR,
-  VIVACITE_RETOUR,
-  decouperTout,
-  vague,
-} from "../lib/anime";
+import { DELAI_RETOUR, VIVACITE_RETOUR, decouperTout } from "../lib/anime";
 import { APPUIS, CENTRE, MAILLAGE, RAYON, SCENE } from "../lib/ecosysteme";
 
 /**
@@ -53,10 +48,6 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       let premier = true;
-
-      const lignes = Array.from(
-        el.querySelectorAll<HTMLElement>(".hero-line-inner")
-      );
 
       const jouer = () => {
         const tl = gsap.timeline({
@@ -118,9 +109,6 @@ export default function Hero() {
           },
           d(0.42)
         );
-
-        // Une vague de lumière court dans les lettres, ligne après ligne
-        vague(tl, lignes, d(0.95), d(0.2));
 
         // La phrase — une seule ligne — arrive mot à mot
         tl.fromTo(
@@ -248,13 +236,6 @@ export default function Hero() {
           delay: INTRO_FIN + 5.5,
         }
       );
-
-      const respiration = gsap.timeline({
-        repeat: -1,
-        repeatDelay: 7,
-        delay: INTRO_FIN + 7,
-      });
-      vague(respiration, lignes, 0, 0.22);
 
       // Rejoue quand l'écran redevient actif (et non à chaque écriture de
       // l'attribut : le deck le repose à l'identique à chaque changement)
