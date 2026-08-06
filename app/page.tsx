@@ -27,13 +27,13 @@ const SLIDES: SlideMeta[] = [
 const bonuses = [
   {
     icone: "formation",
-    title: "2 formations en Marketing Digital",
-    text: "ASA & JDS, incluses dans l'accompagnement.",
+    title: "Formations & logiciels",
+    text: "ASA & JDS en marketing digital, et des logiciels créés pour le business.",
   },
   {
     icone: "acces",
     title: "Accès privés & réductions",
-    text: "Sur des SaaS développés pour le business.",
+    text: "Réservés aux personnes accompagnées.",
   },
   {
     icone: "groupe",
