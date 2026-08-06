@@ -298,10 +298,26 @@ export default function Intro() {
         // est déjà là derrière, on ne voit jamais la coupure.
         .call(
           () => {
-            gsap.set([".intro-inner", ".intro-fond", ".intro-vignette"], {
-              opacity: 0,
-            });
+            /* Tout le décor disparaît d'un coup, la scène 3D comprise : elle
+               est plein écran et hors du bloc plat, donc elle ne s'effaçait
+               pas avec lui et restait visible derrière l'éclat pendant que
+               celui-ci retombait. Le site est déjà là dessous — on ne doit
+               jamais voir la coupure. */
+            gsap.set(
+              [
+                ".intro-inner",
+                ".intro-fond",
+                ".intro-vignette",
+                ".intro-scene3d",
+              ],
+              { opacity: 0 }
+            );
             if (root.current) root.current.style.background = "transparent";
+            /* La scène 3D est démontée ici et non au démontage du composant :
+               invisible, elle continuerait à rendre une image par trame
+               pendant que le site, lui, joue son propre plan d'entrée. */
+            scene?.detruire();
+            scene = undefined;
           },
           undefined,
           OUVERTURE
