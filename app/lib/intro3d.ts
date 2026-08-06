@@ -113,7 +113,113 @@ export function monterIntro3D(
   scene.add(ciel);
 
   // La brume commence tôt : c'est elle qui efface la ligne d'horizon
-  scene.fog = new THREE.Fog(0x22120a, 7, 23);
+  scene.fog = new THREE.Fog(0x22120a, 9, 34);
+
+  /* ------------------------------------------------------------------
+     L'espace.
+
+     Un décor immobile reste un fond. Ce qui donne la profondeur, c'est le
+     mouvement relatif : des plans qui ne se déplacent pas à la même vitesse
+     quand la caméra bouge. D'où trois couches, du plus lointain au plus
+     proche — des barres de lumière, une trame au sol, une poussière.
+     ------------------------------------------------------------------ */
+  const espace = new THREE.Group();
+  scene.add(espace);
+
+  const texBarre = (() => {
+    const c = document.createElement("canvas");
+    c.width = 256;
+    c.height = 8;
+    const g = c.getContext("2d")!;
+    const d = g.createLinearGradient(0, 0, 256, 0);
+    d.addColorStop(0, "rgba(255,140,46,0)");
+    d.addColorStop(0.5, "rgba(255,140,46,0.55)");
+    d.addColorStop(1, "rgba(255,140,46,0)");
+    g.fillStyle = d;
+    g.fillRect(0, 0, 256, 8);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+
+  const barres = new THREE.Group();
+  for (let i = 0; i < 7; i++) {
+    const barre = new THREE.Mesh(
+      new THREE.PlaneGeometry(14 + i * 2.2, 0.035),
+      new THREE.MeshBasicMaterial({
+        map: texBarre,
+        transparent: true,
+        opacity: 0.16 + (i % 3) * 0.05,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        fog: true,
+      })
+    );
+    barre.position.set(
+      (i % 2 ? -1 : 1) * (1 + i * 0.5),
+      -1.1 + i * 0.62,
+      -13 - i * 1.4
+    );
+    barre.userData.vitesse = 0.06 + (i % 4) * 0.035;
+    barres.add(barre);
+  }
+  espace.add(barres);
+
+  /* Une trame au sol : elle dit « il y a un sol », et sa fuite vers
+     l'horizon donne la perspective sans qu'on ait rien à dessiner. */
+  const trame = new THREE.GridHelper(90, 60, 0x3a2116, 0x241610);
+  trame.position.y = -1.6;
+  const matTrame = trame.material as THREE.LineBasicMaterial;
+  matTrame.transparent = true;
+  matTrame.opacity = 0.55;
+  matTrame.fog = true;
+  espace.add(trame);
+
+  /* La poussière : la couche la plus proche, donc celle qui bouge le plus
+     quand la caméra tourne. C'est elle qui fait sentir le volume. */
+  const POUSSIERES = 900;
+  const posPoussiere = new Float32Array(POUSSIERES * 3);
+  for (let i = 0; i < POUSSIERES; i++) {
+    posPoussiere[i * 3] = (Math.random() - 0.5) * 34;
+    posPoussiere[i * 3 + 1] = Math.random() * 13 - 1.5;
+    posPoussiere[i * 3 + 2] = (Math.random() - 0.5) * 30 - 4;
+  }
+  const geoPoussiere = new THREE.BufferGeometry();
+  geoPoussiere.setAttribute(
+    "position",
+    new THREE.BufferAttribute(posPoussiere, 3)
+  );
+
+  const texPoussiere = (() => {
+    const c = document.createElement("canvas");
+    c.width = 32;
+    c.height = 32;
+    const g = c.getContext("2d")!;
+    const d = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+    d.addColorStop(0, "rgba(255,200,150,1)");
+    d.addColorStop(0.45, "rgba(255,150,70,0.5)");
+    d.addColorStop(1, "rgba(255,120,40,0)");
+    g.fillStyle = d;
+    g.fillRect(0, 0, 32, 32);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+
+  const poussiere = new THREE.Points(
+    geoPoussiere,
+    new THREE.PointsMaterial({
+      map: texPoussiere,
+      size: 0.07,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      fog: true,
+    })
+  );
+  espace.add(poussiere);
 
   /* Un environnement fabriqué sur place : un dégradé équirectangulaire, clair
      en haut et chaud en bas. Il ne se voit jamais — il ne sert qu'aux reflets.
@@ -197,9 +303,13 @@ export function monterIntro3D(
     groupe.add(pivot);
   });
 
+  /* Logo et mots forment une seule affiche : c'est elle qu'on centre et
+     qu'on cadre. Placés séparément, ils débordaient de l'écran dès que le
+     mot était long — « Perfectionnement » sortait par la gauche. */
   groupe.scale.setScalar(0.021);
-  groupe.position.x = 0.85; // le logo à droite, les mots à sa gauche
-  scene.add(groupe);
+  const affiche = new THREE.Group();
+  affiche.add(groupe);
+  scene.add(affiche);
 
   // ---- Les trois mots, posés dans la scène ----
   const mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[] = [];
@@ -208,9 +318,10 @@ export function monterIntro3D(
      fixe, « Perfectionnement » débordait et se retrouvait amputé de ses
      premières lettres. La hauteur du plan reste la même pour les trois, sa
      largeur suit celle du texte. */
-  const HAUTEUR_MOT = 0.3;
+  const HAUTEUR_MOT = 0.22; // discrets : ils accompagnent, ils ne pèsent pas
   const CORPS = 72;
   const MARGE = 24;
+  const ECART = 0.5; // entre le bord droit des mots et le bord gauche du logo
 
   libelles.slice(0, 3).forEach((libelle, i) => {
     const lettres = libelle.toUpperCase().split("").join(" ");
@@ -246,12 +357,28 @@ export function monterIntro3D(
         fog: true, // les mots sont dans le décor, la brume les touche aussi
       })
     );
-    // Alignés à droite sur une même marge, quelle que soit leur longueur
-    plan.position.set(-0.75 - largeur / 2, 0.63 - i * 0.63, 0.16);
+    /* Bord droit à zéro, quelle que soit la longueur : les trois mots sont
+       alignés sur la même marge. L'affiche est recentrée juste après. */
+    plan.position.set(-largeur / 2, 0.58 - i * 0.58, 0.16);
     plan.userData.repos = plan.position.clone();
-    scene.add(plan);
+    affiche.add(plan);
     mots.push(plan);
   });
+
+  /* Le logo prend place à droite des mots, puis l'affiche entière est ramenée
+     sur son centre : la composition tient au milieu de l'écran quelle que
+     soit la longueur du plus long mot. */
+  groupe.position.x = ECART + 1.26;
+  const tailleAffiche = (() => {
+    const boite = new THREE.Box3().setFromObject(affiche);
+    const centre = boite.getCenter(new THREE.Vector3());
+    affiche.children.forEach((e) => {
+      e.position.x -= centre.x;
+      if (e.userData.repos) e.userData.repos.x -= centre.x;
+    });
+    return boite.getSize(new THREE.Vector3());
+  })();
+  const logoX = groupe.position.x;
 
   /* Le sol : une vraie surface, et non un simple receveur d'ombre. En
      transparent, l'ombre se détachait sur le fond CSS comme une dalle
@@ -304,20 +431,35 @@ export function monterIntro3D(
 
   scene.add(new THREE.AmbientLight(0xffc39a, 0.82));
 
-  // ---- Cadrage ----
+  /* Le cadrage se calcule, il ne se devine pas : on recule la caméra juste
+     assez pour que l'affiche tienne — sur la hauteur ou sur la largeur, selon
+     celle qui contraint. Le remplissage laisse volontairement de l'air : une
+     composition qui touche les bords écrase tout le reste. */
+  const REMPLISSAGE = 0.62;
+
   const cadrer = () => {
     const l = hote.clientWidth || 1;
     const h = hote.clientHeight || 1;
     renderer.setSize(l, h, false);
     camera.aspect = l / h;
-    /* Sous un certain rapport, les mots ne tiennent plus à côté du logo :
-       on recule, et le logo revient au centre. */
-    const etroit = camera.aspect < 1.15;
-    groupe.position.x = etroit ? 0 : 0.85;
+
+    // Sur un écran étroit, les mots ne tiennent plus à côté du logo
+    const etroit = camera.aspect < 1.05;
     mots.forEach((m) => {
       m.visible = !etroit;
     });
-    camera.position.set(0, 0, etroit ? 6.4 : 8.4);
+    groupe.position.x = etroit ? 0 : logoX;
+    affiche.position.x = etroit ? 0 : 0;
+
+    const largeur = etroit ? 2.52 : tailleAffiche.x;
+    const fov = (camera.fov * Math.PI) / 180;
+    const parHauteur = tailleAffiche.y / 2 / Math.tan(fov / 2);
+    const parLargeur = largeur / 2 / Math.tan(fov / 2) / camera.aspect;
+    camera.position.set(
+      0,
+      0,
+      Math.max(parHauteur, parLargeur) / REMPLISSAGE
+    );
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   };
@@ -328,10 +470,25 @@ export function monterIntro3D(
   let raf = 0;
   let derniere = 0;
   const intervalles: number[] = [];
+  const depart = performance.now();
   const tick = () => {
     const t = performance.now();
     if (derniere) intervalles.push(t - derniere);
     derniere = t;
+
+    /* L'espace bouge en permanence, à trois vitesses : sans ce mouvement
+       relatif le décor reste une image et la profondeur ne se lit pas. */
+    const s = (t - depart) / 1000;
+    poussiere.rotation.y = s * 0.012;
+    poussiere.position.y = Math.sin(s * 0.18) * 0.28;
+    barres.children.forEach((b, i) => {
+      const v = b.userData.vitesse as number;
+      b.position.x = (i % 2 ? -1 : 1) * (1 + i * 0.5) + Math.sin(s * v) * 2.6;
+      (b as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>).material.opacity =
+        (0.16 + (i % 3) * 0.05) * (0.55 + 0.45 * Math.sin(s * v * 1.7 + i));
+    });
+    trame.position.z = ((s * 0.35) % 1.5) - 0.75;
+
     renderer.render(scene, camera);
     raf = requestAnimationFrame(tick);
   };
@@ -380,6 +537,17 @@ export function monterIntro3D(
       ciel.geometry.dispose();
       (ciel.material as THREE.Material).dispose();
       cielTexture.dispose();
+      barres.children.forEach((b) => {
+        const m = b as THREE.Mesh;
+        m.geometry.dispose();
+        (m.material as THREE.Material).dispose();
+      });
+      texBarre.dispose();
+      trame.geometry.dispose();
+      matTrame.dispose();
+      geoPoussiere.dispose();
+      (poussiere.material as THREE.Material).dispose();
+      texPoussiere.dispose();
       envTexture.dispose();
       renderer.dispose();
       renderer.domElement.remove();
