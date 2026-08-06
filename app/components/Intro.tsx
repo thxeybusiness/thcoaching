@@ -314,6 +314,9 @@ export default function Intro() {
       // L'ensemble s'incline pendant toute l'intro, puis pousse vers la
       // caméra au moment de l'éclat : le logo sort par l'avant.
       if (enVolume && scene) {
+        /* L'ensemble s'incline pendant toute l'intro. Il ne se rapproche plus
+           de la caméra à l'éclat : ce dernier élan lisait comme un zoom, et
+           il écrasait la composition juste avant qu'elle disparaisse. */
         tl.fromTo(
           scene.groupe.rotation,
           { y: -0.34, x: -0.16 },
@@ -321,10 +324,6 @@ export default function Intro() {
              frappe la grande face de plein fouet et la lave. */
           { y: -0.28, x: -0.12, duration: t(1.5), ease: "power2.out" },
           0
-        ).to(
-          scene.groupe.position,
-          { z: 1.4, duration: t(0.5), ease: "power2.in" },
-          ECLAT
         );
       }
     }, root);
