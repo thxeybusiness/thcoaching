@@ -102,12 +102,14 @@ export function monterIntro3D(
     return t;
   })();
 
+  /* Ce n'est plus un ciel mais l'ambiance de la pièce : ce qu'on aperçoit
+     au-delà des murs, et ce qui teinte les angles morts. */
   const ciel = new THREE.Mesh(
-    new THREE.SphereGeometry(60, 32, 24),
+    new THREE.SphereGeometry(60, 24, 16),
     new THREE.MeshBasicMaterial({
       map: cielTexture,
       side: THREE.BackSide,
-      fog: false, // le ciel EST le lointain : la brume n'a pas à le manger
+      fog: false,
     })
   );
   scene.add(ciel);
@@ -116,73 +118,188 @@ export function monterIntro3D(
   scene.fog = new THREE.Fog(0x22120a, 9, 34);
 
   /* ------------------------------------------------------------------
-     L'espace.
+     Le lieu.
 
-     Un décor immobile reste un fond. Ce qui donne la profondeur, c'est le
-     mouvement relatif : des plans qui ne se déplacent pas à la même vitesse
-     quand la caméra bouge. D'où trois couches, du plus lointain au plus
-     proche — des barres de lumière, une trame au sol, une poussière.
+     Un bureau, la nuit. Tout est bâti en volumes simples — des boîtes, des
+     cylindres, des cônes : aucun fichier de modèle, et l'ensemble reste
+     léger. Ce n'est pas un décor réaliste, c'est un lieu reconnaissable, et
+     c'est ce qui compte : on doit sentir qu'il y a quelqu'un qui travaille
+     ici, pas regarder un fond.
+
+     Ce qui fait vivre la pièce n'est pas le nombre d'objets mais la lumière :
+     la lampe du bureau chauffe le plan de travail, l'écran teinte ce qui
+     l'entoure, et le store découpe la lumière du dehors en lames qui
+     traversent la poussière.
      ------------------------------------------------------------------ */
-  const espace = new THREE.Group();
-  scene.add(espace);
+  const lieu = new THREE.Group();
+  scene.add(lieu);
 
-  const texBarre = (() => {
+  /** Tout ce que la pièce alloue et qu'il faudra rendre au démontage. */
+  const aRanger: { dispose: () => void }[] = [];
+
+  /** Un volume, avec sa matière — le vocabulaire de tout le mobilier. */
+  const bloc = (
+    geo: THREE.BufferGeometry,
+    couleur: number,
+    grain = 0.85,
+    metal = 0
+  ) => {
+    const mat = new THREE.MeshStandardMaterial({
+      color: couleur,
+      roughness: grain,
+      metalness: metal,
+    });
+    aRanger.push(geo, mat);
+    const m = new THREE.Mesh(geo, mat);
+    m.castShadow = true;
+    m.receiveShadow = true;
+    lieu.add(m);
+    return m;
+  };
+
+  const SOL_Y = -1.62;
+
+  // ---- La pièce : un fond et un mur latéral, rien de plus ----
+  const mur = bloc(new THREE.BoxGeometry(16, 8, 0.2), 0x1d1512, 0.95);
+  mur.position.set(0, SOL_Y + 4, -5.2);
+  mur.castShadow = false;
+
+  const murCote = bloc(new THREE.BoxGeometry(0.2, 8, 10), 0x191210, 0.95);
+  murCote.position.set(-7.4, SOL_Y + 4, -0.6);
+  murCote.castShadow = false;
+
+  // ---- Le bureau ----
+  const plateau = bloc(new THREE.BoxGeometry(3.9, 0.09, 1.6), 0x3a2418, 0.7);
+  plateau.position.set(0.15, SOL_Y + 1.05, -1.75);
+
+  [-1.7, 1.7].forEach((dx) => {
+    const pied = bloc(new THREE.BoxGeometry(0.09, 1.05, 1.4), 0x241812, 0.8);
+    pied.position.set(0.15 + dx, SOL_Y + 0.52, -1.75);
+  });
+
+  // ---- L'écran : c'est lui qui éclaire le bureau par en dessous ----
+  const pied = bloc(new THREE.BoxGeometry(0.36, 0.05, 0.24), 0x14100e, 0.6, 0.4);
+  pied.position.set(-0.85, SOL_Y + 1.12, -2.05);
+  const mat = bloc(new THREE.BoxGeometry(0.07, 0.42, 0.07), 0x14100e, 0.6, 0.4);
+  mat.position.set(-0.85, SOL_Y + 1.33, -2.05);
+  const cadre = bloc(new THREE.BoxGeometry(1.34, 0.82, 0.05), 0x14100e, 0.6, 0.4);
+  cadre.position.set(-0.85, SOL_Y + 1.78, -2.06);
+
+  const geoDalle = new THREE.PlaneGeometry(1.24, 0.72);
+  const matDalle = new THREE.MeshBasicMaterial({ color: 0x2a1a12, fog: true });
+  aRanger.push(geoDalle, matDalle);
+  const dalle = new THREE.Mesh(geoDalle, matDalle);
+  dalle.position.set(-0.85, SOL_Y + 1.78, -2.03);
+  lieu.add(dalle);
+
+  // ---- La lampe : la vraie source chaude de la pièce ----
+  const socle = bloc(new THREE.CylinderGeometry(0.17, 0.19, 0.05, 16), 0x2e1d14, 0.7);
+  socle.position.set(1.45, SOL_Y + 1.12, -1.9);
+  const bras = bloc(new THREE.CylinderGeometry(0.025, 0.025, 0.72, 10), 0x2e1d14, 0.6, 0.3);
+  bras.position.set(1.45, SOL_Y + 1.48, -1.9);
+  bras.rotation.z = 0.24;
+  const abatJour = bloc(new THREE.ConeGeometry(0.2, 0.24, 18, 1, true), 0x51301c, 0.65);
+  abatJour.position.set(1.28, SOL_Y + 1.82, -1.9);
+  abatJour.rotation.z = 0.5;
+
+  const lampe = new THREE.PointLight(0xffb066, 5.5, 6.5, 2);
+  lampe.position.set(1.24, SOL_Y + 1.72, -1.86);
+  lieu.add(lampe);
+
+  // ---- La chaise ----
+  const assise = bloc(new THREE.BoxGeometry(0.62, 0.08, 0.6), 0x241a16, 0.9);
+  assise.position.set(0.2, SOL_Y + 0.58, -1.05);
+  const dossier = bloc(new THREE.BoxGeometry(0.6, 0.72, 0.07), 0x241a16, 0.9);
+  dossier.position.set(0.2, SOL_Y + 0.96, -0.74);
+  dossier.rotation.x = 0.14;
+  const colonne = bloc(new THREE.CylinderGeometry(0.05, 0.05, 0.5, 10), 0x14100e, 0.6, 0.4);
+  colonne.position.set(0.2, SOL_Y + 0.3, -1.05);
+  const etoile = bloc(new THREE.CylinderGeometry(0.34, 0.34, 0.04, 5), 0x14100e, 0.6, 0.4);
+  etoile.position.set(0.2, SOL_Y + 0.04, -1.05);
+
+  // ---- La plante : le seul volume vivant de la pièce ----
+  const pot = bloc(new THREE.CylinderGeometry(0.2, 0.15, 0.34, 14), 0x4a2a1c, 0.9);
+  pot.position.set(-2.9, SOL_Y + 0.17, -2.3);
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const feuille = bloc(new THREE.ConeGeometry(0.1, 0.62, 5), 0x2f3f24, 0.95);
+    feuille.position.set(
+      -2.9 + Math.cos(a) * 0.13,
+      SOL_Y + 0.62 + (i % 2) * 0.12,
+      -2.3 + Math.sin(a) * 0.13
+    );
+    feuille.rotation.set(Math.sin(a) * 0.42, a, -Math.cos(a) * 0.42);
+  }
+
+  // ---- L'étagère et ses livres ----
+  const etagere = bloc(new THREE.BoxGeometry(2.4, 0.07, 0.3), 0x33211a, 0.85);
+  etagere.position.set(-2.2, SOL_Y + 2.5, -4.9);
+  const TEINTES = [0x6b3a22, 0x3d2a1e, 0x7a4526, 0x2b2a24, 0x59331f];
+  for (let i = 0; i < 9; i++) {
+    const h = 0.3 + (i % 4) * 0.06;
+    const livre = bloc(
+      new THREE.BoxGeometry(0.07 + (i % 3) * 0.02, h, 0.22),
+      TEINTES[i % TEINTES.length],
+      0.95
+    );
+    livre.position.set(-3.2 + i * 0.13, SOL_Y + 2.54 + h / 2, -4.9);
+    livre.rotation.z = i === 6 ? 0.24 : 0;
+  }
+
+  // ---- Une tasse, posée là ----
+  const tasse = bloc(new THREE.CylinderGeometry(0.08, 0.07, 0.12, 14), 0x6b3f26, 0.8);
+  tasse.position.set(0.75, SOL_Y + 1.16, -1.45);
+
+  /* ---- La fenêtre : un store, et la lumière qui passe entre ses lames ----
+     Ce sont ces lames qui donnent l'heure et l'ambiance. Elles bougent très
+     lentement, comme une lumière d'extérieur qui change. */
+  const texLame = (() => {
     const c = document.createElement("canvas");
     c.width = 256;
     c.height = 8;
     const g = c.getContext("2d")!;
     const d = g.createLinearGradient(0, 0, 256, 0);
-    d.addColorStop(0, "rgba(255,140,46,0)");
-    d.addColorStop(0.5, "rgba(255,140,46,0.55)");
-    d.addColorStop(1, "rgba(255,140,46,0)");
+    d.addColorStop(0, "rgba(255,150,60,0)");
+    d.addColorStop(0.45, "rgba(255,160,80,0.5)");
+    d.addColorStop(1, "rgba(255,150,60,0)");
     g.fillStyle = d;
     g.fillRect(0, 0, 256, 8);
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
   })();
+  aRanger.push(texLame);
 
-  const barres = new THREE.Group();
-  for (let i = 0; i < 7; i++) {
-    const barre = new THREE.Mesh(
-      new THREE.PlaneGeometry(14 + i * 2.2, 0.035),
-      new THREE.MeshBasicMaterial({
-        map: texBarre,
-        transparent: true,
-        opacity: 0.16 + (i % 3) * 0.05,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        fog: true,
-      })
-    );
-    barre.position.set(
-      (i % 2 ? -1 : 1) * (1 + i * 0.5),
-      -1.1 + i * 0.62,
-      -13 - i * 1.4
-    );
-    barre.userData.vitesse = 0.06 + (i % 4) * 0.035;
-    barres.add(barre);
+  const lames = new THREE.Group();
+  for (let i = 0; i < 6; i++) {
+    const geo = new THREE.PlaneGeometry(7.4, 0.5);
+    const matLame = new THREE.MeshBasicMaterial({
+      map: texLame,
+      transparent: true,
+      opacity: 0.1 + (i % 3) * 0.03,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      fog: true,
+    });
+    aRanger.push(geo, matLame);
+    const lame = new THREE.Mesh(geo, matLame);
+    // Les lames tombent en biais, du haut à gauche vers le bas à droite
+    lame.position.set(-2.6 + i * 0.34, SOL_Y + 3.4 - i * 0.62, -4.4 + i * 0.12);
+    lame.rotation.z = -0.42;
+    lame.userData.base = 0.1 + (i % 3) * 0.03;
+    lame.userData.vitesse = 0.05 + (i % 4) * 0.03;
+    lames.add(lame);
   }
-  espace.add(barres);
+  lieu.add(lames);
 
-  /* Une trame au sol : elle dit « il y a un sol », et sa fuite vers
-     l'horizon donne la perspective sans qu'on ait rien à dessiner. */
-  const trame = new THREE.GridHelper(90, 60, 0x3a2116, 0x241610);
-  trame.position.y = -1.6;
-  const matTrame = trame.material as THREE.LineBasicMaterial;
-  matTrame.transparent = true;
-  matTrame.opacity = 0.55;
-  matTrame.fog = true;
-  espace.add(trame);
-
-  /* La poussière : la couche la plus proche, donc celle qui bouge le plus
-     quand la caméra tourne. C'est elle qui fait sentir le volume. */
-  const POUSSIERES = 900;
+  /* La poussière, dans la lumière : c'est le détail qui fait qu'une pièce
+     paraît habitée plutôt que modélisée. */
+  const POUSSIERES = 700;
   const posPoussiere = new Float32Array(POUSSIERES * 3);
   for (let i = 0; i < POUSSIERES; i++) {
-    posPoussiere[i * 3] = (Math.random() - 0.5) * 34;
-    posPoussiere[i * 3 + 1] = Math.random() * 13 - 1.5;
-    posPoussiere[i * 3 + 2] = (Math.random() - 0.5) * 30 - 4;
+    posPoussiere[i * 3] = (Math.random() - 0.5) * 13;
+    posPoussiere[i * 3 + 1] = SOL_Y + Math.random() * 5.2;
+    posPoussiere[i * 3 + 2] = (Math.random() - 0.5) * 8 - 1.5;
   }
   const geoPoussiere = new THREE.BufferGeometry();
   geoPoussiere.setAttribute(
@@ -196,30 +313,28 @@ export function monterIntro3D(
     c.height = 32;
     const g = c.getContext("2d")!;
     const d = g.createRadialGradient(16, 16, 0, 16, 16, 16);
-    d.addColorStop(0, "rgba(255,200,150,1)");
-    d.addColorStop(0.45, "rgba(255,150,70,0.5)");
-    d.addColorStop(1, "rgba(255,120,40,0)");
+    d.addColorStop(0, "rgba(255,205,155,1)");
+    d.addColorStop(0.45, "rgba(255,160,80,0.45)");
+    d.addColorStop(1, "rgba(255,130,50,0)");
     g.fillStyle = d;
     g.fillRect(0, 0, 32, 32);
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
   })();
-
-  const poussiere = new THREE.Points(
-    geoPoussiere,
-    new THREE.PointsMaterial({
-      map: texPoussiere,
-      size: 0.07,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.5,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      fog: true,
-    })
-  );
-  espace.add(poussiere);
+  const matPoussiere = new THREE.PointsMaterial({
+    map: texPoussiere,
+    size: 0.045,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.42,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: true,
+  });
+  aRanger.push(geoPoussiere, matPoussiere, texPoussiere);
+  const poussiere = new THREE.Points(geoPoussiere, matPoussiere);
+  lieu.add(poussiere);
 
   /* Un environnement fabriqué sur place : un dégradé équirectangulaire, clair
      en haut et chaud en bas. Il ne se voit jamais — il ne sert qu'aux reflets.
@@ -385,7 +500,7 @@ export function monterIntro3D(
      posée dans le vide. Avec une matière et la brume, elle s'éteint dans
      le lointain et le logo se met enfin à reposer sur quelque chose. */
   const sol = new THREE.Mesh(
-    new THREE.PlaneGeometry(120, 120),
+    new THREE.PlaneGeometry(30, 22),
     new THREE.MeshStandardMaterial({
       color: 0x2b1a12,
       roughness: 0.92,
@@ -393,9 +508,14 @@ export function monterIntro3D(
     })
   );
   sol.rotation.x = -Math.PI / 2;
-  sol.position.y = -1.62;
+  sol.position.y = SOL_Y;
   sol.receiveShadow = true;
-  scene.add(sol);
+  lieu.add(sol);
+
+  /* La pièce descend et recule : le logo doit flotter au-dessus du plan de
+     travail, pas se poser dessus. Tout le mobilier bouge d'un bloc, les
+     lumières comprises — elles appartiennent au lieu. */
+  lieu.position.set(0, -0.95, -0.9);
 
   // ---- Lumières ----
   /* La clé est nettement en avant : posée au-dessus, elle raserait la grande
@@ -435,7 +555,7 @@ export function monterIntro3D(
      assez pour que l'affiche tienne — sur la hauteur ou sur la largeur, selon
      celle qui contraint. Le remplissage laisse volontairement de l'air : une
      composition qui touche les bords écrase tout le reste. */
-  const REMPLISSAGE = 0.62;
+  const REMPLISSAGE = 0.5;
 
   const cadrer = () => {
     const l = hote.clientWidth || 1;
@@ -476,18 +596,19 @@ export function monterIntro3D(
     if (derniere) intervalles.push(t - derniere);
     derniere = t;
 
-    /* L'espace bouge en permanence, à trois vitesses : sans ce mouvement
-       relatif le décor reste une image et la profondeur ne se lit pas. */
+    /* La pièce vit : la poussière dérive dans la lumière, les lames du store
+       respirent, la lampe vacille imperceptiblement. Rien de spectaculaire —
+       c'est l'absence totale de mouvement qui trahit un décor. */
     const s = (t - depart) / 1000;
-    poussiere.rotation.y = s * 0.012;
-    poussiere.position.y = Math.sin(s * 0.18) * 0.28;
-    barres.children.forEach((b, i) => {
-      const v = b.userData.vitesse as number;
-      b.position.x = (i % 2 ? -1 : 1) * (1 + i * 0.5) + Math.sin(s * v) * 2.6;
-      (b as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>).material.opacity =
-        (0.16 + (i % 3) * 0.05) * (0.55 + 0.45 * Math.sin(s * v * 1.7 + i));
+    poussiere.rotation.y = s * 0.01;
+    poussiere.position.y = Math.sin(s * 0.16) * 0.2;
+    lames.children.forEach((lame, i) => {
+      const m = lame as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+      const v = m.userData.vitesse as number;
+      m.material.opacity =
+        (m.userData.base as number) * (0.6 + 0.4 * Math.sin(s * v * 1.6 + i));
     });
-    trame.position.z = ((s * 0.35) % 1.5) - 0.75;
+    lampe.intensity = 5.5 + Math.sin(s * 1.7) * 0.18 + Math.sin(s * 4.3) * 0.07;
 
     renderer.render(scene, camera);
     raf = requestAnimationFrame(tick);
@@ -537,17 +658,7 @@ export function monterIntro3D(
       ciel.geometry.dispose();
       (ciel.material as THREE.Material).dispose();
       cielTexture.dispose();
-      barres.children.forEach((b) => {
-        const m = b as THREE.Mesh;
-        m.geometry.dispose();
-        (m.material as THREE.Material).dispose();
-      });
-      texBarre.dispose();
-      trame.geometry.dispose();
-      matTrame.dispose();
-      geoPoussiere.dispose();
-      (poussiere.material as THREE.Material).dispose();
-      texPoussiere.dispose();
+      aRanger.forEach((r) => r.dispose());
       envTexture.dispose();
       renderer.dispose();
       renderer.domElement.remove();
