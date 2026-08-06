@@ -5,6 +5,10 @@
  * pendant la transition, pas seulement à l'arrivée.
  */
 
+/** Temps de voyage d'un chapitre à l'autre, en secondes. Les écrans qui
+ *  jouent une séquence à leur arrivée s'y accordent. */
+export const DUREE_VOYAGE = 0.72;
+
 let progress = 0;
 
 export function getDeckProgress() {

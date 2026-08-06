@@ -4,8 +4,13 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import Magnetic from "./Magnetic";
 import IconeCompetence from "./IconeCompetence";
-import { DUREE_VOYAGE } from "./Deck";
 import { INTRO_FIN } from "../lib/intro";
+import {
+  DELAI_RETOUR,
+  VIVACITE_RETOUR,
+  decouperTout,
+  vague,
+} from "../lib/anime";
 import { APPUIS, CENTRE, MAILLAGE, RAYON, SCENE } from "../lib/ecosysteme";
 
 /**
@@ -28,39 +33,10 @@ import { APPUIS, CENTRE, MAILLAGE, RAYON, SCENE } from "../lib/ecosysteme";
 const VITESSE = 1;
 const d = (secondes: number) => secondes / VITESSE;
 
-/** L'ombre portée du titre, telle que la feuille de style la pose, et sa
- *  version éclairée — la vague de lumière fait l'aller-retour entre les deux. */
-const OMBRE = "0 2px 26px rgba(0, 0, 0, 0.85)";
-const OMBRE_LUMIERE = "0 0 18px rgba(255, 216, 176, 0.6)";
-
 /** Longueurs des deux tracés de la scène, pour les dessiner au lancement.
  *  L'anneau est un cercle ; le maillage, cinq cordes d'angle 144°. */
 const TOUR = 2 * Math.PI * RAYON;
 const ETOILE = 5 * 2 * RAYON * Math.sin((144 * Math.PI) / 360);
-
-/** Découpe un texte en mots — et, si demandé, chaque mot en caractères. */
-function decouper(el: HTMLElement, enCaracteres: boolean) {
-  if (el.dataset.decoupe) return;
-  el.dataset.decoupe = "1";
-  const mots = (el.textContent ?? "").split(" ");
-  el.textContent = "";
-  mots.forEach((mot, i) => {
-    const m = document.createElement("span");
-    m.className = "mot-anim";
-    if (enCaracteres) {
-      Array.from(mot).forEach((c) => {
-        const s = document.createElement("span");
-        s.className = "char";
-        s.textContent = c;
-        m.appendChild(s);
-      });
-    } else {
-      m.textContent = mot;
-    }
-    el.appendChild(m);
-    if (i < mots.length - 1) el.appendChild(document.createTextNode(" "));
-  });
-}
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -70,42 +46,17 @@ export default function Hero() {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    el.querySelectorAll<HTMLElement>(".hero-line-inner").forEach((l) =>
-      decouper(l, true)
-    );
-    el.querySelectorAll<HTMLElement>(".hero-eyebrow-texte, .hero-sub").forEach(
-      (l) => decouper(l, false)
-    );
+    decouperTout(el, ".hero-line-inner", true);
+    decouperTout(el, ".hero-eyebrow-texte, .hero-sub", false);
 
     let obs: MutationObserver | undefined;
 
     const ctx = gsap.context(() => {
       let premier = true;
 
-      /* La vague : chaque caractère s'éclaire un court instant, l'un après
-         l'autre, et retombe. C'est un éclat qui suit la forme des lettres —
-         là où une bande de lumière posée par-dessus dessinerait un rectangle. */
-      const vague = (
-        tl: gsap.core.Timeline,
-        depart: number,
-        entreLignes: number
-      ) => {
-        el.querySelectorAll<HTMLElement>(".hero-line-inner").forEach((l, i) => {
-          tl.fromTo(
-            l.querySelectorAll(".char"),
-            { textShadow: OMBRE },
-            {
-              textShadow: OMBRE_LUMIERE,
-              duration: d(0.2),
-              stagger: d(0.016),
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: 1,
-            },
-            depart + i * entreLignes
-          );
-        });
-      };
+      const lignes = Array.from(
+        el.querySelectorAll<HTMLElement>(".hero-line-inner")
+      );
 
       const jouer = () => {
         const tl = gsap.timeline({
@@ -114,10 +65,10 @@ export default function Hero() {
              tiers du voyage : lancé au clic, la moitié se jouerait hors de
              l'écran ; lancé à l'arrivée, l'écran resterait vide une seconde.
              Il est aussi joué plus vif — on revient, on ne découvre plus. */
-          delay: premier ? INTRO_FIN : DUREE_VOYAGE - 0.34,
+          delay: premier ? INTRO_FIN : DELAI_RETOUR,
           defaults: { ease: "power4.out" },
         });
-        if (!premier) tl.timeScale(1.4);
+        if (!premier) tl.timeScale(VIVACITE_RETOUR);
 
         // ---- La moitié gauche : l'accroche ----
 
@@ -169,7 +120,7 @@ export default function Hero() {
         );
 
         // Une vague de lumière court dans les lettres, ligne après ligne
-        vague(tl, d(0.95), d(0.2));
+        vague(tl, lignes, d(0.95), d(0.2));
 
         // La phrase — une seule ligne — arrive mot à mot
         tl.fromTo(
@@ -303,7 +254,7 @@ export default function Hero() {
         repeatDelay: 7,
         delay: INTRO_FIN + 7,
       });
-      vague(respiration, 0, 0.22);
+      vague(respiration, lignes, 0, 0.22);
 
       // Rejoue quand l'écran redevient actif (et non à chaque écriture de
       // l'attribut : le deck le repose à l'identique à chaque changement)

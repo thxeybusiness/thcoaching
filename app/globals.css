@@ -653,15 +653,19 @@ cliquable ---------- */
   --avancee: 100%;
 }
 
+/* `--trait` va de 0 à 1 pendant la séquence d'entrée : le filet se remplit
+   jusqu'à l'avancée de son étape. Hors séquence il vaut 1, donc le filet est
+   simplement là. */
 .deroule-etape::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
+  --rempli: calc(var(--avancee) * var(--trait, 1));
   background: linear-gradient(
     90deg,
-    var(--orange) 0 var(--avancee),
-    rgba(255, 255, 255, 0.07) var(--avancee)
+    var(--orange) 0 var(--rempli),
+    rgba(255, 255, 255, 0.07) var(--rempli)
   );
 }
 
@@ -892,9 +896,24 @@ cliquable ---------- */
   gap: 26px;
 }
 
+/* Le filet du repère est un pseudo-élément et non une bordure : la séquence
+   le tire de haut en bas (`--filet`, de 0 à 1). La largeur totale ne change
+   pas — les 3 px de la bordure passent dans le retrait. */
 .stat {
-  border-left: 3px solid var(--orange);
-  padding-left: 22px;
+  position: relative;
+  padding-left: 25px;
+}
+
+.stat::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--orange);
+  transform: scaleY(var(--filet, 1));
+  transform-origin: 50% 0;
 }
 
 /* Pictogramme à gauche du chiffre : au-dessus, les trois repères
@@ -1115,6 +1134,22 @@ cliquable ---------- */
 }
 
 /* ---------- Révélations à l'arrivée sur un écran ---------- */
+
+/* Les fragments produits par le découpage des textes. Ils n'existent que
+   lorsqu'une séquence est jouée ; sans JavaScript, le texte reste entier. */
+.mot-anim {
+  display: inline-block;
+}
+
+.char {
+  display: inline-block;
+}
+
+/* Un chapitre dont la séquence a pris la main : la transition de la feuille
+   de style ne doit plus se superposer aux images écrites par GSAP. */
+.deck[data-ready="true"] .slide[data-anime="true"] [data-r] {
+  transition: none;
+}
 .deck[data-ready="true"] [data-r] {
   opacity: 0;
   transform: translateY(24px);
