@@ -222,20 +222,6 @@ export default function Poles() {
             aria-labelledby={`onglet-${p.cle}`}
             data-actif={i === actif}
           >
-            <div className="pilier-tete">
-              <span className="pilier-num" aria-hidden="true">
-                {p.num}
-              </span>
-              <div>
-                <h3 className="pilier-titre">{p.titre}</h3>
-                <p className="pilier-promesse">
-                  <span className="pole-role">{p.role}</span>
-                  {p.promesse}
-                </p>
-              </div>
-
-            </div>
-
             <GrilleCompetences
               cle={p.cle}
               num={p.num}

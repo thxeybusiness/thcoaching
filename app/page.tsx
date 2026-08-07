@@ -140,21 +140,17 @@ export default function Home() {
           <div className="section-glow section-glow--left" aria-hidden="true" />
           <div className="slide-inner">
             <div className="container">
+              {/* Un titre, et rien d'autre.
+                  Au-dessus de la constellation s'empilaient une suradresse,
+                  deux compteurs, une consigne, puis l'en-tête du pôle avec son
+                  numéro, son titre, son étiquette de rôle et sa promesse — six
+                  lignes d'appareil pour annoncer un schéma qui se lit tout
+                  seul. Le nom du pôle est déjà sur l'orbite, ses compétences
+                  sont numérotées, et son anneau se surligne. */}
               <div className="programme-tete" style={r(0)} data-r>
-                <h2 className="section-label" id="offre-titre">
-                  La base de tout projet
+                <h2 className="section-title" id="offre-titre">
+                  Les bases
                 </h2>
-                {/* Ne reste que la consigne. Les deux compteurs qui
-                    l'accompagnaient — cinq pôles, quarante-trois compétences —
-                    sont déjà lisibles trois fois ailleurs : sur l'accueil, sur
-                    la carte de l'écosystème, et sur l'orbite elle-même, où
-                    chaque pôle affiche le sien. Répétés ici, ils chargeaient
-                    le haut de l'écran sans rien apprendre. */}
-                <p className="programme-cles">
-                  <span className="programme-astuce">
-                    Parcours l&apos;orbite, puis ouvre une compétence
-                  </span>
-                </p>
               </div>
 
               <Poles />
