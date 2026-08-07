@@ -2090,11 +2090,19 @@ cliquable ---------- */
     /* Rayons de la couronne, en pourcentage de la scène : le premier se
        résout sur sa largeur, le second sur sa hauteur. La couronne est donc
        une ellipse, aussi large que le conteneur le permet et aussi haute que
-       la fenêtre le permet — c'est ce qui laisse aux tuiles leur largeur. */
+       la fenêtre le permet — c'est ce qui laisse aux tuiles leur largeur.
+
+       Le rayon vertical se plafonne aussi à ce que la scène peut contenir :
+       une tuile de la couronne ne doit jamais en sortir par le haut ou par
+       le bas. Sans ce plafond, le plancher posé sur la hauteur des tuiles
+       les poussait dehors sur une fenêtre courte. */
     --rayon-l: 40%;
-    --rayon-h: 40%;
-    --noeud-l: 22cqh;
-    --noeud-h: 19.4cqh;
+    --rayon-h: min(40%, calc(50% - var(--noeud-h) / 2 - 4px));
+    /* Un plancher en pixels sous la mesure proportionnelle : sur une fenêtre
+       de 720 px de haut, la tuile tombait à 84 px de large et « Environnement »
+       en touchait les deux bords. */
+    --noeud-l: max(104px, 22cqh);
+    --noeud-h: max(84px, 19.4cqh);
     /* La tuile ouverte ne descend pas sous une taille où sa description
        deviendrait illisible, même si la scène, elle, se réduit. Elle grandit
        surtout en largeur : c'est la hauteur qui manque, et une tuile du bas
@@ -2417,11 +2425,24 @@ cliquable ---------- */
 }
 
 @media (min-width: 1100px) and (min-height: 700px) {
-  /* On grignote sur les marges du chapitre, mais seulement en constellation :
-     en dessous, le mur défile derrière la navigation du deck et a besoin de
-     toute la marge basse pour que sa dernière rangée s'en dégage. */
+  /* Ce qui sépare l'en-tête fixe du site de la suradresse du chapitre.
+
+     Les autres chapitres centrent leur bloc verticalement — c'est ce qui les
+     fait respirer. Celui-ci est calé en haut, puisque la scène en dessous
+     prend toute la place qui reste. Il avait donc 76 px de marge haute
+     contre 96 aux autres, sous un en-tête qui en fait 72 : quatre pixels de
+     dégagement, et une suradresse collée à la barre.
+
+     La marge grandit avec la fenêtre plutôt que d'être fixe : sur un écran
+     court, chaque pixel donné au vide est pris à la couronne. La scène s'y
+     ajuste seule — sa hauteur vient de la chaîne flexible, pas d'un nombre
+     à tenir en accord avec celui-ci.
+
+     On grignote en revanche sur la marge basse, et seulement en
+     constellation : en dessous, le mur défile derrière la navigation du deck
+     et a besoin de toute sa marge pour que sa dernière rangée s'en dégage. */
   .deck[data-ready="true"] .slide--programme .slide-inner {
-    padding: 76px 0 96px;
+    padding: clamp(96px, 13vh, 176px) 0 96px;
   }
 
   /* La scène prend toute la hauteur restante du chapitre : la chaîne flexible
