@@ -146,10 +146,22 @@ export default function Home() {
                   s'empilaient dessous annonçaient un schéma qui se lit tout
                   seul. Le nom du pôle est déjà sur l'orbite, ses compétences
                   sont numérotées, et son anneau se surligne. */}
-              <div className="programme-tete" style={r(0)} data-r>
-                <p className="section-label">Les bases</p>
-                <h2 className="section-title" id="offre-titre">
-                  Se former pour mieux performer
+              <div className="programme-tete">
+                <p className="section-label" style={r(0)} data-r>
+                  Les bases
+                </p>
+                {/* Deux lignes, la seconde en orange : c'est la forme de tous
+                    les titres du site. Sur une seule ligne et tout en blanc,
+                    ce chapitre-là avait l'air d'appartenir à un autre. */}
+                <h2
+                  className="section-title"
+                  id="offre-titre"
+                  style={r(1)}
+                  data-r
+                >
+                  Se former
+                  <br />
+                  <span className="accent">pour mieux performer</span>
                 </h2>
               </div>
 

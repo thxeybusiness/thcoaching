@@ -157,18 +157,21 @@ export default function Poles() {
         {POLES.map((p, i) => {
           const angle = (i * 360) / POLES.length;
           const rad = (angle * Math.PI) / 180;
-          /* De quel côté le libellé se range : toujours vers l'extérieur de
-             l'anneau, jamais vers son centre.
-             Ils étaient tous posés dessous. Pour ceux du haut et du bas c'est
-             juste, mais pour les deux de flanc ça les envoyait à hauteur du
-             noyau : « ORGANISATION » et « 360° » se disputaient la même ligne,
-             et le trait de l'anneau leur passait au travers. */
+          /* Où le libellé se range autour de sa pastille.
+             Les deux pôles de flanc partent franchement à l'horizontale : posés
+             dessous comme les autres, ils tombaient à hauteur du noyau et
+             « ORGANISATION » se disputait la ligne du « 360° ».
+             Les deux du bas restent dessous, mais s'écartent un peu de part et
+             d'autre : sur une fenêtre courte l'anneau rétrécit, eux non — le
+             libellé a un corps minimal — et « SYSTÈMES » finissait par toucher
+             « VENTE ». Celui du haut n'a personne à côté de lui. */
+          const cote = Math.sin(rad) > 0 ? "droit" : "gauche";
           const flanc =
             Math.abs(Math.sin(rad)) > Math.abs(Math.cos(rad))
-              ? Math.sin(rad) > 0
-                ? "droite"
-                : "gauche"
-              : "pied";
+              ? `flanc-${cote}`
+              : Math.cos(rad) > 0
+                ? "haut"
+                : `bas-${cote}`;
           return (
           <span
             key={p.cle}

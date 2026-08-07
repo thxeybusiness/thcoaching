@@ -1705,17 +1705,25 @@ cliquable ---------- */
   white-space: nowrap;
 }
 
-/* Seuls les deux pôles de flanc changent : à l'horizontale, vers l'extérieur.
-   Ceux du haut et du bas gardent le réglage par défaut — sous la pastille —,
-   qui est déjà le bon : en constellation, l'extérieur du haut est occupé par
-   une tuile, et sous l'anneau il n'y a personne. */
-.orbite-point[data-flanc="droite"] .orbite-textes {
+/* Les deux pôles de flanc : à l'horizontale pleine, vers l'extérieur. */
+.orbite-point[data-flanc="flanc-droit"] .orbite-textes {
   --fx: 1;
   --fy: 0;
 }
-.orbite-point[data-flanc="gauche"] .orbite-textes {
+.orbite-point[data-flanc="flanc-gauche"] .orbite-textes {
   --fx: -1;
   --fy: 0;
+}
+
+/* Les deux du bas : sous la pastille comme avant, mais écartés d'un peu plus
+   de la moitié de leur largeur, de part et d'autre. C'est ce qui les sépare
+   quand l'anneau rétrécit sans qu'eux ne rétrécissent. Le pôle du haut, lui,
+   garde le réglage par défaut : il n'a personne à côté. */
+.orbite-point[data-flanc="bas-droit"] .orbite-textes {
+  --fx: 0.55;
+}
+.orbite-point[data-flanc="bas-gauche"] .orbite-textes {
+  --fx: -0.55;
 }
 
 .orbite-textes::before {
@@ -2400,9 +2408,10 @@ cliquable ---------- */
 
 /* Le chapitre est le seul dont le titre partage la hauteur avec un schéma qui
    se dimensionne sur ce qu'il reste : il se tient donc un cran en dessous du
-   titre des autres, et sur une seule ligne. */
+   titre des autres — même dessin, même bicolore, un corps en dessous. */
 .programme-tete .section-title {
-  font-size: clamp(1.6rem, 2.7vw, 2.5rem);
+  font-size: clamp(1.55rem, 3vw, 2.6rem);
+  line-height: 1.08;
   max-width: none;
   margin: 0;
 }
