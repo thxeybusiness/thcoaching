@@ -148,9 +148,23 @@ export function construireLieu(
   mur.position.set(0, SOL_Y + 4, -5.2);
   mur.castShadow = false;
 
-  const murCote = bloc(new THREE.BoxGeometry(0.2, 8, 10), 0x191210, 0.95);
-  murCote.position.set(-7.4, SOL_Y + 4, -0.6);
-  murCote.castShadow = false;
+  /* Le mur de gauche est percé : quatre pans autour du trou, et non un
+     panneau plein. C'est la condition pour que la fenêtre donne sur quelque
+     chose — jusqu'ici les lames de lumière traversaient la pièce sans que
+     leur source existe. Le trou fait 2,90 de haut sur 2,30 de large, un peu
+     moins que le châssis, qui le recouvre donc de tous les côtés. */
+  const PANS: [number, number, number, number][] = [
+    // [hauteur, profondeur, y du centre, z du centre]
+    [1.05, 10, SOL_Y + 0.525, -0.6], // l'allège, sous la fenêtre
+    [4.05, 10, SOL_Y + 5.975, -0.6], // le linteau, au-dessus
+    [2.9, 3.05, SOL_Y + 2.5, -4.075], // le trumeau côté fond
+    [2.9, 4.65, SOL_Y + 2.5, 2.075], // le trumeau côté spectateur
+  ];
+  PANS.forEach(([h, pr, y, z]) => {
+    const pan = bloc(new THREE.BoxGeometry(0.2, h, pr), 0x191210, 0.95);
+    pan.position.set(-7.4, y, z);
+    pan.castShadow = false;
+  });
 
   // ---- Le bureau ----
   const plateau = bloc(new THREE.BoxGeometry(3.9, 0.09, 1.6), 0x3a2418, 0.7);
@@ -444,9 +458,25 @@ export function construireLieu(
 
   /* Le cadre de la fenêtre et ses lattes, sur le mur de gauche : sans elle,
      les lames de lumière tombaient de nulle part. */
-  const chassis = bloc(new THREE.BoxGeometry(0.12, 3.2, 2.6), 0x241a15, 0.9);
-  chassis.position.set(-7.24, SOL_Y + 2.5, -1.4);
-  chassis.castShadow = false;
+  /* Le châssis est un cadre, et non un panneau.
+     Il était plein : tant que le mur derrière l'était aussi, personne ne
+     pouvait s'en apercevoir. Le mur une fois percé, c'est lui qui bouchait le
+     trou — la ville était bien là, derrière un volet de bois. Deux traverses,
+     deux montants, et un meneau au milieu qui en fait une fenêtre à deux
+     vantaux. */
+  const MENUISERIE: [number, number, number, number][] = [
+    // [hauteur, profondeur, y du centre, z du centre]
+    [0.22, 2.6, SOL_Y + 1.01, -1.4], // traverse basse
+    [0.22, 2.6, SOL_Y + 3.99, -1.4], // traverse haute
+    [3.2, 0.2, SOL_Y + 2.5, -2.6], // montant côté fond
+    [3.2, 0.2, SOL_Y + 2.5, -0.2], // montant côté spectateur
+    [3.2, 0.08, SOL_Y + 2.5, -1.4], // le meneau
+  ];
+  MENUISERIE.forEach(([h, pr, y, z]) => {
+    const piece = bloc(new THREE.BoxGeometry(0.12, h, pr), 0x241a15, 0.9);
+    piece.position.set(-7.24, y, z);
+    piece.castShadow = false;
+  });
 
   const vitre = bloc(new THREE.BoxGeometry(0.04, 2.9, 2.3), 0x3a2415, 0.4, 0.2);
   vitre.position.set(-7.16, SOL_Y + 2.5, -1.4);
@@ -457,6 +487,228 @@ export function construireLieu(
     latte.position.set(-7.1, SOL_Y + 1.2 + i * 0.32, -1.4);
     latte.rotation.z = 0.34;
   }
+
+  /* ------------------------------------------------------------------
+     Ce qu'il y a derrière la vitre.
+
+     Une pièce n'existe pas seule : elle donne sur quelque chose. Le mur est
+     percé, il fallait maintenant remplir le trou. La ville est peinte sur une
+     seule toile posée loin derrière — une masse d'immeubles et leurs fenêtres
+     allumées. Un immeuble par volume aurait coûté cent objets pour un
+     résultat qu'on ne voit qu'à travers un store.
+
+     C'est surtout la deuxième température de couleur de la pièce : tout est
+     chaud à l'intérieur, tout est froid dehors, et c'est ce contraste-là qui
+     dit qu'il est tard. */
+  const texVille = (() => {
+    const c = document.createElement("canvas");
+    c.width = 512;
+    c.height = 288;
+    const g = c.getContext("2d")!;
+    const nuit = g.createLinearGradient(0, 0, 0, 288);
+    nuit.addColorStop(0, "#070b14");
+    nuit.addColorStop(0.62, "#131c2b");
+    nuit.addColorStop(1, "#2a2029");
+    g.fillStyle = nuit;
+    g.fillRect(0, 0, 512, 288);
+
+    // Les immeubles, de gauche à droite, chacun avec ses fenêtres allumées
+    let x = -30;
+    while (x < 540) {
+      const large = 28 + Math.random() * 58;
+      const haut = 60 + Math.random() * 155;
+      g.fillStyle = "#080b12";
+      g.fillRect(x, 288 - haut, large, haut);
+      for (let fy = 288 - haut + 12; fy < 278; fy += 15) {
+        for (let fx = x + 7; fx < x + large - 9; fx += 13) {
+          if (Math.random() < 0.34) continue; // la plupart des fenêtres sont éteintes
+          g.fillStyle =
+            Math.random() > 0.7
+              ? "rgba(255, 198, 128, 0.92)"
+              : "rgba(186, 206, 238, 0.62)";
+          g.fillRect(fx, fy, 6, 8);
+        }
+      }
+      x += large + 3 + Math.random() * 12;
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+  aRanger.push(texVille);
+
+  const geoVille = new THREE.PlaneGeometry(22, 12.4);
+  const matVille = new THREE.MeshBasicMaterial({ map: texVille, fog: false });
+  aRanger.push(geoVille, matVille);
+  const ville = new THREE.Mesh(geoVille, matVille);
+  ville.position.set(-11.5, SOL_Y + 3.4, -1.2);
+  ville.rotation.y = Math.PI / 2; // la toile regarde vers la pièce
+  lieu.add(ville);
+
+  /* La vitre redevient une vitre : opaque, elle bouchait le trou qu'on venait
+     d'ouvrir. */
+  const verre = vitre.material as THREE.MeshStandardMaterial;
+  verre.transparent = true;
+  verre.opacity = 0.14;
+  verre.roughness = 0.12;
+  verre.metalness = 0.1;
+  vitre.receiveShadow = false;
+
+  /* Et la lumière qui entre avec. Froide, faible, mais c'est elle qui donne
+     un bord bleuté au mobilier de gauche — sans quoi la pièce n'est qu'orange
+     du sol au plafond. */
+  const lueurFenetre = new THREE.PointLight(0x9db6d8, 2.2, 9, 2);
+  lueurFenetre.position.set(-6.5, SOL_Y + 2.4, -1.4);
+  lieu.add(lueurFenetre);
+  feux.push(lueurFenetre);
+
+  /* ------------------------------------------------------------------
+     Le côté droit.
+
+     Il n'existait pas : la caméra du site passe désormais par là et la pièce
+     s'ouvrait sur le vide. Un mur, sa plinthe, et de quoi meubler le coin.
+     ------------------------------------------------------------------ */
+  const murDroit = bloc(new THREE.BoxGeometry(0.2, 8, 10), 0x191210, 0.95);
+  murDroit.position.set(7.4, SOL_Y + 4, -0.6);
+  murDroit.castShadow = false;
+
+  const plintheDroite = bloc(new THREE.BoxGeometry(0.08, 0.16, 10), 0x2a1e18, 0.95);
+  plintheDroite.position.set(7.26, SOL_Y + 0.08, -0.6);
+  plintheDroite.castShadow = false;
+
+  // Un meuble bas, ses dossiers empilés et une petite plante
+  const meuble = bloc(new THREE.BoxGeometry(1.2, 0.72, 0.46), 0x2e2018, 0.9);
+  meuble.position.set(6.4, SOL_Y + 0.36, -4.7);
+  [0, 1, 2, 3].forEach((i) => {
+    const dossier = bloc(
+      new THREE.BoxGeometry(0.28, 0.04, 0.36),
+      [0x7a4526, 0xd8cdbd, 0x59331f, 0xd8cdbd][i],
+      0.95
+    );
+    dossier.position.set(6.15, SOL_Y + 0.74 + i * 0.042, -4.68);
+    dossier.rotation.y = 0.06 - i * 0.05;
+  });
+  const potHaut = bloc(new THREE.CylinderGeometry(0.11, 0.09, 0.18, 12), 0x4a2a1c, 0.9);
+  potHaut.position.set(6.85, SOL_Y + 0.81, -4.7);
+  for (let i = 0; i < 4; i++) {
+    const a = (i / 4) * Math.PI * 2;
+    const brin = bloc(new THREE.ConeGeometry(0.05, 0.34, 5), 0x2f3f24, 0.95);
+    brin.position.set(
+      6.85 + Math.cos(a) * 0.07,
+      SOL_Y + 1.05,
+      -4.7 + Math.sin(a) * 0.07
+    );
+    brin.rotation.set(Math.sin(a) * 0.4, a, -Math.cos(a) * 0.4);
+  }
+
+  /* ------------------------------------------------------------------
+     La porte donne sur quelque part.
+
+     Un rai de lumière sous la porte : c'est la chose la plus courte à écrire
+     et la plus efficace du lot. Une pièce dont la porte est noire par en
+     dessous est une pièce isolée dans le vide.
+     ------------------------------------------------------------------ */
+  const geoRai = new THREE.PlaneGeometry(0.92, 0.05);
+  const matRai = new THREE.MeshBasicMaterial({
+    color: 0xffcb8a,
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: true,
+  });
+  aRanger.push(geoRai, matRai);
+  const rai = new THREE.Mesh(geoRai, matRai);
+  rai.rotation.x = -Math.PI / 2;
+  rai.position.set(5.05, SOL_Y + 0.012, -4.82);
+  lieu.add(rai);
+
+  const lueurCouloir = new THREE.PointLight(0xffc487, 0.9, 1.9, 2);
+  lueurCouloir.position.set(5.05, SOL_Y + 0.22, -4.72);
+  lieu.add(lueurCouloir);
+  feux.push(lueurCouloir);
+
+  // Le portemanteau à côté, avec sa veste et un sac posé dessous
+  const perche = bloc(new THREE.CylinderGeometry(0.028, 0.028, 1.9, 10), 0x2a1e18, 0.7);
+  perche.position.set(4.3, SOL_Y + 0.95, -4.62);
+  const patere = bloc(new THREE.CylinderGeometry(0.02, 0.02, 0.34, 8), 0x2a1e18, 0.7);
+  patere.position.set(4.3, SOL_Y + 1.82, -4.62);
+  patere.rotation.z = Math.PI / 2;
+  const veste = bloc(new THREE.BoxGeometry(0.34, 0.92, 0.14), 0x2b2f38, 0.95);
+  veste.position.set(4.44, SOL_Y + 1.3, -4.58);
+  veste.rotation.z = -0.05;
+  const sac = bloc(new THREE.BoxGeometry(0.38, 0.3, 0.22), 0x33261e, 0.95);
+  sac.position.set(4.12, SOL_Y + 0.15, -4.4);
+  sac.rotation.y = 0.28;
+
+  /* ------------------------------------------------------------------
+     Le mur du fond se remplit.
+     ------------------------------------------------------------------ */
+  // Un tableau blanc, et ce qui reste dessus
+  const tableau = bloc(new THREE.BoxGeometry(1.5, 0.94, 0.04), 0x4c473e, 0.9);
+  tableau.position.set(0.25, SOL_Y + 2.35, -5.03);
+  tableau.castShadow = false;
+  const rebord = bloc(new THREE.BoxGeometry(1.5, 0.05, 0.08), 0x2a1d16, 0.85);
+  rebord.position.set(0.25, SOL_Y + 1.86, -5.0);
+  [
+    [-0.4, 0.24, 0.5],
+    [-0.32, 0.06, 0.34],
+    [0.28, 0.14, 0.42],
+    [0.24, -0.1, 0.26],
+  ].forEach(([dx, dy, l], i) => {
+    const trait = bloc(new THREE.BoxGeometry(l, 0.025, 0.006), i === 2 ? 0xd05a24 : 0x2f3540, 0.95);
+    trait.position.set(0.25 + dx, SOL_Y + 2.35 + dy, -5.0);
+    trait.rotation.z = 0.03 - i * 0.02;
+    trait.castShadow = false;
+  });
+
+  // Un calendrier, à côté du panneau de liège
+  const calendrier = bloc(new THREE.BoxGeometry(0.44, 0.58, 0.03), 0xd8cdbd, 0.95);
+  calendrier.position.set(-5.45, SOL_Y + 2.0, -5.02);
+  calendrier.castShadow = false;
+  const bandeau = bloc(new THREE.BoxGeometry(0.44, 0.14, 0.035), 0xff8c2e, 0.9);
+  bandeau.position.set(-5.45, SOL_Y + 2.22, -5.015);
+  bandeau.castShadow = false;
+
+  // Une cimaise haute : elle donne au mur son échelle
+  const cimaise = bloc(new THREE.BoxGeometry(16, 0.07, 0.05), 0x2a1e18, 0.9);
+  cimaise.position.set(0, SOL_Y + 3.75, -5.04);
+  cimaise.castShadow = false;
+
+  /* Un luminaire au plafond, éteint. Il n'y a pas de plafond — la caméra
+     passe au-dessus sur un chapitre — mais un abat-jour suspendu au bout de
+     son fil suffit à faire exister ce plafond hors champ. Éteint, il raconte
+     en plus qu'à cette heure-ci, seule la lampe du bureau sert encore. */
+  const fil = bloc(new THREE.CylinderGeometry(0.008, 0.008, 1.1, 6), 0x1a1512, 0.8);
+  fil.position.set(-1.2, SOL_Y + 4.25, -3.2);
+  fil.castShadow = false;
+  const suspension = bloc(
+    new THREE.CylinderGeometry(0.34, 0.24, 0.28, 18, 1, true),
+    0x3a2a20,
+    0.85
+  );
+  suspension.position.set(-1.2, SOL_Y + 3.56, -3.2);
+
+  // ---- Ce qui traîne encore au sol ----
+  const tabouret = bloc(new THREE.CylinderGeometry(0.21, 0.21, 0.07, 14), 0x33231d, 0.9);
+  tabouret.position.set(-3.7, SOL_Y + 0.56, -3.85);
+  const pivotTabouret = bloc(new THREE.CylinderGeometry(0.035, 0.035, 0.52, 8), 0x14100e, 0.6, 0.4);
+  pivotTabouret.position.set(-3.7, SOL_Y + 0.27, -3.85);
+  const socleTabouret = bloc(new THREE.CylinderGeometry(0.24, 0.24, 0.035, 12), 0x14100e, 0.6, 0.4);
+  socleTabouret.position.set(-3.7, SOL_Y + 0.02, -3.85);
+
+  // Une multiprise et son câble, le long de la plinthe
+  const multiprise = bloc(new THREE.BoxGeometry(0.36, 0.06, 0.11), 0x241a15, 0.85);
+  multiprise.position.set(-2.6, SOL_Y + 0.06, -4.86);
+  multiprise.castShadow = false;
+  const filPrise = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-2.42, SOL_Y + 0.05, -4.86),
+    new THREE.Vector3(-2.0, SOL_Y + 0.03, -4.6),
+    new THREE.Vector3(-1.5, SOL_Y + 0.03, -3.4),
+    new THREE.Vector3(-1.35, SOL_Y + 0.03, -2.6),
+  ]);
+  const cordon = bloc(new THREE.TubeGeometry(filPrise, 20, 0.011, 6, false), 0x14100e, 0.8);
+  cordon.castShadow = false;
 
   const lames = new THREE.Group();
   for (let i = 0; i < 6; i++) {
@@ -522,6 +774,37 @@ export function construireLieu(
   aRanger.push(geoPoussiere, matPoussiere, texPoussiere);
   const poussiere = new THREE.Points(geoPoussiere, matPoussiere);
   lieu.add(poussiere);
+
+  /* La vapeur de la tasse.
+
+     Vingt-quatre points qui montent et recommencent. C'est le seul mouvement
+     de la pièce qui vienne d'un objet et non de la lumière, et c'est pour ça
+     qu'il se remarque : tout le reste peut être un décor figé, pas une tasse
+     qui fume. */
+  const NB_VAPEUR = 24;
+  const VAPEUR_BAS = SOL_Y + 1.24;
+  const VAPEUR_HAUT = SOL_Y + 1.92;
+  const posVapeur = new Float32Array(NB_VAPEUR * 3);
+  for (let i = 0; i < NB_VAPEUR; i++) {
+    posVapeur[i * 3] = 0.75 + (Math.random() - 0.5) * 0.05;
+    posVapeur[i * 3 + 1] = VAPEUR_BAS + Math.random() * (VAPEUR_HAUT - VAPEUR_BAS);
+    posVapeur[i * 3 + 2] = -1.45 + (Math.random() - 0.5) * 0.05;
+  }
+  const geoVapeur = new THREE.BufferGeometry();
+  geoVapeur.setAttribute("position", new THREE.BufferAttribute(posVapeur, 3));
+  const matVapeur = new THREE.PointsMaterial({
+    map: texPoussiere,
+    size: 0.055,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.17,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: true,
+  });
+  aRanger.push(geoVapeur, matVapeur);
+  const vapeur = new THREE.Points(geoVapeur, matVapeur);
+  lieu.add(vapeur);
 
   /* Le sol : une vraie surface, et non un simple receveur d'ombre. En
      transparent, l'ombre se détachait sur le fond CSS comme une dalle posée
@@ -645,6 +928,21 @@ export function construireLieu(
         reposLampe *
         (1 + (Math.sin(s * 1.7) * 0.18 + Math.sin(s * 4.3) * 0.07) /
           REPOS_LAMPE);
+
+      /* La vapeur monte, s'enroule, et recommence en bas. L'enroulement suit
+         la hauteur autant que le temps, et l'écart s'ouvre en montant : sans
+         ça les vingt-quatre points ondulent tous ensemble et on voit une
+         file indienne, pas un filet de vapeur. */
+      const pv = geoVapeur.attributes.position as THREE.BufferAttribute;
+      for (let i = 0; i < NB_VAPEUR; i++) {
+        let y = pv.getY(i) + 0.0022;
+        if (y > VAPEUR_HAUT) y = VAPEUR_BAS;
+        const monte = (y - VAPEUR_BAS) / (VAPEUR_HAUT - VAPEUR_BAS);
+        pv.setY(i, y);
+        pv.setX(i, 0.75 + Math.sin(y * 9 + s * 0.9 + i) * 0.05 * monte);
+        pv.setZ(i, -1.45 + Math.cos(y * 7 + s * 0.7 + i) * 0.045 * monte);
+      }
+      pv.needsUpdate = true;
     },
 
     detruire() {

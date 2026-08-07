@@ -46,8 +46,12 @@ type Plan = {
 const PLANS: Plan[] = [
   // Accueil — le plan de l'intro, qui se pose doucement sur le bureau
   { p: 0.0, pos: [0, 0, 10.4], cible: [0, -0.35, -1.2], roulis: 0 },
-  // Méthode — la caméra glisse vers la fenêtre, les lames du store entrent
-  { p: 0.2, pos: [-2.3, 0.45, 8.6], cible: [-1.6, -0.5, -2.6], roulis: 0.012 },
+  /* Méthode — la caméra regarde vers la fenêtre. Elle glissait vers la
+     gauche mais continuait de regarder droit devant : le mur percé restait
+     hors champ, et la ville derrière n'a jamais été vue. Il faut viser plus à
+     gauche qu'on ne se tient, sans quoi on longe le mur au lieu de regarder
+     à travers. La fenêtre se pose au bord gauche, le bureau au bord droit. */
+  { p: 0.2, pos: [0.2, 0.5, 7.6], cible: [-3.0, -0.35, -2.0], roulis: 0.012 },
   // Programme — au-dessus du plan de travail, en plongée douce
   { p: 0.4, pos: [0.6, 1.5, 7.4], cible: [0.1, -0.9, -2.9], roulis: -0.01 },
   // Écosystème — le côté droit : le lampadaire et le cadre au mur
