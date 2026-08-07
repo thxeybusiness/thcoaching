@@ -7,7 +7,7 @@ import Deck, { type SlideMeta } from "./components/Deck";
 import LogoEtape from "./components/LogoEtape";
 import IconeCompetence from "./components/IconeCompetence";
 import Poles from "./components/Poles";
-import { POLES, NB_COMPETENCES } from "./lib/programme";
+import { NB_COMPETENCES } from "./lib/programme";
 import { ETAPES } from "./lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
@@ -144,11 +144,13 @@ export default function Home() {
                 <h2 className="section-label" id="offre-titre">
                   La base de tout projet
                 </h2>
+                {/* Ne reste que la consigne. Les deux compteurs qui
+                    l'accompagnaient — cinq pôles, quarante-trois compétences —
+                    sont déjà lisibles trois fois ailleurs : sur l'accueil, sur
+                    la carte de l'écosystème, et sur l'orbite elle-même, où
+                    chaque pôle affiche le sien. Répétés ici, ils chargeaient
+                    le haut de l'écran sans rien apprendre. */}
                 <p className="programme-cles">
-                  <strong>{POLES.length}</strong> pôles
-                  <i aria-hidden="true" />
-                  <strong>{NB_COMPETENCES}</strong> compétences
-                  <i aria-hidden="true" />
                   <span className="programme-astuce">
                     Parcours l&apos;orbite, puis ouvre une compétence
                   </span>

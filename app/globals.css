@@ -1921,7 +1921,10 @@ cliquable ---------- */
   padding: 0;
   border-radius: 20px;
   border: 1px solid var(--line);
-  background: var(--panel);
+  /* Un fond franc, et non le panneau translucide du reste du site : ces
+     tuiles-là passent devant la pièce en 3D, avec ses lampes et ses arêtes.
+     À 3,5 % de blanc, le décor traversait le texte. */
+  background: rgba(13, 11, 10, 0.72);
   overflow: hidden;
   cursor: pointer;
   text-align: left;
@@ -2028,7 +2031,13 @@ cliquable ---------- */
   transform: translateY(10px);
   padding-top: 46px;
   display: flex;
-  align-items: center;
+  /* « safe » : centré tant que le texte tient, calé en haut dès qu'il déborde.
+     Un centrage ordinaire rogne alors les deux bouts à la fois — c'est ce qui
+     donnait une description commençant au milieu d'une phrase et finissant au
+     milieu d'une autre. Le débordement qui reste peut se faire défiler. */
+  align-items: safe center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   font-size: 0.86rem;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.76);
@@ -2169,8 +2178,8 @@ cliquable ---------- */
        deviendrait illisible, même si la scène, elle, se réduit. Elle grandit
        surtout en largeur : c'est la hauteur qui manque, et une tuile du bas
        qui s'épaissit sortirait de la fenêtre. */
-    --noeud-ouvert-l: max(240px, 27cqh);
-    --noeud-ouvert-h: max(196px, 21cqh);
+    --noeud-ouvert-l: max(276px, 30cqh);
+    --noeud-ouvert-h: max(230px, 24cqh);
 
     /* L'orbite et la couronne partagent la même case de grille : elles ont
        donc forcément le même centre, sans calcul d'aucune sorte. */
@@ -2325,7 +2334,10 @@ cliquable ---------- */
 
   /* Ouverte, la tuile grandit autour de son propre centre : elle ne quitte
      pas la couronne, elle s'y épaissit. */
+  /* Ouverte, elle devient franchement opaque : c'est le seul moment où on lui
+     demande de porter une phrase entière. */
   .competence[data-ouvert="true"] {
+    background: rgba(11, 10, 9, 0.95);
     width: var(--noeud-ouvert-l);
     height: var(--noeud-ouvert-h);
     margin: calc(var(--noeud-ouvert-h) / -2) 0 0
@@ -2360,7 +2372,7 @@ cliquable ---------- */
   }
 
   .comp-dos {
-    padding: 4.4cqh 2.1cqh 2.3cqh;
+    padding: 3.5cqh 1.9cqh 1.8cqh;
     font-size: clamp(0.77rem, 1.42cqh, 0.9rem);
     line-height: 1.42;
   }

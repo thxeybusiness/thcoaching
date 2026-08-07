@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { gsap } from "gsap";
-import { POLES, NB_COMPETENCES } from "../lib/programme";
+import { POLES } from "../lib/programme";
 import GrilleCompetences from "./GrilleCompetences";
 
 /**
@@ -234,24 +234,6 @@ export default function Poles() {
                 </p>
               </div>
 
-              {/* Part de ce pôle dans les quarante-trois compétences */}
-              <span
-                className="pilier-part"
-                style={
-                  {
-                    "--part": p.competences.length / NB_COMPETENCES,
-                  } as CSSProperties
-                }
-              >
-                <svg viewBox="0 0 44 44" aria-hidden="true">
-                  <circle className="part-piste" cx="22" cy="22" r="18" />
-                  <circle className="part-arc" cx="22" cy="22" r="18" />
-                </svg>
-                <b aria-hidden="true">{p.competences.length}</b>
-                <span className="sr-only">
-                  {p.competences.length} compétences sur {NB_COMPETENCES}
-                </span>
-              </span>
             </div>
 
             <GrilleCompetences
