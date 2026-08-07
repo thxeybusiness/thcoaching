@@ -506,12 +506,43 @@ h3 {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /* La scène se dévoile quand le rideau de l'intro se lève : c'est le
+     composant qui pilote l'opacité, image par image. Partir de zéro évite la
+     seule image où la pièce apparaîtrait en pleine lumière. */
+  opacity: 0;
 }
 
 .world-canvas canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* Le voile.
+
+   La pièce en 3D est un décor, pas une illustration : elle passe derrière le
+   texte de tous les chapitres. À sa luminosité d'origine, le contenu doit
+   lutter contre elle. On l'assombrit donc là où le texte se trouve — au
+   centre — et on la laisse respirer sur les bords, où il n'y a rien.
+   Que des dégradés : aucun flou, ils coûtent cher et Safari les rend mal. */
+.world-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      78% 62% at 50% 50%,
+      rgba(9, 8, 7, 0.64),
+      rgba(9, 8, 7, 0.36) 62%,
+      rgba(9, 8, 7, 0.15) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(9, 8, 7, 0.72) 0%,
+      rgba(9, 8, 7, 0.12) 26%,
+      rgba(9, 8, 7, 0.12) 72%,
+      rgba(9, 8, 7, 0.76) 100%
+    );
 }
 
 main {
@@ -1048,10 +1079,26 @@ cliquable ---------- */
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  /* Le logo 3D devient une texture d'ambiance : sur un écran étroit il n'y a
-     aucun espace libre à côté du texte, il passait donc par-dessus. */
-  .world-canvas {
-    opacity: 0.16;
+  /* Sur un écran étroit, le texte occupe toute la largeur : il n'y a plus de
+     bord libre où la pièce pourrait se montrer. Le voile se referme donc
+     presque entièrement — elle n'est plus qu'une texture d'ambiance.
+     C'est le voile qu'on renforce et non l'opacité du bloc : celle-ci est
+     pilotée image par image par la scène, elle serait écrasée. */
+  .world-canvas::after {
+    background:
+      radial-gradient(
+        86% 58% at 50% 50%,
+        rgba(9, 8, 7, 0.92),
+        rgba(9, 8, 7, 0.76) 62%,
+        rgba(9, 8, 7, 0.6) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(9, 8, 7, 0.86) 0%,
+        rgba(9, 8, 7, 0.62) 30%,
+        rgba(9, 8, 7, 0.62) 70%,
+        rgba(9, 8, 7, 0.9) 100%
+      );
   }
   .brand-logo {
     width: 38px;

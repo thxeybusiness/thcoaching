@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import Hero from "./components/Hero";
-import Scene3DLoader from "./components/Scene3DLoader";
 import Sequences from "./components/Sequences";
 import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
@@ -76,7 +75,6 @@ const CHIFFRES: Repere[] = [
 export default function Home() {
   return (
     <>
-      <Scene3DLoader />
       <Sequences />
 
       <Deck slides={SLIDES}>

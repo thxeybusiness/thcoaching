@@ -10,6 +10,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Intro from "./components/Intro";
+import Scene3DLoader from "./components/Scene3DLoader";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -132,7 +133,11 @@ export default function RootLayout({
         <noscript>
           <style>{NOSCRIPT_CSS}</style>
         </noscript>
+        {/* Le fond du site, dans cet ordre : les vagues en dégradés, qui
+            tiennent seules tant que la 3D n'est pas là (ou si le visiteur
+            préfère moins d'animations), puis la pièce en volume par-dessus. */}
         <div className="waves-bg" aria-hidden="true" />
+        <Scene3DLoader />
         <Intro />
         <a href="#contenu" className="skip-link">
           Aller au contenu
