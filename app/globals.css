@@ -1548,11 +1548,18 @@ cliquable ---------- */
   transform-origin: 50% 50%;
 }
 
+/* Le noyau descend d'un cheveu sous le centre géométrique.
+   Le libellé du pôle du haut se range à l'intérieur de l'anneau — dehors, il
+   y a une tuile —, et il venait buter contre le « 360° ». Ce qui se trouve
+   sous le noyau, en revanche, c'est le vide jusqu'au bas de l'anneau : c'est
+   de ce côté-là qu'il y a de la place à prendre. */
 .orbite-noyau {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  /* En pixels et non en pourcentage : le pourcentage se résout sur la
+     hauteur du noyau lui-même, qui est justement ce qu'on cherche à écarter. */
+  transform: translate(-50%, calc(-50% + 14px));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1675,16 +1682,40 @@ cliquable ---------- */
 
 /* Les libellés latéraux passent par-dessus l'anneau : un fondu sombre
    derrière le texte interrompt le trait, sans flou ni masque sur le SVG. */
+/* Le libellé se range autour de sa pastille, dans la direction que le
+   composant lui donne : `--fx` horizontalement, `--fy` verticalement, l'un ou
+   l'autre valant zéro. Le décalage se compte pour moitié en pourcentage du
+   libellé lui-même : un nom long s'écarte donc d'autant plus, et aucune valeur
+   n'est à retoucher si le mot change. */
 .orbite-textes {
+  --fx: 0;
+  --fy: 1;
   position: absolute;
-  top: calc(100% + 6px);
   left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%)
+    translate(
+      calc(var(--fx) * (50% + 24px)),
+      calc(var(--fy) * (50% + 24px))
+    );
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+}
+
+/* Seuls les deux pôles de flanc changent : à l'horizontale, vers l'extérieur.
+   Ceux du haut et du bas gardent le réglage par défaut — sous la pastille —,
+   qui est déjà le bon : en constellation, l'extérieur du haut est occupé par
+   une tuile, et sous l'anneau il n'y a personne. */
+.orbite-point[data-flanc="droite"] .orbite-textes {
+  --fx: 1;
+  --fy: 0;
+}
+.orbite-point[data-flanc="gauche"] .orbite-textes {
+  --fx: -1;
+  --fy: 0;
 }
 
 .orbite-textes::before {
@@ -1713,6 +1744,12 @@ cliquable ---------- */
 @media (max-width: 860px) {
   .orbite {
     width: min(100%, 340px);
+  }
+  /* L'anneau n'est plus assez large pour qu'un libellé parte de côté sans
+     sortir du conteneur : tous reviennent sous leur pastille. */
+  .orbite-point[data-flanc] .orbite-textes {
+    --fx: 0;
+    --fy: 1;
   }
   .orbite-pastille {
     width: 24px;
@@ -1937,7 +1974,11 @@ cliquable ---------- */
    qui se peindrait par-dessus. */
 .comp-face {
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* « minmax(0, 1fr) » et non « 1fr » : une rangée de grille ne descend pas
+     sous la taille de son contenu, et le pictogramme empêchait donc la sienne
+     de se comprimer. Sur une tuile de couronne, un nom de trois lignes
+     poussait alors le texte hors du cadre. */
+  grid-template-rows: minmax(0, 1fr) auto;
   align-items: center;
   justify-items: center;
   text-align: center;
@@ -2108,7 +2149,7 @@ cliquable ---------- */
    plus, donc changer de pôle ne déplace rigoureusement rien, et un pôle de
    trois compétences occupe le même espace qu'un pôle de onze, simplement plus
    aéré. */
-@media (min-width: 1180px) and (min-height: 820px) {
+@media (min-width: 1100px) and (min-height: 700px) {
   .piliers-vue {
     /* Côté de la scène. 224 px sont réservés autour : l'en-tête du site,
        celle du pôle, l'espace qui les sépare, et de quoi laisser une tuile du
@@ -2123,7 +2164,7 @@ cliquable ---------- */
     --rayon-l: 40%;
     --rayon-h: 40%;
     --noeud-l: 22cqh;
-    --noeud-h: 18.3cqh;
+    --noeud-h: 19.4cqh;
     /* La tuile ouverte ne descend pas sous une taille où sa description
        deviendrait illisible, même si la scène, elle, se réduit. Elle grandit
        surtout en largeur : c'est la hauteur qui manque, et une tuile du bas
@@ -2292,7 +2333,7 @@ cliquable ---------- */
   }
 
   .comp-face {
-    padding: 2.7cqh 1.3cqh 1.7cqh;
+    padding: 2.3cqh 1.2cqh 1.4cqh;
   }
 
   /* Le pictogramme laisse plus de place au nom que dans le mur en grille :
@@ -2300,13 +2341,15 @@ cliquable ---------- */
      hauteur de la scène et non par la largeur de la tuile, qui est la
      dimension la plus généreuse des deux. */
   .comp-face .comp-icone {
-    width: min(50%, 8.6cqh);
+    width: min(48%, 7.8cqh);
+    /* Il suit sa rangée quand elle se comprime, au lieu de la forcer. */
+    max-height: 100%;
   }
 
   /* Les textes suivent l'échelle de la scène, mais jamais en dessous d'une
      taille lisible : sous ce plancher c'est la tuile qui s'élargit. */
   .comp-nom {
-    font-size: clamp(0.69rem, 1.5cqh, 0.95rem);
+    font-size: clamp(0.64rem, 1.5cqh, 0.95rem);
     line-height: 1.2;
   }
 
@@ -2487,7 +2530,7 @@ cliquable ---------- */
   color: color-mix(in srgb, var(--orange) 80%, transparent);
 }
 
-@media (min-width: 1180px) and (min-height: 820px) {
+@media (min-width: 1100px) and (min-height: 700px) {
   /* On grignote sur les marges du chapitre, mais seulement en constellation :
      en dessous, le mur défile derrière la navigation du deck et a besoin de
      toute la marge basse pour que sa dernière rangée s'en dégage. */

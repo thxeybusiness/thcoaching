@@ -154,13 +154,27 @@ export default function Poles() {
           <span className="orbite-noyau-texte">autour de toi</span>
         </span>
 
-        {POLES.map((p, i) => (
+        {POLES.map((p, i) => {
+          const angle = (i * 360) / POLES.length;
+          const rad = (angle * Math.PI) / 180;
+          /* De quel côté le libellé se range : toujours vers l'extérieur de
+             l'anneau, jamais vers son centre.
+             Ils étaient tous posés dessous. Pour ceux du haut et du bas c'est
+             juste, mais pour les deux de flanc ça les envoyait à hauteur du
+             noyau : « ORGANISATION » et « 360° » se disputaient la même ligne,
+             et le trait de l'anneau leur passait au travers. */
+          const flanc =
+            Math.abs(Math.sin(rad)) > Math.abs(Math.cos(rad))
+              ? Math.sin(rad) > 0
+                ? "droite"
+                : "gauche"
+              : "pied";
+          return (
           <span
             key={p.cle}
             className="orbite-point"
-            style={
-              { "--a": `${(i * 360) / POLES.length}deg` } as CSSProperties
-            }
+            data-flanc={flanc}
+            style={{ "--a": `${angle}deg` } as CSSProperties}
           >
             <span className="orbite-redresse">
               <button
@@ -194,7 +208,8 @@ export default function Poles() {
               </button>
             </span>
           </span>
-        ))}
+          );
+        })}
       </div>
 
       <div className="piliers-panneaux">
