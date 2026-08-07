@@ -2387,15 +2387,23 @@ cliquable ---------- */
    cartes qui renvoyait à une page séparée. Un chapitre du deck vaut un écran :
    tout ce qui l'entoure est donc compressé au maximum pour laisser la hauteur
    à la scène, qui se dimensionne sur ce qu'il reste. */
+/* La suradresse au-dessus du titre, et non à côté : c'est l'ordre de lecture
+   de tous les autres chapitres. Le trait orange vient du « ::before » de
+   « .section-label ». */
 .programme-tete {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 18px;
   flex: none;
 }
 
 .programme-tete .section-label {
+  margin-bottom: 10px;
+}
+
+/* Le chapitre est le seul dont le titre partage la hauteur avec un schéma qui
+   se dimensionne sur ce qu'il reste : il se tient donc un cran en dessous du
+   titre des autres, et sur une seule ligne. */
+.programme-tete .section-title {
+  font-size: clamp(1.6rem, 2.7vw, 2.5rem);
+  max-width: none;
   margin: 0;
 }
 

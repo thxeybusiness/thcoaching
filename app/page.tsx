@@ -140,16 +140,16 @@ export default function Home() {
           <div className="section-glow section-glow--left" aria-hidden="true" />
           <div className="slide-inner">
             <div className="container">
-              {/* Un titre, et rien d'autre.
-                  Au-dessus de la constellation s'empilaient une suradresse,
-                  deux compteurs, une consigne, puis l'en-tête du pôle avec son
-                  numéro, son titre, son étiquette de rôle et sa promesse — six
-                  lignes d'appareil pour annoncer un schéma qui se lit tout
+              {/* La suradresse et son trait, puis le titre — la même paire
+                  que sur les autres chapitres. Ne s'y ajoute plus rien : les
+                  deux compteurs, la consigne et l'en-tête du pôle qui
+                  s'empilaient dessous annonçaient un schéma qui se lit tout
                   seul. Le nom du pôle est déjà sur l'orbite, ses compétences
                   sont numérotées, et son anneau se surligne. */}
               <div className="programme-tete" style={r(0)} data-r>
+                <p className="section-label">Les bases</p>
                 <h2 className="section-title" id="offre-titre">
-                  Les bases
+                  Se former pour mieux performer
                 </h2>
               </div>
 
