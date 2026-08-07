@@ -710,6 +710,144 @@ export function construireLieu(
   const cordon = bloc(new THREE.TubeGeometry(filPrise, 20, 0.011, 6, false), 0x14100e, 0.8);
   cordon.castShadow = false;
 
+  /* ------------------------------------------------------------------
+     Le vert.
+
+     Une pièce de travail sans plantes est un bureau de catalogue. Il y en
+     avait une, minuscule, coincée derrière le bureau. Il en faut au sol —
+     de grandes, qui occupent la hauteur que les meubles laissent vide — et
+     au mur, dont le feuillage retombe : c'est la seule chose de la pièce qui
+     pende, tout le reste étant posé ou accroché droit.
+
+     Les feuilles partagent trois matières et ne portent pas d'ombre. Une
+     matière par feuille aurait multiplié les nuanceurs pour trois teintes en
+     tout, et leurs ombres — des dizaines de petites taches — coûtent une
+     passe entière pour un détail que la brume avale.
+     ------------------------------------------------------------------ */
+  const VERTS = [0x2f3f24, 0x3d5631, 0x27351f].map((c) => {
+    const m = new THREE.MeshStandardMaterial({ color: c, roughness: 0.95 });
+    aRanger.push(m);
+    return m;
+  });
+
+  /** Une foliole : un cône aplati en lame, incliné et retombant.
+      (« feuille » est déjà pris par celle qui traîne sur le bureau.) */
+  const foliole = (
+    mat: THREE.MeshStandardMaterial,
+    large: number,
+    long: number,
+    x: number,
+    y: number,
+    z: number,
+    angle: number,
+    penche: number
+  ) => {
+    const geo = new THREE.ConeGeometry(large, long, 5);
+    aRanger.push(geo);
+    const m = new THREE.Mesh(geo, mat);
+    // Aplatie sur un axe : sans ça, c'est un piquet et non une feuille
+    m.scale.set(1, 1, 0.3);
+    m.position.set(x, y, z);
+    m.rotation.set(Math.sin(angle) * penche, angle, -Math.cos(angle) * penche);
+    m.receiveShadow = ombres;
+    lieu.add(m);
+    return m;
+  };
+
+  /** Une grande plante au sol : cache-pot, tronc, deux couronnes. */
+  const planteSol = (x: number, z: number, e: number) => {
+    const cachePot = bloc(
+      new THREE.CylinderGeometry(0.3 * e, 0.23 * e, 0.46 * e, 14),
+      0x50331f,
+      0.9
+    );
+    cachePot.position.set(x, SOL_Y + 0.23 * e, z);
+    const terre = bloc(
+      new THREE.CylinderGeometry(0.27 * e, 0.27 * e, 0.05 * e, 12),
+      0x241a13,
+      0.98
+    );
+    terre.position.set(x, SOL_Y + 0.47 * e, z);
+    terre.castShadow = false;
+    const tronc = bloc(
+      new THREE.CylinderGeometry(0.035 * e, 0.055 * e, 1.0 * e, 8),
+      0x3f2c1e,
+      0.9
+    );
+    tronc.position.set(x, SOL_Y + 0.96 * e, z);
+    tronc.rotation.z = 0.05;
+
+    /* Deux couronnes : la basse s'étale presque à l'horizontale, la haute se
+       redresse. Une seule couronne donne un plumeau. */
+    [
+      { n: 5, h: 1.06, large: 0.17, long: 0.66, penche: 1.0, ecart: 0.19 },
+      { n: 6, h: 1.44, large: 0.2, long: 0.8, penche: 0.58, ecart: 0.15 },
+    ].forEach((c, k) => {
+      for (let i = 0; i < c.n; i++) {
+        const a = (i / c.n) * Math.PI * 2 + k * 0.52;
+        foliole(
+          VERTS[(i + k) % 3],
+          c.large * e,
+          c.long * e,
+          x + Math.cos(a) * c.ecart * e,
+          SOL_Y + c.h * e,
+          z + Math.sin(a) * c.ecart * e,
+          a,
+          c.penche
+        );
+      }
+    });
+  };
+
+  /** Une plante murale : un pot accroché, et son feuillage qui retombe. */
+  const planteMurale = (x: number, y: number, e: number) => {
+    const support = bloc(
+      new THREE.CylinderGeometry(0.17 * e, 0.13 * e, 0.24 * e, 12),
+      0x4a3120,
+      0.9
+    );
+    support.position.set(x, y, -4.9);
+    const attache = bloc(
+      new THREE.BoxGeometry(0.03, 0.26, 0.03),
+      0x2a1e18,
+      0.7,
+      0.4
+    );
+    attache.position.set(x, y + 0.24 * e, -4.94);
+    attache.castShadow = false;
+
+    /* Le feuillage retombe en masses de longueurs inégales : à longueur
+       égale, on lit une frange et non une plante. */
+    const RETOMBEES: [number, number, number][] = [
+      [-0.14, 0.66, 0.12],
+      [-0.05, 0.98, -0.06],
+      [0.06, 0.78, 0.14],
+      [0.15, 0.52, -0.03],
+    ];
+    RETOMBEES.forEach(([dx, long, penche], i) => {
+      const geo = new THREE.ConeGeometry(0.085 * e, long * e, 5);
+      aRanger.push(geo);
+      const m = new THREE.Mesh(geo, VERTS[i % 3]);
+      m.scale.set(1, 1, 0.42);
+      m.position.set(x + dx * e, y - (long / 2) * e, -4.86);
+      m.rotation.z = Math.PI + penche; // la pointe vers le bas
+      m.receiveShadow = ombres;
+      lieu.add(m);
+    });
+  };
+
+  /* Au sol : une grande devant la fenêtre — c'est la seule chose de la pièce
+     que la lumière froide du dehors éclaire de face —, une contre le mur du
+     fond, une plus modeste dans le coin droit. */
+  planteSol(-6.0, -3.2, 1.15);
+  planteSol(2.75, -4.5, 1.0);
+  planteSol(6.7, -2.4, 0.85);
+
+  // Au mur : trois pots, entre le calendrier, le tableau et la porte
+  planteMurale(-6.4, SOL_Y + 2.95, 1.0);
+  planteMurale(1.45, SOL_Y + 3.05, 0.9);
+  planteMurale(3.9, SOL_Y + 2.85, 0.95);
+
   const lames = new THREE.Group();
   for (let i = 0; i < 6; i++) {
     const geo = new THREE.PlaneGeometry(7.4, 0.5);
