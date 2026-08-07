@@ -23,8 +23,9 @@ import { INTRO_FIN } from "../lib/intro";
  * Ce qui change d'un chapitre à l'autre, ce n'est pas le décor : c'est
  * l'endroit d'où on le regarde. La caméra se déplace dans la pièce au rythme
  * du deck — elle passe devant la fenêtre, monte au-dessus du bureau, recule
- * pour le dernier écran. Le logo, lui, reste accroché à la caméra : il se
- * pose dans le coin libre de chaque chapitre.
+ * pour le dernier écran. Le logo, lui, reste accroché à la caméra : il
+ * traverse l'écran d'un chapitre à l'autre et se pose dans le coin que
+ * chacun laisse libre — c'est lui qui dit où l'on en est.
  */
 
 /** Une position de caméra par chapitre du deck. */
@@ -64,30 +65,38 @@ const PLANS: Plan[] = [
  * bas, +1 = bord droit ou haut) et non en unités du monde : c'est le seul
  * repère qui vaille aussi bien sur un 21/9 que sur un téléphone tenu debout.
  * `o` est son intensité une fois posé : pleine sur les écrans qui ont de
- * l'espace libre, nulle sur ceux dont le centre est déjà occupé.
+ * l'espace libre, retenue sur ceux qui sont chargés.
  */
 type Pose = { p: number; x: number; y: number; s: number; o: number };
 
-/* Petit et franc plutôt que grand et fantomatique.
+/* Le logo accompagne la progression : il change de coin à chaque chapitre, et
+ * on le voit faire le trajet.
  *
- * Devant un fond plat, un logo large à 20 % d'opacité passait pour une
- * texture. Devant une pièce, il ne passe plus : il se lit comme une tache
- * brune, et il débordait du cadre par le bas. Réduit et rendu à sa couleur,
- * il redevient ce qu'il doit être — un objet posé dans la pièce, dans un coin
- * que le chapitre laisse libre. */
+ * Deux réglages décident de ça, et ce sont les seuls. La taille : trop petit,
+ * il devient une vignette dans un coin et on ne remarque plus qu'il a bougé.
+ * Et les côtés : les coins alternent gauche / droite d'un chapitre à l'autre,
+ * de sorte que chaque déplacement traverse l'écran au lieu de le longer.
+ *
+ * Chaque coin est choisi sur ce que le chapitre laisse libre — sous les
+ * boutons de l'accueil, au-dessus des cartes de la méthode, à gauche de
+ * l'orbite du programme. */
 const POSES: Pose[] = [
-  // Accueil : le coin bas gauche, sous les boutons
-  { p: 0.0, x: -0.82, y: -0.72, s: 0.26, o: 0.45 },
-  { p: 0.2, x: 0.8, y: 0.52, s: 0.26, o: 0.42 },
-  // Programme : de tous les chapitres, le seul dont aucun coin n'est libre —
-  // le 360° tient le centre et ses cartes tiennent les bords. Le logo sort.
-  { p: 0.4, x: -0.8, y: -0.66, s: 0.24, o: 0 },
-  { p: 0.6, x: -0.82, y: -0.7, s: 0.26, o: 0.42 },
-  { p: 0.8, x: 0.82, y: -0.66, s: 0.26, o: 0.44 },
+  // Accueil : bas gauche, sous les deux boutons
+  { p: 0.0, x: -0.74, y: -0.62, s: 0.42, o: 0.5 },
+  // Méthode : haut droite, le titre tient la gauche et les cartes le bas
+  { p: 0.2, x: 0.72, y: 0.5, s: 0.4, o: 0.5 },
+  /* Programme : le chapitre le plus chargé du deck — le 360° tient le centre
+     et les compétences tout le bas. Il reste la marge gauche, à mi-hauteur ;
+     le logo s'y range et s'y fait discret plutôt que d'en disparaître. */
+  { p: 0.4, x: -0.82, y: 0.3, s: 0.34, o: 0.32 },
+  // Écosystème : bas gauche, sous la rangée de cartes
+  { p: 0.6, x: -0.72, y: -0.62, s: 0.42, o: 0.5 },
+  // À propos : bas droite, le texte tient la gauche et les chiffres le milieu
+  { p: 0.8, x: 0.78, y: -0.58, s: 0.42, o: 0.5 },
   /* Dernier écran : le logo se couche derrière le wordmark. « Derrière » —
-     à 0,95 d'opacité et à cette taille, il passait devant et mangeait la
+     à pleine opacité et à pleine taille, il passait devant et mangeait la
      moitié du mot. */
-  { p: 1.0, x: 0.62, y: -0.42, s: 0.4, o: 0.6 },
+  { p: 1.0, x: 0.6, y: -0.4, s: 0.5, o: 0.7 },
 ];
 
 /** Distance du logo devant la caméra : c'est elle qui donne sa perspective. */
@@ -276,8 +285,11 @@ export default function Scene3D() {
       const brut = getDeckProgress();
       pageP += (brut - pageP) * 0.11;
 
-      /* Le logo s'efface pendant qu'il voyage d'un chapitre à l'autre : sinon
-         il traverse le texte de l'écran d'arrivée. Il revient une fois posé. */
+      /* Le logo faiblit pendant qu'il voyage d'un chapitre à l'autre — il
+         passe alors au-dessus du texte de l'écran d'arrivée — mais il ne
+         s'efface pas : c'est précisément le trajet qu'on doit voir. Tombé à
+         12 %, il disparaissait le temps du voyage et réapparaissait ailleurs,
+         ce qui ne raconte plus rien. */
       voyage += (Math.abs(brut - pageP) - voyage) * 0.18;
       const pose = 1 - Math.min(1, voyage * 16);
 
@@ -316,7 +328,7 @@ export default function Scene3D() {
         Math.sin(t * 0.35) * 0.06
       );
 
-      const opacite = p.o * (0.12 + 0.88 * pose * pose) * arrivee;
+      const opacite = p.o * (0.45 + 0.55 * pose * pose) * arrivee;
       logo.matieres.forEach((m) => {
         m.opacity = opacite;
       });
