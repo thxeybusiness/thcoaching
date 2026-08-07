@@ -245,16 +245,6 @@ h3 {
   }
 }
 
-/* Logo à droite, chaque pilier en face de sa vague */
-.intro-inner {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: stretch;
-  gap: clamp(26px, 4vw, 60px);
-}
-
 /* ---------- Décor de l'intro ---------- */
 .intro-fond {
   position: absolute;
@@ -308,67 +298,6 @@ h3 {
   );
 }
 
-/* ---------- Lumière autour du logo ---------- */
-.intro-logo-zone {
-  position: relative;
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-
-.intro-halo {
-  position: absolute;
-  width: min(64vw, 640px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(
-    circle,
-    rgba(255, 155, 70, 0.34),
-    rgba(255, 90, 31, 0.1) 34%,
-    transparent 64%
-  );
-}
-
-/* Rayons très discrets, en rotation lente */
-.intro-rayons {
-  position: absolute;
-  width: min(96vw, 940px);
-  aspect-ratio: 1;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0 7%,
-    rgba(255, 160, 70, 0.05) 9%,
-    transparent 11% 27%,
-    rgba(255, 160, 70, 0.038) 29%,
-    transparent 31% 52%,
-    rgba(255, 160, 70, 0.05) 54%,
-    transparent 56% 77%,
-    rgba(255, 160, 70, 0.035) 79%,
-    transparent 81%
-  );
-  -webkit-mask-image: radial-gradient(circle, transparent 14%, #000 30%, transparent 58%);
-  mask-image: radial-gradient(circle, transparent 14%, #000 30%, transparent 58%);
-  animation: intro-rayons 26s linear infinite;
-  will-change: transform;
-}
-
-@keyframes intro-rayons {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.intro-logo-svg {
-  position: relative;
-  z-index: 1;
-  width: clamp(190px, 26vw, 330px);
-  height: auto;
-  overflow: visible;
-}
-
 /* La scène 3D prend tout l'écran : les trois mots y sont posés en volume,
    avec les vagues, et non écrits par-dessus. */
 .intro-scene3d {
@@ -384,70 +313,16 @@ h3 {
   height: 100%;
 }
 
-/* Le décor plat s'efface dès que le volume a pris la main : logo, mots, ciel
-   et sol sont alors dans la scène, et deux décors superposés se
-   contrediraient. Il reste dans le document — si la machine ne suit pas, la
-   séquence le rend à sa place en cours de route. */
-.intro[data-volume="true"] .intro-inner,
+/* Le fond en dégradés n'est là que le temps que la scène se charge. Dès
+   qu'elle prend la main, il s'efface : ciel, sol et lumière sont alors dans
+   la scène, et deux décors superposés se contrediraient. */
 .intro[data-volume="true"] .intro-fond {
   visibility: hidden;
 }
 
-/* Chaque vague s'allume avec son pilier */
-.intro-wave {
-  transition: filter 0.45s ease;
-}
-
-.intro-wave[data-on="true"] {
-  filter: drop-shadow(0 0 18px rgba(255, 140, 46, 0.6));
-}
-
-/* Les trois piliers, alignés sur les trois vagues */
-.intro-piliers {
-  position: relative;
-  margin: 0;
-}
-
-.intro-piliers-gabarit {
-  visibility: hidden;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(0.78rem, 1.4vw, 1.02rem);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.intro-word {
-  position: absolute;
-  top: var(--y);
-  right: 0;
-  transform: translateY(-50%);
-  white-space: nowrap;
-  text-align: right;
-}
-
-/* Invisible au départ, sinon les trois mots s'affichent une fraction de
-   seconde avant que l'animation ne les reprenne. */
-.intro-word-texte {
-  display: inline-block;
-  opacity: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(0.78rem, 1.4vw, 1.02rem);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #f4f2ef;
-  will-change: transform, opacity;
-}
-
-/* Écran étroit : les piliers passent sous le logo */
+/* Écran étroit : la vignette se recentre, la composition n'étant plus
+   décalée vers la droite. */
 @media (max-width: 720px) {
-  .intro-inner {
-    flex-direction: column;
-    align-items: center;
-    gap: 26px;
-  }
   .intro-vignette {
     background: radial-gradient(
       115% 92% at 50% 40%,
@@ -455,25 +330,6 @@ h3 {
       rgba(0, 0, 0, 0.6) 58%,
       rgba(0, 0, 0, 0.92) 100%
     );
-  }
-  .intro-rayons {
-    width: 130vw;
-  }
-  .intro-piliers {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .intro-word {
-    position: static;
-    transform: none;
-  }
-  .intro-piliers-gabarit {
-    display: none;
-  }
-  .intro-word-texte {
-    font-size: 0.8rem;
   }
 }
 
@@ -1140,8 +996,7 @@ cliquable ---------- */
   .deck-progress i {
     transition: none !important;
   }
-  .intro-fond,
-  .intro-rayons {
+  .intro-fond {
     animation: none !important;
   }
 }

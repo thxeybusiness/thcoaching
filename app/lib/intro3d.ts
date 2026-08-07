@@ -6,9 +6,9 @@ import { construireLogo, ETEINTE } from "./logo3d";
  * La scène 3D de l'intro : les trois vagues du logo, en volume, et les trois
  * mots posés dans l'espace avec elles.
  *
- * Le module est chargé à la volée par l'intro, et seulement si le navigateur
- * le rapporte à temps — l'intro dure une seconde, elle ne doit jamais
- * attendre après lui. Sans lui, l'intro joue sa version plate.
+ * Le module est chargé à la volée par l'intro. Il n'a plus de doublure à
+ * plat : sans lui, il n'y a pas d'intro du tout et le site s'ouvre
+ * directement.
  *
  * La pièce et le logo viennent de `lieu3d` et `logo3d`, partagés avec le fond
  * du site : c'est ce qui garantit que le rideau se lève sur le même espace,
@@ -18,8 +18,6 @@ import { construireLogo, ETEINTE } from "./logo3d";
 export { ETEINTE, ALLUMEE, EMISSIF_REPOS } from "./logo3d";
 
 export type SceneIntro = {
-  /** Durée médiane d'une image, mesurée sur de vraies images. Voir plus bas. */
-  mesurer: () => Promise<number>;
   /** Les trois vagues, de haut en bas — une par pilier. */
   vagues: THREE.Object3D[];
   /** Leurs matériaux, un par vague : elles s'allument séparément. */
@@ -35,21 +33,30 @@ export function monterIntro3D(
   hote: HTMLElement,
   libelles: string[]
 ): SceneIntro {
+  const etroit = (hote.clientWidth || window.innerWidth) < 861;
+
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, etroit ? 1.25 : 1.75));
   /* Pas de mappage filmique : ACES tire l'orange de la marque (#ff5a1f, très
      saturé) vers un rouge sombre. Sur un logo, la fidélité de la couleur
      passe avant le rendu cinéma — la luminosité se règle aux lumières. */
   renderer.toneMapping = THREE.NoToneMapping;
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = !etroit;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   hote.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 200);
 
-  // Le bureau, à pleine lumière : ici, la pièce est le sujet
-  const lieu = construireLieu(scene, renderer);
+  /* Le bureau, à pleine lumière : ici, la pièce est le sujet.
+     Sur un écran étroit, les deux seuls postes vraiment coûteux tombent —
+     les ombres portées et la moitié de la poussière. L'intro n'a plus de
+     doublure à plat vers laquelle se rabattre : c'est ici, et non après
+     coup, qu'elle doit tenir dans le budget d'une petite machine. */
+  const lieu = construireLieu(scene, renderer, {
+    ombres: !etroit,
+    poussieres: etroit ? 260 : 700,
+  });
 
   // ---- Les trois vagues, chacune dans son pivot ----
   const logo = construireLogo({ couleur: ETEINTE });
@@ -144,15 +151,16 @@ export function monterIntro3D(
     renderer.setSize(l, h, false);
     camera.aspect = l / h;
 
-    // Sur un écran étroit, les mots ne tiennent plus à côté du logo
-    const etroit = camera.aspect < 1.05;
+    /* Sur un écran plus haut que large, les mots ne tiennent plus à côté du
+       logo. C'est une question de format, pas de largeur : un écran étroit
+       posé en paysage les garde. */
+    const portrait = camera.aspect < 1.05;
     mots.forEach((m) => {
-      m.visible = !etroit;
+      m.visible = !portrait;
     });
-    groupe.position.x = etroit ? 0 : logoX;
-    affiche.position.x = etroit ? 0 : 0;
+    groupe.position.x = portrait ? 0 : logoX;
 
-    const largeur = etroit ? 2.52 : tailleAffiche.x;
+    const largeur = portrait ? 2.52 : tailleAffiche.x;
     const fov = (camera.fov * Math.PI) / 180;
     const parHauteur = tailleAffiche.y / 2 / Math.tan(fov / 2);
     const parLargeur = largeur / 2 / Math.tan(fov / 2) / camera.aspect;
@@ -169,14 +177,9 @@ export function monterIntro3D(
 
   // ---- Boucle ----
   let raf = 0;
-  let derniere = 0;
-  const intervalles: number[] = [];
   const depart = performance.now();
   const tick = () => {
     const t = performance.now();
-    if (derniere) intervalles.push(t - derniere);
-    derniere = t;
-
     lieu.animer((t - depart) / 1000);
 
     renderer.render(scene, camera);
@@ -184,30 +187,7 @@ export function monterIntro3D(
   };
   tick();
 
-  /**
-   * Combien coûte une image, pour de vrai ?
-   *
-   * Pas en chronométrant `render()` : l'appel empile des commandes et rend la
-   * main avant que quoi que ce soit ne soit tracé — on mesurerait quelques
-   * microsecondes sur une machine à genoux. On regarde donc l'écart entre
-   * images réellement affichées.
-   */
-  const mesurer = () =>
-    new Promise<number>((resoudre) => {
-      const debut = intervalles.length;
-      const attendre = () => {
-        if (intervalles.length - debut >= 4) {
-          const pris = intervalles.slice(debut).sort((a, b) => a - b);
-          resoudre(pris[Math.floor(pris.length / 2)]);
-          return;
-        }
-        requestAnimationFrame(attendre);
-      };
-      requestAnimationFrame(attendre);
-    });
-
   return {
-    mesurer,
     vagues,
     matieres,
     mots,
