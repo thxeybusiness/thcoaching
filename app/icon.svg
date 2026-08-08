@@ -1,15 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
   <rect width="120" height="120" rx="26" fill="#0d0d0d" />
   <defs>
-    <linearGradient id="ic" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#ff6a12" />
-      <stop offset="0.6" stop-color="#ff9a2a" />
-      <stop offset="1" stop-color="#ffc061" />
+    <linearGradient id="ic" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff9a2a" />
+      <stop offset="1" stop-color="#ff5a1f" />
     </linearGradient>
   </defs>
-  <g fill="url(#ic)">
-    <path d="M20 26 C46 12 74 38 100 22 L100 40 C74 56 46 30 20 44 Z" />
-    <path d="M20 51 C46 37 74 63 100 47 L100 65 C74 81 46 55 20 69 Z" />
-    <path d="M20 76 C46 62 74 88 100 72 L100 90 C74 106 46 80 20 94 Z" />
+  <g transform="rotate(45 60 60)" fill="none" stroke="url(#ic)" stroke-width="10.483" stroke-dasharray="69.852 14.152 69.852 14.152" stroke-dashoffset="-41.834">
+    <path d="M37.931 47.310L82.069 47.310A12.69 12.69 0 0 1 82.069 72.690L37.931 72.690A12.69 12.69 0 0 1 37.931 47.310Z" />
+    <path d="M37.931 47.310L82.069 47.310A12.69 12.69 0 0 1 82.069 72.690L37.931 72.690A12.69 12.69 0 0 1 37.931 47.310Z" transform="rotate(90 60 60)" />
   </g>
 </svg>

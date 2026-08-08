@@ -113,7 +113,7 @@ export default function Home() {
                     data-r
                   >
                     <span className="deroule-tete">
-                      <LogoEtape actif={i} className="deroule-logo" />
+                      <LogoEtape className="deroule-logo" />
                       <span className="deroule-num" aria-hidden="true">
                         {e.num}
                       </span>

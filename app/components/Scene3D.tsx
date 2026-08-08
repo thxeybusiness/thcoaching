@@ -192,7 +192,6 @@ export default function Scene3D() {
       m.opacity = 0;
       m.emissiveIntensity = EMISSIF_REPOS;
     });
-    logo.groupe.scale.setScalar(0.021);
     const porteur = new THREE.Group();
     porteur.add(logo.groupe);
     porteur.position.z = -PROFONDEUR_LOGO;

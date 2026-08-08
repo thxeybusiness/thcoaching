@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { TRESSE } from "./lib/tresse";
 
 /**
  * Visuel partagé sur WhatsApp, LinkedIn, iMessage, X…
@@ -23,19 +24,27 @@ function loadFont(relativePath: string) {
   return readFile(join(process.cwd(), "node_modules", relativePath));
 }
 
-/** Le logo 3 vagues, en dégradé orange, encodé en data URI. */
+/**
+ * La tresse, en dégradé orange, encodée en data URI.
+ *
+ * Le tracé vient de `lib/tresse`, comme le logo du site et l'icône : la
+ * vignette de partage ne redessine pas la marque de son côté, sans quoi elle
+ * dériverait au premier ajustement des proportions. Pas de fond non plus —
+ * l'entrelacement est fait de vrais trous, la marque se pose donc directement
+ * sur le noir de la vignette.
+ */
 const LOGO_DATA_URI = `data:image/svg+xml;base64,${Buffer.from(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
     <defs>
       <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#ff8c1a"/>
-        <stop offset="100%" stop-color="#ff5a1f"/>
+        <stop offset="55%" stop-color="#ff5a1f"/>
+        <stop offset="100%" stop-color="#e64c12"/>
       </linearGradient>
     </defs>
-    <g fill="url(#g)">
-      <path d="M12 20 C44 4 76 34 108 14 L108 34 C76 54 44 24 12 40 Z"/>
-      <path d="M12 49 C44 33 76 63 108 43 L108 63 C76 83 44 53 12 69 Z"/>
-      <path d="M12 78 C44 62 76 92 108 72 L108 92 C76 112 44 82 12 98 Z"/>
+    <g transform="${TRESSE.pose}" fill="none" stroke="url(#g)" stroke-width="${TRESSE.largeur}" stroke-dasharray="${TRESSE.tirets}" stroke-dashoffset="${TRESSE.decalage}">
+      <path d="${TRESSE.d}"/>
+      <path d="${TRESSE.d}" transform="${TRESSE.quart}"/>
     </g>
   </svg>`
 ).toString("base64")}`;

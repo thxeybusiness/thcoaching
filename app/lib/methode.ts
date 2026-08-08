@@ -2,8 +2,8 @@
  * Le thème global du coaching : la personne accompagnée n'avance pas seule.
  * Tout un écosystème l'entoure — un coach, un programme complet, des
  * formations, des outils, un groupe — pour l'aider à bâtir son business.
- * Source unique partagée par l'intro (un mot = une vague du logo) et les
- * chapitres de l'accueil.
+ * Source unique partagée par l'intro (un mot = un temps de l'animation) et
+ * les chapitres de l'accueil.
  */
 
 export const PROMESSE =

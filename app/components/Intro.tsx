@@ -9,13 +9,14 @@ import type { SceneIntro } from "../lib/intro3d";
 import { EMISSIF_REPOS } from "../lib/intro3d";
 
 /**
- * Intro : les trois étapes du déroulé allument le logo.
+ * Intro : les trois étapes du déroulé montent le logo.
  *
- * 1. Le logo apparaît en grand, ses trois vagues éteintes, dans le bureau
- * 2. « Fondations », « Perfectionnement », « Développement » entrent l'un
- *    après l'autre — chaque mot allume la vague correspondante
- * 3. Au troisième mot, un éclat couvre l'écran ; le décor s'efface derrière
- *    lui et le site apparaît pendant que l'éclat retombe.
+ * 1. Le bureau est là, la tresse n'y est pas encore
+ * 2. « Fondations » et « Perfectionnement » amènent chacun un anneau : il
+ *    vient de loin, se pose, et s'allume
+ * 3. « Développement » n'a plus d'anneau à poser — la tresse entière pivote
+ *    d'un quart de tour et s'embrase ; un éclat couvre l'écran, le décor
+ *    s'efface derrière lui et le site apparaît pendant que l'éclat retombe.
  *
  * L'intro est en volume, ou elle n'est pas.
  *
@@ -35,7 +36,7 @@ import { EMISSIF_REPOS } from "../lib/intro3d";
 /** Ce qu'on accorde au moteur 3D pour arriver. Passé ce délai, pas d'intro. */
 const ATTENTE_3D = 2500;
 
-/** Les trois mots, dans l'ordre des vagues. */
+/** Les trois mots, dans l'ordre du déroulé. */
 const PILIERS = ETAPES.map((e) => e.mot);
 
 /** Départ de l'éclat, puis instant où le site apparaît derrière lui.
@@ -112,28 +113,37 @@ export default function Intro() {
           onComplete: () => setDone(true),
         });
 
-        // Un mot = une vague qui se pose et s'allume
-        PILIERS.forEach((_, i) => {
+        /* Trois mots, deux anneaux.
+           Les deux premiers mots font arriver un anneau chacun : il vient de
+           loin et de côté, se pose, et s'allume. Le troisième n'a plus
+           d'anneau à poser — c'est la tresse entière qui pivote d'un quart de
+           tour et s'embrase. Le quart de tour n'est pas choisi au hasard : la
+           tresse a cette symétrie, elle revient donc exactement sur elle-même
+           et le mouvement se referme. */
+        vue.anneaux.forEach((pivot, i) => {
           const debut = t(0.34 + i * 0.44);
-          const pivot = vue.vagues[i];
           const matiere = vue.matieres[i];
-          const mot = vue.mots[i];
+          const cote = i === 0 ? -1 : 1;
 
-          /* La vague arrive de loin, de côté et de biais, puis se pose à
-             plat : c'est la bascule qui donne le volume, pas le voyage. */
           tl.fromTo(
             pivot.position,
-            { z: -2.6 - i * 0.5, x: -1.5 },
-            { z: 0, x: 0, duration: t(0.62), ease: "power3.out" },
+            { x: cote * 1.7, z: -2.4 },
+            { x: 0, z: 0, duration: t(0.62), ease: "power3.out" },
             debut
           )
             .fromTo(
               pivot.rotation,
-              { y: 1.25, x: 0.45, z: -0.22 },
-              { y: 0, x: 0, z: 0, duration: t(0.72), ease: "back.out(1.35)" },
+              { z: cote * 1.15, x: 0.5, y: -0.35 },
+              {
+                z: 0,
+                x: 0,
+                y: 0,
+                duration: t(0.72),
+                ease: "back.out(1.35)",
+              },
               debut
             )
-            // Elle s'allume en arrivant : braise, puis orange de la marque
+            // Il s'allume en arrivant : braise, puis orange de la marque
             .to(
               matiere.color,
               {
@@ -164,21 +174,43 @@ export default function Intro() {
               { emissiveIntensity: EMISSIF_REPOS, duration: t(0.2) },
               debut + t(0.46)
             );
+        });
 
-          // Le mot glisse avec sa vague, dans la scène
-          if (mot) {
-            tl.fromTo(
-              mot.material,
-              { opacity: 0 },
-              { opacity: 0.92, duration: t(0.42), ease: "power2.out" },
-              debut + t(0.06)
-            ).fromTo(
-              mot.position,
-              { x: mot.userData.repos.x - 0.5 },
-              { x: mot.userData.repos.x, duration: t(0.6), ease: "power3.out" },
-              debut + t(0.06)
-            );
-          }
+        // Troisième mot : la tresse se referme sur elle-même et s'embrase
+        const final = t(0.34 + 2 * 0.44);
+        tl.to(
+          vue.groupe.rotation,
+          { z: Math.PI / 2, duration: t(1.05), ease: "power2.inOut" },
+          final - t(0.12)
+        );
+        vue.matieres.forEach((matiere) => {
+          tl.to(
+            matiere,
+            {
+              emissiveIntensity: 0.5,
+              duration: t(0.2),
+              yoyo: true,
+              repeat: 1,
+              ease: "power2.out",
+            },
+            final
+          );
+        });
+
+        // Les trois mots, eux, entrent un par un — un par temps
+        vue.mots.forEach((mot, i) => {
+          const debut = t(0.34 + i * 0.44);
+          tl.fromTo(
+            mot.material,
+            { opacity: 0 },
+            { opacity: 0.92, duration: t(0.42), ease: "power2.out" },
+            debut + t(0.06)
+          ).fromTo(
+            mot.position,
+            { x: mot.userData.repos.x - 0.5 },
+            { x: mot.userData.repos.x, duration: t(0.6), ease: "power3.out" },
+            debut + t(0.06)
+          );
         });
 
         // L'éclat part du logo, qui se tient au centre de la scène plein écran

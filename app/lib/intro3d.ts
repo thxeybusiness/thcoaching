@@ -3,8 +3,8 @@ import { construireLieu } from "./lieu3d";
 import { construireLogo, ETEINTE } from "./logo3d";
 
 /**
- * La scène 3D de l'intro : les trois vagues du logo, en volume, et les trois
- * mots posés dans l'espace avec elles.
+ * La scène 3D de l'intro : la tresse du logo, en volume, et les trois mots
+ * posés dans l'espace avec elle.
  *
  * Le module est chargé à la volée par l'intro. Il n'a plus de doublure à
  * plat : sans lui, il n'y a pas d'intro du tout et le site s'ouvre
@@ -18,9 +18,9 @@ import { construireLogo, ETEINTE } from "./logo3d";
 export { ETEINTE, ALLUMEE, EMISSIF_REPOS } from "./logo3d";
 
 export type SceneIntro = {
-  /** Les trois vagues, de haut en bas — une par pilier. */
-  vagues: THREE.Object3D[];
-  /** Leurs matériaux, un par vague : elles s'allument séparément. */
+  /** Les deux anneaux de la tresse — ils arrivent l'un après l'autre. */
+  anneaux: THREE.Object3D[];
+  /** Leurs matières, une par anneau : ils s'allument séparément. */
   matieres: THREE.MeshStandardMaterial[];
   /** Les trois mots, posés dans la scène et non par-dessus. */
   mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[];
@@ -58,14 +58,14 @@ export function monterIntro3D(
     poussieres: etroit ? 260 : 700,
   });
 
-  // ---- Les trois vagues, chacune dans son pivot ----
+  // ---- La tresse, ses deux anneaux dans leurs pivots ----
   const logo = construireLogo({ couleur: ETEINTE });
-  const { groupe, vagues, matieres } = logo;
+  const { groupe, anneaux, matieres } = logo;
 
   /* Logo et mots forment une seule affiche : c'est elle qu'on centre et
      qu'on cadre. Placés séparément, ils débordaient de l'écran dès que le
-     mot était long — « Perfectionnement » sortait par la gauche. */
-  groupe.scale.setScalar(0.021);
+     mot était long — « Perfectionnement » sortait par la gauche.
+     La tresse arrive déjà à sa taille : elle se mesure dans son module. */
   const affiche = new THREE.Group();
   affiche.add(groupe);
   scene.add(affiche);
@@ -127,7 +127,7 @@ export function monterIntro3D(
   /* Le logo prend place à droite des mots, puis l'affiche entière est ramenée
      sur son centre : la composition tient au milieu de l'écran quelle que
      soit la longueur du plus long mot. */
-  groupe.position.x = ECART + 1.26;
+  groupe.position.x = ECART + 1.05;
   const tailleAffiche = (() => {
     const boite = new THREE.Box3().setFromObject(affiche);
     const centre = boite.getCenter(new THREE.Vector3());
@@ -188,7 +188,7 @@ export function monterIntro3D(
   tick();
 
   return {
-    vagues,
+    anneaux,
     matieres,
     mots,
     groupe,
