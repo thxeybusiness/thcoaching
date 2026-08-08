@@ -47,7 +47,7 @@ const REGROUPE = t(1.46);
 /** Départ de l'éclat, puis instant où le site apparaît derrière lui.
     Toutes les durées passent par `t` : elles sont écrites à leur valeur
     d'origine et divisées par la cadence commune. */
-const ECLAT = t(4.78);
+const ECLAT = t(3.38);
 const OUVERTURE = INTRO_FIN;
 
 export default function Intro() {
@@ -217,7 +217,9 @@ export default function Intro() {
 
            Il prend son temps — près d'une seconde pour un seul tour. C'est
            lent pour une intro, et c'est voulu : un tour expédié ne se lit pas,
-           on n'y voit qu'un clignotement.
+           on n'y voit qu'un clignotement. En revanche il n'y a rien après :
+           l'éclat part un dixième de seconde après qu'il se referme. Le temps
+           est donné au mouvement, pas à l'arrêt.
 
            C'est le seul mouvement de la fin. La tresse a aussi tourné dans son
            plan pendant un temps : elle passait par la position droite avant de
@@ -243,16 +245,14 @@ export default function Intro() {
             },
             REGROUPE
           )
-            /* Puis la chauffe. Elle monte pendant le tour, pendant le
-               redressement, et continue de monter pendant que la marque se
-               tient droite : c'est ce qui empêche ce long temps d'arrêt d'être
-               un temps mort. Elle atteint son maximum juste avant l'éclat, qui
-               prend alors le relais. */
+            /* Puis la chauffe, qui monte pendant tout le tour et atteint son
+               maximum au moment où celui-ci se referme. L'éclat prend le
+               relais dans la foulée. */
             .to(
               matiere,
               {
                 emissiveIntensity: 0.85,
-                duration: t(3.0),
+                duration: t(1.6),
                 ease: "power2.in",
               },
               REGROUPE + t(0.3)
@@ -326,7 +326,7 @@ export default function Intro() {
           { y: -0.34, x: -0.16 },
           /* On garde un peu de biais à l'arrivée : de face, la lumière clé
              frappe la grande face de plein fouet et la lave. */
-          { y: -0.28, x: -0.12, duration: t(4.8), ease: "power2.out" },
+          { y: -0.28, x: -0.12, duration: t(3.5), ease: "power2.out" },
           0
         );
       }, root);

@@ -18,8 +18,10 @@ export const cadence = (secondes: number) => secondes / VITESSE_INTRO;
  * Il tombait autrefois à 1,66, soit un quart de seconde après le dernier
  * anneau posé : la tresse n'avait pas le temps de faire quoi que ce soit une
  * fois regroupée, et son mouvement final se jouait derrière l'éclat. Le
- * rideau attend maintenant que ce mouvement soit allé au bout, et qu'on ait
- * eu le temps de le voir : le tour dure près d'une seconde à lui seul, et la
- * marque se tient ensuite en place près d'une seconde encore avant l'éclat.
+ * rideau attend maintenant que ce mouvement soit allé au bout : le tour dure
+ * près d'une seconde à lui seul. Mais il n'attend rien de plus — l'éclat part
+ * un dixième de seconde après le dernier geste. Un logo immobile à l'écran ne
+ * raconte plus rien, et chaque instant qu'il y passe est du temps volé au
+ * site.
  */
-export const INTRO_FIN = cadence(5.08);
+export const INTRO_FIN = cadence(3.68);
