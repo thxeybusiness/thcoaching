@@ -2103,12 +2103,17 @@ cliquable ---------- */
        en touchait les deux bords. */
     --noeud-l: max(104px, 22cqh);
     --noeud-h: max(84px, 19.4cqh);
-    /* La tuile ouverte ne descend pas sous une taille où sa description
-       deviendrait illisible, même si la scène, elle, se réduit. Elle grandit
-       surtout en largeur : c'est la hauteur qui manque, et une tuile du bas
-       qui s'épaissit sortirait de la fenêtre. */
-    --noeud-ouvert-l: max(276px, 30cqh);
-    --noeud-ouvert-h: max(230px, 24cqh);
+    /* La tuile ouverte est taillée sur la plus longue des quarante-trois
+       descriptions, et sur rien d'autre. Elle était deux fois trop haute :
+       le texte tenait dans le tiers supérieur et les deux tiers du bas
+       restaient vides.
+
+       Un peu plus large, nettement moins haute : à largeur égale, chaque
+       ligne gagnée sur la largeur en supprime une sur la hauteur, et c'est
+       la hauteur qui manque — une tuile du bas qui s'épaissit sort de la
+       fenêtre, une tuile qui s'élargit ne gêne personne. */
+    --noeud-ouvert-l: max(304px, 32cqh);
+    --noeud-ouvert-h: max(146px, 16cqh);
 
     /* L'orbite et la couronne partagent la même case de grille : elles ont
        donc forcément le même centre, sans calcul d'aucune sorte. */
