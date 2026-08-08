@@ -47,7 +47,7 @@ const REGROUPE = t(1.46);
 /** Départ de l'éclat, puis instant où le site apparaît derrière lui.
     Toutes les durées passent par `t` : elles sont écrites à leur valeur
     d'origine et divisées par la cadence commune. */
-const ECLAT = t(5.5);
+const ECLAT = t(4.78);
 const OUVERTURE = INTRO_FIN;
 
 export default function Intro() {
@@ -217,30 +217,17 @@ export default function Intro() {
 
            Il prend son temps — près d'une seconde pour un seul tour. C'est
            lent pour une intro, et c'est voulu : un tour expédié ne se lit pas,
-           on n'y voit qu'un clignotement. */
+           on n'y voit qu'un clignotement.
+
+           C'est le seul mouvement de la fin. La tresse a aussi tourné dans son
+           plan pendant un temps : elle passait par la position droite avant de
+           revenir sur ses diagonales. Deux rotations coup sur coup faisaient
+           une pirouette de trop — le tour en profondeur dit déjà tout, et il
+           le dit mieux seul. */
         tl.to(
           vue.noyau.rotation,
           { y: Math.PI * 2, duration: t(1.6), ease: "power2.inOut" },
           REGROUPE + t(0.16)
-        );
-
-        /* Le redressement. Le tour fini, la tresse pivote dans son plan : un
-           quart de tour plein, de +45° à −45°.
-
-           Elle passe donc par la position droite — boucles à l'horizontale et
-           à la verticale — à mi-chemin, et repart pour arriver sur ses
-           diagonales. C'est voulu : la tresse a quatre lobes régulièrement
-           répartis, un quart de tour la ramène exactement sur elle-même. La
-           marque termine donc l'intro dans l'orientation où elle est partout
-           ailleurs — l'en-tête, l'icône, la vignette de partage — et le
-           raccord avec le site ne se voit pas.
-
-           L'élan dépasse légèrement avant de revenir : la marque ne glisse pas
-           jusqu'à sa place, elle s'y encliquette. */
-        tl.to(
-          vue.noyau.rotation,
-          { z: -Math.PI / 4, duration: t(0.72), ease: "back.out(1.4)" },
-          REGROUPE + t(1.76)
         );
 
         vue.matieres.forEach((matiere) => {
@@ -265,7 +252,7 @@ export default function Intro() {
               matiere,
               {
                 emissiveIntensity: 0.85,
-                duration: t(3.7),
+                duration: t(3.0),
                 ease: "power2.in",
               },
               REGROUPE + t(0.3)
@@ -339,7 +326,7 @@ export default function Intro() {
           { y: -0.34, x: -0.16 },
           /* On garde un peu de biais à l'arrivée : de face, la lumière clé
              frappe la grande face de plein fouet et la lave. */
-          { y: -0.28, x: -0.12, duration: t(5.5), ease: "power2.out" },
+          { y: -0.28, x: -0.12, duration: t(4.8), ease: "power2.out" },
           0
         );
       }, root);
