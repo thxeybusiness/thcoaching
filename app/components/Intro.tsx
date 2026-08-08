@@ -14,9 +14,10 @@ import { EMISSIF_REPOS } from "../lib/intro3d";
  * 1. Le bureau est là, la tresse n'y est pas encore
  * 2. « Fondations » et « Perfectionnement » amènent chacun un anneau : il
  *    vient de loin, se pose, et s'allume
- * 3. « Développement » n'a plus d'anneau à poser — la tresse entière pivote
- *    d'un quart de tour et s'embrase ; un éclat couvre l'écran, le décor
- *    s'efface derrière lui et le site apparaît pendant que l'éclat retombe.
+ * 3. « Développement » arrive sur la tresse achevée. Elle se serre, fait un
+ *    tour complet sur elle-même en profondeur et s'embrase ; un éclat couvre
+ *    l'écran, le décor s'efface derrière lui et le site apparaît pendant que
+ *    l'éclat retombe.
  *
  * L'intro est en volume, ou elle n'est pas.
  *
@@ -39,10 +40,14 @@ const ATTENTE_3D = 2500;
 /** Les trois mots, dans l'ordre du déroulé. */
 const PILIERS = ETAPES.map((e) => e.mot);
 
+/** Instant où le second anneau a fini de se poser : la tresse est faite.
+    C'est de là que part son mouvement propre. */
+const REGROUPE = t(1.46);
+
 /** Départ de l'éclat, puis instant où le site apparaît derrière lui.
     Toutes les durées passent par `t` : elles sont écrites à leur valeur
     d'origine et divisées par la cadence commune. */
-const ECLAT = t(1.46);
+const ECLAT = t(5.5);
 const OUVERTURE = INTRO_FIN;
 
 export default function Intro() {
@@ -115,11 +120,9 @@ export default function Intro() {
 
         /* Trois mots, deux anneaux.
            Les deux premiers mots font arriver un anneau chacun : il vient de
-           loin et de côté, se pose, et s'allume. Le troisième n'a plus
-           d'anneau à poser — c'est la tresse entière qui pivote d'un quart de
-           tour et s'embrase. Le quart de tour n'est pas choisi au hasard : la
-           tresse a cette symétrie, elle revient donc exactement sur elle-même
-           et le mouvement se referme. */
+           loin et de côté, se pose, et s'allume. Le troisième tombe sur une
+           tresse déjà faite — c'est elle, alors, qui prend la parole (plus
+           bas). */
         vue.anneaux.forEach((pivot, i) => {
           const debut = t(0.34 + i * 0.44);
           const matiere = vue.matieres[i];
@@ -176,25 +179,97 @@ export default function Intro() {
             );
         });
 
-        // Troisième mot : la tresse se referme sur elle-même et s'embrase
-        const final = t(0.34 + 2 * 0.44);
+        /* ---- Une fois la tresse faite ----
+           Trois gestes qui s'enchaînent sans se recouvrir : elle se serre,
+           elle se retourne, elle s'embrase. Le mouvement porte sur le noyau
+           et non sur l'ensemble : l'affiche entière garde pendant ce temps
+           son inclinaison lente, et les deux ne se marchent pas dessus. */
+
+        /* Le serrage. Les deux anneaux viennent de s'emboîter, le nœud se
+           tend d'un coup — comme une vraie tresse qu'on tire par les deux
+           bouts — puis se détend en débordant à peine. C'est ce très court
+           resserrement qui donne au regroupement son point final. */
         tl.to(
-          vue.groupe.rotation,
-          { z: Math.PI / 2, duration: t(1.05), ease: "power2.inOut" },
-          final - t(0.12)
+          vue.noyau.scale,
+          { x: 0.87, y: 0.87, z: 0.87, duration: t(0.16), ease: "power2.in" },
+          REGROUPE - t(0.02)
+        ).to(
+          vue.noyau.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: t(0.52),
+            ease: "elastic.out(1, 0.55)",
+          },
+          REGROUPE + t(0.14)
         );
+
+        /* Le tour. Un tour complet en profondeur, autour de l'axe vertical de
+           l'écran. À mi-chemin la tresse se présente sur la tranche : c'est le
+           seul moment de l'intro où l'on voit qu'elle a une épaisseur, donc
+           qu'elle est un objet et non un dessin.
+
+           Un tour entier, et pas un demi-tour : vue de dos, une tresse
+           échange ses dessus et ses dessous, elle reviendrait donc en nœud
+           inverse. Le tour complet est le seul qui se referme exactement sur
+           la marque de départ.
+
+           Il prend son temps — près d'une seconde pour un seul tour. C'est
+           lent pour une intro, et c'est voulu : un tour expédié ne se lit pas,
+           on n'y voit qu'un clignotement. */
+        tl.to(
+          vue.noyau.rotation,
+          { y: Math.PI * 2, duration: t(1.6), ease: "power2.inOut" },
+          REGROUPE + t(0.16)
+        );
+
+        /* Le redressement. Le tour fini, la tresse pivote dans son plan : un
+           quart de tour plein, de +45° à −45°.
+
+           Elle passe donc par la position droite — boucles à l'horizontale et
+           à la verticale — à mi-chemin, et repart pour arriver sur ses
+           diagonales. C'est voulu : la tresse a quatre lobes régulièrement
+           répartis, un quart de tour la ramène exactement sur elle-même. La
+           marque termine donc l'intro dans l'orientation où elle est partout
+           ailleurs — l'en-tête, l'icône, la vignette de partage — et le
+           raccord avec le site ne se voit pas.
+
+           L'élan dépasse légèrement avant de revenir : la marque ne glisse pas
+           jusqu'à sa place, elle s'y encliquette. */
+        tl.to(
+          vue.noyau.rotation,
+          { z: -Math.PI / 4, duration: t(0.72), ease: "back.out(1.4)" },
+          REGROUPE + t(1.76)
+        );
+
         vue.matieres.forEach((matiere) => {
+          // L'étincelle du serrage
           tl.to(
             matiere,
             {
-              emissiveIntensity: 0.5,
-              duration: t(0.2),
+              emissiveIntensity: 0.45,
+              duration: t(0.12),
               yoyo: true,
               repeat: 1,
               ease: "power2.out",
             },
-            final
-          );
+            REGROUPE
+          )
+            /* Puis la chauffe. Elle monte pendant le tour, pendant le
+               redressement, et continue de monter pendant que la marque se
+               tient droite : c'est ce qui empêche ce long temps d'arrêt d'être
+               un temps mort. Elle atteint son maximum juste avant l'éclat, qui
+               prend alors le relais. */
+            .to(
+              matiere,
+              {
+                emissiveIntensity: 0.85,
+                duration: t(3.7),
+                ease: "power2.in",
+              },
+              REGROUPE + t(0.3)
+            );
         });
 
         // Les trois mots, eux, entrent un par un — un par temps
@@ -264,7 +339,7 @@ export default function Intro() {
           { y: -0.34, x: -0.16 },
           /* On garde un peu de biais à l'arrivée : de face, la lumière clé
              frappe la grande face de plein fouet et la lave. */
-          { y: -0.28, x: -0.12, duration: t(1.5), ease: "power2.out" },
+          { y: -0.28, x: -0.12, duration: t(5.5), ease: "power2.out" },
           0
         );
       }, root);

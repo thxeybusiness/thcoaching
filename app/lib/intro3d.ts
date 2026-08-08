@@ -26,6 +26,8 @@ export type SceneIntro = {
   mots: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[];
   /** L'ensemble, pour l'incliner ou le pousser vers la caméra. */
   groupe: THREE.Group;
+  /** La tresse seule, pour son mouvement propre une fois les anneaux posés. */
+  noyau: THREE.Group;
   detruire: () => void;
 };
 
@@ -60,7 +62,7 @@ export function monterIntro3D(
 
   // ---- La tresse, ses deux anneaux dans leurs pivots ----
   const logo = construireLogo({ couleur: ETEINTE });
-  const { groupe, anneaux, matieres } = logo;
+  const { groupe, noyau, anneaux, matieres } = logo;
 
   /* Logo et mots forment une seule affiche : c'est elle qu'on centre et
      qu'on cadre. Placés séparément, ils débordaient de l'écran dès que le
@@ -192,6 +194,7 @@ export function monterIntro3D(
     matieres,
     mots,
     groupe,
+    noyau,
     detruire() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", cadrer);

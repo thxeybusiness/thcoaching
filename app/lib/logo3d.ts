@@ -171,6 +171,15 @@ function ruban(centre: THREE.Vector3[]) {
 export type Logo3D = {
   /** L'ensemble, à sa taille finale. */
   groupe: THREE.Group;
+  /**
+   * La tresse elle-même, à l'intérieur du porteur.
+   *
+   * Deux niveaux, parce qu'il faut deux mouvements en même temps : le porteur
+   * porte l'inclinaison lente de toute l'affiche, le noyau le mouvement propre
+   * de la marque. Sur un seul groupe les deux se disputeraient la même
+   * rotation, et le dernier écrit gagnerait à chaque image.
+   */
+  noyau: THREE.Group;
   /** Les deux anneaux, chacun dans son pivot — ils s'animent séparément. */
   anneaux: THREE.Object3D[];
   /** Leurs matières, une par anneau : ils s'allument l'un après l'autre. */
@@ -245,6 +254,7 @@ export function construireLogo(
 
   return {
     groupe: porteur,
+    noyau: groupe,
     anneaux,
     matieres,
     detruire() {
