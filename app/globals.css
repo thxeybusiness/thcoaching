@@ -2112,8 +2112,8 @@ cliquable ---------- */
        ligne gagnée sur la largeur en supprime une sur la hauteur, et c'est
        la hauteur qui manque — une tuile du bas qui s'épaissit sort de la
        fenêtre, une tuile qui s'élargit ne gêne personne. */
-    --noeud-ouvert-l: max(304px, 32cqh);
-    --noeud-ouvert-h: max(146px, 16cqh);
+    --noeud-ouvert-l: max(258px, 28cqh);
+    --noeud-ouvert-h: max(112px, 13cqh);
 
     /* L'orbite et la couronne partagent la même case de grille : elles ont
        donc forcément le même centre, sans calcul d'aucune sorte. */
@@ -2292,10 +2292,14 @@ cliquable ---------- */
     font-size: 1.05cqh;
   }
 
+  /* Le corps du texte descend d'un cran et les marges se resserrent : c'est
+     ce qui permet à la fiche d'être plus petite sans qu'un seul mot en sorte.
+     La marge haute reste large : c'est là que se tiennent le numéro de la
+     compétence et la croix de fermeture. */
   .comp-dos {
-    padding: 3.5cqh 1.9cqh 1.8cqh;
-    font-size: clamp(0.77rem, 1.42cqh, 0.9rem);
-    line-height: 1.42;
+    padding: 2.6cqh 1.6cqh 1.4cqh;
+    font-size: clamp(0.72rem, 1.3cqh, 0.86rem);
+    line-height: 1.38;
   }
 
   .comp-signe {
