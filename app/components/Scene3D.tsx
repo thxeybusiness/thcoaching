@@ -103,8 +103,18 @@ const POSES: Pose[] = [
   { p: 1.0, x: 0.6, y: -0.4, s: 0.5, o: 0.7 },
 ];
 
-/** Distance du logo devant la caméra : c'est elle qui donne sa perspective. */
+/** Distance de la marque devant sa caméra. */
 const PROFONDEUR_LOGO = 6;
+
+/**
+ * Demi-hauteur du cadre de la marque, dans ses unités à elle.
+ *
+ * C'est la hauteur qu'occupait le champ de 28° à six unités, du temps où la
+ * marque était vue en perspective. Elle est conservée telle quelle : toutes
+ * les places et toutes les tailles écrites plus haut restent valables, seule
+ * la façon de projeter change.
+ */
+const DEMI_CADRE = Math.tan(((28 * Math.PI) / 180) / 2) * PROFONDEUR_LOGO;
 
 const lissage = (t: number) => t * t * (3 - 2 * t);
 
@@ -203,7 +213,28 @@ export default function Scene3D() {
        vient avec elle : de la pièce, dont les lampes défilaient, elle ne
        gardait qu'un éclairage qui changeait à chaque chapitre. */
     const marque = new THREE.Scene();
-    const camMarque = new THREE.PerspectiveCamera(28, width / height, 0.1, 40);
+
+    /* Elle est vue sans perspective, et c'est le point.
+       Vue en perspective, un objet posé au bord du cadre est regardé de
+       biais : ses faces se raccourcissent, ses lobes s'ovalisent, et le
+       défaut grandit à mesure qu'il s'éloigne du centre. Or cette marque
+       passe justement son temps à changer de coin. Elle se déformait donc à
+       chaque chapitre, différemment à chaque fois — et d'autant plus sur un
+       écran large, où les coins sont les plus excentrés.
+
+       Sans perspective, elle se projette exactement pareil partout : même
+       forme au centre et dans un angle, sur un 21/9 comme sur un téléphone.
+       Elle garde son volume — la lumière le lui donne — mais plus rien ne la
+       tord. C'est ce qu'on attend d'une marque : qu'elle soit reconnaissable,
+       pas qu'elle soit en situation. */
+    const camMarque = new THREE.OrthographicCamera(
+      -DEMI_CADRE * (width / height),
+      DEMI_CADRE * (width / height),
+      DEMI_CADRE,
+      -DEMI_CADRE,
+      0.1,
+      40
+    );
 
     const logo = construireLogo({ couleur: ALLUMEE, ombres: false });
     logo.matieres.forEach((m) => {
@@ -258,7 +289,8 @@ export default function Scene3D() {
       etroit = width < 861;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      camMarque.aspect = camera.aspect;
+      camMarque.left = -DEMI_CADRE * camera.aspect;
+      camMarque.right = DEMI_CADRE * camera.aspect;
       camMarque.updateProjectionMatrix();
       renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, etroit ? 1 : 1.5)
@@ -344,8 +376,7 @@ export default function Scene3D() {
 
       // ---- Le logo, à sa place sur l'écran ----
       const p = echantillon(POSES, pageP, melangePose);
-      const demiHauteur =
-        Math.tan(((camera.fov * Math.PI) / 180) / 2) * PROFONDEUR_LOGO;
+      const demiHauteur = DEMI_CADRE;
       const demiLargeur = demiHauteur * camera.aspect;
       const respire = 1 + Math.sin(t * 0.8) * 0.04;
 
@@ -357,10 +388,20 @@ export default function Scene3D() {
       const limiteY = Math.max(0, demiHauteur - demiLogo.y * echelle - 0.04);
       porteur.position.x = borner(p.x * demiLargeur, limiteX);
       porteur.position.y = borner(p.y * demiHauteur, limiteY);
+      /* Une inclinaison de quelques degrés, et rien de plus.
+         Elle allait jusqu'à vingt degrés, et suivait la souris par-dessus le
+         marché. Sur un objet plat, vingt degrés ne se lisent pas comme une
+         inclinaison : ils se lisent comme un écrasement — les lobes ronds
+         deviennent ovales, et comme la tresse est posée sur ses diagonales,
+         l'écrasement tombe de biais et tord la forme. Réduite à trois ou
+         quatre degrés, elle ne fait plus que ce qu'on lui demande : accrocher
+         la lumière sur l'arête du ruban pour qu'on voie l'épaisseur. Et elle
+         ne suit plus la souris : le décor a déjà son parallaxe, la marque n'a
+         pas à bouger quand on ne lui demande rien. */
       porteur.rotation.set(
-        -0.12 + souris.y * -0.16,
-        0.1 + Math.sin(t * 0.25) * 0.12 + souris.x * 0.24,
-        Math.sin(t * 0.35) * 0.06
+        -0.05,
+        0.06 + Math.sin(t * 0.22) * 0.035,
+        Math.sin(t * 0.3) * 0.012
       );
 
       const opacite = p.o * (0.45 + 0.55 * pose * pose) * arrivee;

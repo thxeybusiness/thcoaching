@@ -11,6 +11,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Intro from "./components/Intro";
 import Scene3DLoader from "./components/Scene3DLoader";
+import { TRESSE } from "./lib/tresse";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
 
@@ -101,8 +102,37 @@ function Header() {
     <header className="site-header">
       <div className="container header-inner">
         <Link href="/" className="brand" aria-label="Accueil TH Coaching">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="TH Coaching" className="brand-logo" width={44} height={44} />
+          {/* La marque est dessinée dans la page, et non chargée depuis un
+              fichier. C'était `/logo.svg` : au changement de logo, les
+              navigateurs ont continué à servir l'ancien depuis leur cache —
+              même adresse, même durée de vie, aucune raison d'aller
+              revérifier. Dessinée ici, elle fait partie du document : elle ne
+              peut plus être en retard sur lui. */}
+          <svg
+            className="brand-logo"
+            viewBox="0 0 120 120"
+            role="img"
+            aria-label="TH Coaching"
+          >
+            <defs>
+              <linearGradient id="marqueTete" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#ff8c1a" />
+                <stop offset="0.55" stopColor="#ff5a1f" />
+                <stop offset="1" stopColor="#e64c12" />
+              </linearGradient>
+            </defs>
+            <g
+              transform={TRESSE.pose}
+              fill="none"
+              stroke="url(#marqueTete)"
+              strokeWidth={TRESSE.largeur}
+              strokeDasharray={TRESSE.tirets}
+              strokeDashoffset={TRESSE.decalage}
+            >
+              <path d={TRESSE.d} />
+              <path d={TRESSE.d} transform={TRESSE.quart} />
+            </g>
+          </svg>
         </Link>
         <nav className="nav" aria-label="Navigation principale">
           <a href="/#offre">Programme</a>
