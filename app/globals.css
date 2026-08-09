@@ -1482,6 +1482,38 @@ cliquable ---------- */
   margin: 0 auto;
 }
 
+/* Une assise sombre sous l'orbite.
+   Tout ce qui suit a été réglé sur un fond plat. Depuis, il y a une pièce en
+   volume derrière — et pas n'importe où : le bureau, l'écran allumé et la
+   lampe tombent exactement au centre du chapitre. Un anneau à 8 % de blanc et
+   un libellé à 24 % ne tiennent pas contre ça.
+   On pose donc un fondu sombre sous l'ensemble. Il déborde largement du
+   cercle et s'éteint bien avant son bord : on ne doit pas voir où il
+   s'arrête, seulement que le centre est plus calme. Un dégradé radial, pas un
+   flou — un flou coûte cher et laisse des artefacts sur Safari. */
+.orbite::before {
+  content: "";
+  position: absolute;
+  inset: -24%;
+  /* Pas de `z-index: -1` : sans transformation sur `.orbite`, un indice
+     négatif passerait derrière le fond d'un ancêtre au lieu de rester dans
+     l'orbite. Premier enfant dans l'ordre du document, le fondu passe déjà
+     sous l'anneau et sous les libellés — ça suffit. */
+  border-radius: 50%;
+  pointer-events: none;
+  /* L'anneau tombe à mi-rayon de ce fondu : c'est là qu'arrivent les fils de
+     la couronne, et il ne faut pas les éteindre. Le fondu est donc franc au
+     centre — sous le « 360° », là où l'écran du bureau brille — et déjà bien
+     retombé quand il les atteint. */
+  background: radial-gradient(
+    circle at center,
+    rgba(8, 8, 9, 0.88) 0 22%,
+    rgba(8, 8, 9, 0.6) 40%,
+    rgba(8, 8, 9, 0.22) 62%,
+    rgba(8, 8, 9, 0) 82%
+  );
+}
+
 /* Pas de « position: sticky » ici, même si l'orbite disparaît en haut d'un mur
    de onze compétences : coller l'orbite la ferait justement bouger, puisqu'un
    pôle court raccourcit son conteneur et la décolle d'un coup. C'est
@@ -1528,17 +1560,18 @@ cliquable ---------- */
 }
 
 .orbite-piste {
-  stroke: rgba(255, 255, 255, 0.08);
+  stroke: rgba(255, 255, 255, 0.22);
 }
 
-/* Le maillage : chaque pôle relié à ceux qui ne lui sont pas voisins. Très
-   discret — il doit se deviner, pas se lire avant les libellés. */
+/* Le maillage : chaque pôle relié à ceux qui ne lui sont pas voisins. Discret
+   — il doit se deviner, pas se lire avant les libellés — mais visible : à
+   force d'être discret il avait fini par ne plus exister du tout. */
 .orbite-maillage {
   fill: none;
-  stroke: color-mix(in srgb, var(--orange) 26%, transparent);
-  stroke-width: 0.8;
+  stroke: color-mix(in srgb, var(--orange) 42%, transparent);
+  stroke-width: 0.9;
   stroke-linejoin: round;
-  opacity: 0.55;
+  opacity: 0.75;
 }
 
 .orbite-trace {
@@ -1580,7 +1613,7 @@ cliquable ---------- */
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* Le point occupe toute la boîte et pivote : son ancre se retrouve donc
@@ -1646,7 +1679,7 @@ cliquable ---------- */
   font-weight: 800;
   font-size: 0.74rem;
   line-height: 1;
-  opacity: 0.62;
+  opacity: 0.82;
   box-shadow: 0 0 16px color-mix(in srgb, var(--orange) 32%, transparent);
   transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.5, 1),
     opacity 0.32s ease, background 0.32s ease, color 0.32s ease,
@@ -1746,7 +1779,9 @@ cliquable ---------- */
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  /* Le pôle non sélectionné reste en retrait — mais en retrait, pas absent.
+     À 40 % de blanc il ne se lisait plus une fois la pièce derrière. */
+  color: rgba(255, 255, 255, 0.74);
 }
 
 @media (max-width: 860px) {
@@ -2055,13 +2090,13 @@ cliquable ---------- */
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.52);
   margin-top: -2px;
   transition: color 0.3s ease;
 }
 
 .orbite-contenu[data-actif="true"] .orbite-compte {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* ---------- Constellation : le 360° au centre, les compétences autour ----------
