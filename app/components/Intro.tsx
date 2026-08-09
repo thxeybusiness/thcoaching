@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { ETAPES } from "../lib/methode";
-import { cadence as t, INTRO_FIN } from "../lib/intro";
+import { cadence as t, ECLAT_INTRO, INTRO_FIN } from "../lib/intro";
 import type { SceneIntro } from "../lib/intro3d";
 import { EMISSIF_REPOS } from "../lib/intro3d";
 
@@ -60,12 +60,24 @@ export default function Intro() {
   const surAccueil = chemin === "/";
 
   useEffect(() => {
-    if (!surAccueil) {
+    /* Le rideau se lève — qu'il ait joué son rôle, qu'il ait renoncé, ou
+       qu'il n'ait jamais eu lieu. Dans les trois cas le signal part : ce qui
+       l'attend, comme la pièce du site, ne doit jamais rester suspendu à une
+       intro qui ne viendra pas. Un même point de sortie pour tous les
+       chemins, sans quoi on en oublie un — c'est arrivé, les pages autres que
+       l'accueil montaient leur décor avec cinq secondes de retard. */
+    const lever = () => {
+      window.dispatchEvent(new Event(ECLAT_INTRO));
       setDone(true);
+    };
+
+    // Sur une page intérieure, un rideau de deux secondes n'aurait aucun sens.
+    if (!surAccueil) {
+      lever();
       return;
     }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDone(true);
+      lever();
       return;
     }
 
@@ -91,22 +103,24 @@ export default function Intro() {
 
       // Pas de volume, pas d'intro : le site s'ouvre sans rideau.
       if (!scene) {
-        setDone(true);
+        lever();
         return;
       }
 
       root.current?.setAttribute("data-volume", "true");
 
-      /* Filet de sécurité : le rideau se lève à l'heure, quoi qu'il arrive.
-         Une machine qui rame ferait traîner la ligne de temps de GSAP, qui
-         lisse les longues images — et le visiteur resterait devant un écran
-         noir. Ce minuteur, lui, ne dépend d'aucune image. Il part d'ici et
-         non du montage du composant : la scène a pu se faire attendre, et le
-         compte ne commence qu'une fois l'intro lancée. */
-      secours = window.setTimeout(
-        () => setDone(true),
-        (INTRO_FIN + 0.8) * 1000
-      );
+      /* Filet de sécurité : le rideau se lève, quoi qu'il arrive. Une machine
+         qui rame fait traîner la ligne de temps de GSAP, qui ralentit plutôt
+         que de sauter des images — sans ce minuteur, qui ne dépend d'aucune
+         image, le visiteur pourrait rester devant un écran noir.
+
+         Il est large, et c'est le point : à 0,8 s de marge il ne rattrapait
+         pas un simple retard, il tranchait dans l'animation. Une intro coupée
+         en plein mouvement est un défaut bien plus visible qu'une intro qui
+         traîne. Il part d'ici et non du montage du composant : la scène a pu
+         se faire attendre, et le compte ne commence qu'une fois l'intro
+         lancée. */
+      secours = window.setTimeout(lever, (INTRO_FIN + 2.4) * 1000);
 
       jouer(scene);
     });
@@ -278,6 +292,13 @@ export default function Intro() {
         // L'éclat part du logo, qui se tient au centre de la scène plein écran
         tl.call(
           () => {
+            /* Le signal part d'ici, depuis la ligne de temps, et non d'une
+               minuterie réglée sur la même heure : c'est la seule façon que
+               la pièce du site ne se monte jamais avant que la tresse ait
+               fini de tourner. Si l'animation prend du retard, le signal en
+               prend autant — c'est justement ce qu'on veut. */
+            window.dispatchEvent(new Event(ECLAT_INTRO));
+
             const el = root.current;
             if (!el) return;
             el.style.setProperty("--fx", "56%");

@@ -25,3 +25,20 @@ export const cadence = (secondes: number) => secondes / VITESSE_INTRO;
  * site.
  */
 export const INTRO_FIN = cadence(3.68);
+
+/**
+ * L'intro annonce son éclat, elle ne se laisse pas deviner.
+ *
+ * Le reste du site savait déjà quand le rideau tombe — il le lisait dans
+ * `INTRO_FIN`. Mais une constante se lit sur l'horloge du navigateur, alors
+ * que l'intro, elle, se joue sur la ligne de temps de GSAP : dès qu'une image
+ * coûte cher, GSAP ralentit sa ligne pour ne rien sauter, l'horloge continue,
+ * et les deux se séparent. C'est ainsi que la pièce du site se montait par
+ * dessus une tresse qui n'avait pas fini son tour.
+ *
+ * L'intro émet donc cet événement au moment exact où son éclat part. Ce qui
+ * doit se caler dessus l'écoute, au lieu de compter dans son coin. Elle
+ * l'émet aussi quand il n'y a pas d'intro du tout — sans quoi ce qui attend
+ * ce signal attendrait pour rien.
+ */
+export const ECLAT_INTRO = "intro:eclat";

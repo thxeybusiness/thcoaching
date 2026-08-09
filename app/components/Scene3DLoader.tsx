@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { INTRO_FIN } from "../lib/intro";
+import { ECLAT_INTRO, INTRO_FIN } from "../lib/intro";
 
 /**
  * Charge la scène 3D (Three.js, ~90 kB) après le premier rendu et seulement
@@ -23,16 +23,38 @@ const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
  * On monte donc pendant l'éclat qui termine l'intro : l'écran est blanc à cet
  * instant, la saccade ne se voit pas, et le recouvrement avec l'intro se
  * compte en dixièmes de seconde.
+ *
+ * L'instant vient de l'intro elle-même, pas d'un compte à rebours. Cette
+ * minuterie-ci calculait le sien à partir de `INTRO_FIN`, sur l'horloge du
+ * navigateur — et cette horloge avance même quand la ligne de temps de GSAP,
+ * elle, ralentit pour ne rien sauter. La pièce se montait alors par-dessus
+ * une tresse qui tournait encore, et sa construction volait justement les
+ * images qui manquaient à ce tour. C'est le début du cercle vicieux qu'on
+ * coupe ici.
  */
-const MONTAGE = Math.max(0, INTRO_FIN - 0.12) * 1000;
+const SECOURS = Math.max(0, INTRO_FIN + 10) * 1000;
 
 export default function Scene3DLoader() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setTimeout(() => setShow(true), MONTAGE);
-    return () => window.clearTimeout(id);
+
+    const monter = () => setShow(true);
+    window.addEventListener(ECLAT_INTRO, monter, { once: true });
+
+    /* Filet, et rien de plus. L'intro donne le signal dans tous les cas de
+       figure, y compris quand elle n'a pas lieu — sur une page intérieure,
+       sans WebGL, en mouvement réduit. Il ne reste donc à couvrir que le cas
+       où elle se serait cassée, et c'est pourquoi ce délai est si large : il
+       ne doit jamais, jamais devancer une intro qui traîne. Le fond en
+       dégradés du document tient la place en attendant. */
+    const id = window.setTimeout(monter, SECOURS);
+
+    return () => {
+      window.removeEventListener(ECLAT_INTRO, monter);
+      window.clearTimeout(id);
+    };
   }, []);
 
   return show ? <Scene3D /> : null;
