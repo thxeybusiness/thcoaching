@@ -157,6 +157,8 @@ export default function Scene3D() {
        pour que l'orange soit identique de part et d'autre du rideau. ACES
        tirerait le #ff5a1f de la marque vers un rouge sombre. */
     renderer.toneMapping = THREE.NoToneMapping;
+    // Deux passes par image : c'est la boucle qui décide quand effacer
+    renderer.autoClear = false;
     renderer.shadowMap.enabled = !etroit;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
@@ -181,11 +183,28 @@ export default function Scene3D() {
       portee: 6.5,
     });
 
-    /* Le logo est accroché à la caméra et non posé dans la pièce : il doit se
-       ranger dans le coin libre de chaque chapitre, ce qui est une position à
-       l'écran — pas une position dans le décor. Accroché ainsi, il garde
-       malgré tout l'éclairage du lieu, puisque les lumières, elles, restent
-       dans le monde. */
+    /* ---- La marque, sur la vitre ----
+       Elle n'est pas dans la pièce, elle est devant : sa place est une place
+       à l'écran — le coin que le chapitre laisse libre — pas une place dans
+       le décor.
+
+       Elle était pourtant dessinée dans la même profondeur que le décor,
+       simplement accrochée à la caméra à six unités devant elle. Or six
+       unités devant la caméra, ça tombe en plein dans la pièce : au chapitre
+       « À propos » la marque atterrissait à hauteur de bureau, et pendant le
+       défilement la caméra balaie tout le volume, donc la marque traversait
+       le bureau, la chaise, l'écran, les plantes. Le mobilier la découpait,
+       morceau par morceau. On ne voyait pas un objet passer derrière un
+       autre — la marque n'est pas dans la pièce, rien ne dit qu'elle devrait
+       passer derrière quoi que ce soit — on voyait une forme se déformer.
+
+       Elle a donc sa propre scène, dessinée par-dessus la pièce sur une
+       profondeur remise à zéro. Rien ne peut plus la couper. Et sa lumière
+       vient avec elle : de la pièce, dont les lampes défilaient, elle ne
+       gardait qu'un éclairage qui changeait à chaque chapitre. */
+    const marque = new THREE.Scene();
+    const camMarque = new THREE.PerspectiveCamera(28, width / height, 0.1, 40);
+
     const logo = construireLogo({ couleur: ALLUMEE, ombres: false });
     logo.matieres.forEach((m) => {
       m.transparent = true;
@@ -195,7 +214,12 @@ export default function Scene3D() {
     const porteur = new THREE.Group();
     porteur.add(logo.groupe);
     porteur.position.z = -PROFONDEUR_LOGO;
-    camera.add(porteur);
+    marque.add(porteur);
+
+    /* La matière garde le reflet de la pièce : c'est ce qui empêche la marque
+       de se détacher du décor comme une vignette collée dessus. La lumière,
+       elle, ne vient plus de la pièce — seul le reflet en vient. */
+    marque.environment = scene.environment;
 
     /* Son encombrement, mesuré une fois : les poses sont écrites pour un
        écran d'ordinateur, et sur un téléphone tenu debout la demi-largeur
@@ -204,15 +228,21 @@ export default function Scene3D() {
     const boite = new THREE.Box3().setFromObject(logo.groupe);
     const demiLogo = boite.getSize(new THREE.Vector3()).multiplyScalar(0.5);
 
-    /* Sa propre clé, accrochée à la caméra elle aussi.
-       Le remplissage de la pièce est écrasé et les lampes du bureau sont à
-       plusieurs unités derrière : il ne restait au logo que la lumière
-       d'environnement, qui arrive de partout à la fois — un aplat orange sans
-       la moindre arête. Cette lampe-ci l'éclaire en biais et lui rend son
-       volume. Sa portée est courte : à 3,4 unités elle meurt bien avant le
-       mobilier, la pièce ne s'en aperçoit pas. */
+    /* Sa clé, qui la suit dans son coin : elle l'éclaire en biais et lui rend
+       son volume. Sans elle il ne resterait que la lumière d'environnement,
+       qui arrive de partout à la fois — un aplat orange sans la moindre
+       arête. */
     const cleLogo = new THREE.PointLight(0xffd9b3, 0, 3.4, 2);
-    camera.add(cleLogo);
+    marque.add(cleLogo);
+
+    /* Et de quoi ne pas laisser le reste tomber dans le noir. Cette part-là
+       venait de la pièce, dont la caméra s'éloignait et se rapprochait sans
+       cesse : d'un chapitre à l'autre la marque virait du plein orange au
+       marron. Fixe, elle est enfin la même partout. */
+    const jourMarque = new THREE.DirectionalLight(0xffe0c2, 0.85);
+    jourMarque.position.set(-0.6, 0.9, 1);
+    marque.add(jourMarque);
+    marque.add(new THREE.AmbientLight(0xffd2ad, 0.42));
 
     // ---- Interactions ----
     const viseSouris = new THREE.Vector2(0, 0);
@@ -228,6 +258,8 @@ export default function Scene3D() {
       etroit = width < 861;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      camMarque.aspect = camera.aspect;
+      camMarque.updateProjectionMatrix();
       renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, etroit ? 1 : 1.5)
       );
@@ -347,7 +379,16 @@ export default function Scene3D() {
 
       lieu.animer(t);
 
+      /* Deux passes. La pièce d'abord, puis la marque sur une profondeur
+         remise à zéro : c'est cette remise à zéro qui fait qu'aucun meuble ne
+         peut plus la découper. Entre ses deux anneaux, en revanche, la
+         profondeur compte toujours — c'est elle qui les entrelace — et elle
+         est bien conservée à l'intérieur de la passe. */
+      renderer.clear();
       renderer.render(scene, camera);
+      renderer.clearDepth();
+      renderer.render(marque, camMarque);
+
       raf = requestAnimationFrame(tick);
     };
     tick();
