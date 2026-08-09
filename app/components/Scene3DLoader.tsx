@@ -40,6 +40,13 @@ export default function Scene3DLoader() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    /* On charge le module tout de suite, on ne l'affiche que plus tard.
+       Sans ça, le téléchargement ne commençait qu'à l'instant du montage —
+       et il fallait l'attendre avant même de commencer à bâtir la pièce. Ici
+       il se fait pendant que l'intro joue, sur un fil qui ne sert à rien
+       d'autre. Quand l'éclat arrive, il n'y a plus rien à aller chercher. */
+    void import("./Scene3D");
+
     const monter = () => setShow(true);
     window.addEventListener(ECLAT_INTRO, monter, { once: true });
 

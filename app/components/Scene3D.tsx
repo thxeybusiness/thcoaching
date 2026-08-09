@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { construireLieu } from "../lib/lieu3d";
 import { ALLUMEE, EMISSIF_REPOS, construireLogo } from "../lib/logo3d";
 import { getDeckProgress } from "../lib/deck";
-import { INTRO_FIN } from "../lib/intro";
 
 /**
  * Le fond du site : la pièce de l'intro, derrière tout le contenu.
@@ -338,10 +337,20 @@ export default function Scene3D() {
 
       const t = horloge.getElapsedTime();
 
-      /* La pièce entre en fondu quand le rideau se lève, pas avant : sinon
-         elle s'anime derrière l'intro et le site apparaît déjà figé. */
+      /* La pièce entre en fondu dès qu'elle est là.
+         Elle attendait `INTRO_FIN` avant de commencer — pour ne pas s'animer
+         derrière l'intro. Mais cette horloge-ci part du montage de la pièce,
+         pas du chargement de la page : la pièce, montée pile au moment où le
+         rideau se lève, réattendait donc toute la durée de l'intro avant de
+         seulement commencer à apparaître, puis mettait encore une seconde et
+         demie à le faire. Sept secondes de page nue à l'arrivée, et quatre
+         sur les pages intérieures, où l'intro ne joue même pas.
+
+         L'attente n'a plus lieu d'être : le montage est désormais commandé
+         par l'éclat de l'intro, donc « quand la pièce est là » et « quand le
+         rideau se lève » sont le même instant. */
       if (arrivee < 1) {
-        const p = Math.min(Math.max(t - INTRO_FIN, 0) / 1.4, 1);
+        const p = Math.min(t / 0.55, 1);
         arrivee = 1 - Math.pow(1 - p, 3);
       }
       mount.style.opacity = String(arrivee);
