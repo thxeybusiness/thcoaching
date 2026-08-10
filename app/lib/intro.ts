@@ -4,8 +4,13 @@
  * Les durées restent écrites à leur valeur d'origine dans le composant et
  * sont divisées ici : le rapport reste lisible et un seul nombre règle la
  * vitesse d'ensemble.
+ *
+ * Elle était de 1,7 ; à 2,72 l'intro va exactement 1,6 fois plus vite. Rien
+ * d'autre n'a bougé : la chorégraphie est écrite en proportions, pas en
+ * secondes, donc chaque geste garde sa place relative et le montage du décor
+ * du site suit tout seul — il est commandé par l'éclat, pas par une horloge.
  */
-export const VITESSE_INTRO = 1.7;
+export const VITESSE_INTRO = 2.72;
 
 /** Convertit une durée d'origine en durée réellement jouée. */
 export const cadence = (secondes: number) => secondes / VITESSE_INTRO;
