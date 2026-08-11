@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { POLES } from "../lib/programme";
 import GrilleCompetences from "./GrilleCompetences";
+import OrbiteRelief from "./OrbiteRelief";
 
 /**
  * Les cinq pôles, en un seul écran.
@@ -23,6 +24,11 @@ import GrilleCompetences from "./GrilleCompetences";
  */
 export default function Poles() {
   const [actif, setActif] = useState(0);
+  /* L'anneau et le maillage existent en deux versions : des traits à plat en
+     SVG, et le même dessin en volume. Le volume ne s'affiche que s'il a pu se
+     monter — pas de WebGL, écran étroit ou mouvement réduit, et il n'y en a
+     pas. On n'efface donc les traits qu'une fois prévenu qu'il est là. */
+  const [relief, setRelief] = useState(false);
   const attente = useRef<number | null>(null);
 
   const annuler = () => {
@@ -138,9 +144,11 @@ export default function Poles() {
         className="orbite"
         role="tablist"
         aria-label="Les cinq pôles du programme"
+        data-relief={relief || undefined}
         onKeyDown={auClavier}
       >
         <span className="orbite-halo" aria-hidden="true" />
+        <OrbiteRelief actif={actif} poles={POLES.length} onPret={setRelief} />
         <svg className="orbite-anneau" viewBox="0 0 400 400" aria-hidden="true">
           <circle className="orbite-piste" cx="200" cy="200" r="150" />
           {/* Les pôles ne sont pas cinq sujets côte à côte : chacun tient les

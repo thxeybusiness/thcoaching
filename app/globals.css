@@ -1545,6 +1545,25 @@ cliquable ---------- */
   }
 }
 
+/* La toile du relief : posée dans l'orbite, elle en prend la taille et la
+   suit sans qu'on ait à la recaler. Elle se glisse entre le halo et le SVG —
+   l'arc de progression et les pastilles restent donc par-dessus. */
+.orbite-relief {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Quand le volume est là, les deux traits qu'il remplace s'effacent. L'arc de
+   progression, lui, reste : il court le long du jonc. */
+.orbite[data-relief] .orbite-piste,
+.orbite[data-relief] .orbite-maillage {
+  display: none;
+}
+
 .orbite-anneau {
   position: absolute;
   inset: 0;
