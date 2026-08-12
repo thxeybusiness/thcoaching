@@ -178,50 +178,6 @@ const PLANS: Record<string, Plan> = {
     );
   },
 
-  /* À propos : le texte se pose à gauche, les trois repères se dressent à
-     droite — leur filet orange se tire de haut en bas avant le chiffre. */
-  apropos(el, tl) {
-    ouverture(el, tl);
-
-    tl.fromTo(
-      el.querySelectorAll(".about-text p:not(.section-label)"),
-      { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: "power3.out" },
-      0.62
-    );
-
-    const stats = Array.from(el.querySelectorAll<HTMLElement>(".stat"));
-    tl.fromTo(
-      stats,
-      { opacity: 0, x: 26 },
-      { opacity: 1, x: 0, duration: 0.7, stagger: 0.12, ease: "power3.out" },
-      0.8
-    );
-    tl.fromTo(
-      stats,
-      { "--filet": 0 },
-      { "--filet": 1, duration: 0.6, stagger: 0.12, ease: "power2.inOut" },
-      0.86
-    );
-    dessinerIcones(
-      tl,
-      stats.map((s) => s.querySelector<HTMLElement>(".comp-icone")!).filter(Boolean),
-      0.95,
-      0.12
-    );
-
-    // Le « 360° » du fond dérive lentement, sans fin
-    const fantome = el.querySelector(".about-ghost");
-    if (fantome) {
-      tl.fromTo(
-        fantome,
-        { opacity: 0, xPercent: 5 },
-        { opacity: 1, xPercent: 0, duration: 1.6, ease: "power3.out" },
-        0.2
-      );
-    }
-  },
-
   /* Le contact : tout converge vers un seul bouton. */
   contact(el, tl) {
     tl.fromTo(

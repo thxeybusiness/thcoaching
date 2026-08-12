@@ -1,13 +1,11 @@
 import type { CSSProperties } from "react";
 import Hero from "./components/Hero";
 import Sequences from "./components/Sequences";
-import CountUp from "./components/CountUp";
 import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
 import LogoEtape from "./components/LogoEtape";
 import IconeCompetence from "./components/IconeCompetence";
 import Poles from "./components/Poles";
-import { NB_COMPETENCES } from "./lib/programme";
 import { ETAPES } from "./lib/methode";
 
 const CONTACT_EMAIL = "thxeybusiness@gmail.com";
@@ -20,7 +18,6 @@ const SLIDES: SlideMeta[] = [
   { id: "methode", label: "Méthode" },
   { id: "offre", label: "Programme" },
   { id: "bonus", label: "Écosystème" },
-  { id: "apropos", label: "À propos" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -51,25 +48,6 @@ const ENTOURAGE = [
     text: "Disponible, du premier jour au projet debout.",
   },
   ...bonuses,
-];
-
-/**
- * Les trois repères de la section « à propos ». Deux sont des chiffres, qui
- * défilent à l'arrivée ; le troisième est un mot — le nombre de bonus n'est
- * pas figé, on ne l'annonce donc pas comme un compte.
- */
-type Repere = {
-  icone: string;
-  libelle: string;
-  valeur?: number;
-  suffixe?: string;
-  mot?: string;
-};
-
-const CHIFFRES: Repere[] = [
-  { icone: "tour", valeur: 360, suffixe: "°", libelle: "d'accompagnement" },
-  { icone: "cadeau", mot: "Plusieurs", libelle: "bonus inclus" },
-  { icone: "grille", valeur: NB_COMPETENCES, suffixe: "", libelle: "compétences travaillées" },
 ];
 
 export default function Home() {
@@ -196,65 +174,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5 — À propos */}
-        <section
-          className="slide slide--about"
-          id="apropos"
-          aria-labelledby="apropos-titre"
-        >
-          <span className="about-ghost" aria-hidden="true">
-            360°
-          </span>
-          <div className="slide-inner">
-            <div className="container about-grid">
-              <div className="about-text">
-                <p className="section-label" style={r(0)} data-r>
-                  À propos
-                </p>
-                <h2
-                  className="section-title"
-                  id="apropos-titre"
-                  style={r(1)}
-                  data-r
-                >
-                  Un coach à tes côtés,
-                  <br />
-                  pas au-dessus.
-                </h2>
-                <p style={r(2)} data-r>
-                  Ma conviction : personne ne réussit seul, et il n&apos;existe
-                  pas un business idéal — seulement celui qui te correspond. On
-                  part donc de ton profil, de tes compétences et de tes
-                  contraintes réelles.
-                </p>
-                <p style={r(3)} data-r>
-                  Chaque accompagnement est confidentiel, bienveillant et
-                  rigoureux. On avance à ton rythme, avec des objectifs clairs.
-                </p>
-              </div>
-              <div className="stats">
-                {CHIFFRES.map((c, i) => (
-                  <div
-                    key={c.libelle}
-                    className={c.mot ? "stat stat--mot" : "stat"}
-                    style={r(4 + i)}
-                    data-r
-                  >
-                    <IconeCompetence nom={c.icone} />
-                    <strong>
-                      {c.mot ?? (
-                        <CountUp to={c.valeur ?? 0} suffix={c.suffixe} />
-                      )}
-                    </strong>
-                    <span>{c.libelle}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 6 — Contact */}
+        {/* 5 — Contact */}
         <section
           className="slide slide--contact"
           id="contact"
