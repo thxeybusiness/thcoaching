@@ -2376,8 +2376,16 @@ cliquable ---------- */
   }
 }
 
+/* Le survol ouvre la tuile en grand, tout seul : on promène la souris sur la
+   couronne et chaque compétence se déplie. C'est le geste principal du
+   chapitre.
+
+   Le `:not([data-ferme])` est indispensable ici, et pas seulement sur les
+   règles de contenu. Sans lui, refermer une tuile par sa croix coupait bien
+   le texte mais la laissait grande ouverte : une plaque vide, de la taille
+   d'une fiche, sans rien dedans. Refermée, une tuile redevient une tuile. */
 @media (min-width: 1180px) and (min-height: 820px) and (hover: hover) {
-  .competence:hover {
+  .competence:not([data-ferme]):hover {
     width: var(--noeud-ouvert-l);
     height: var(--noeud-ouvert-h);
     margin: calc(var(--noeud-ouvert-h) / -2) 0 0
@@ -2385,7 +2393,7 @@ cliquable ---------- */
     transform: none;
   }
 
-  .comp-point:has(.competence:hover) {
+  .comp-point:has(.competence:not([data-ferme]):hover) {
     z-index: 3;
   }
 }
