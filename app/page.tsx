@@ -4,7 +4,6 @@ import Sequences from "./components/Sequences";
 import Magnetic from "./components/Magnetic";
 import Deck, { type SlideMeta } from "./components/Deck";
 import LogoEtape from "./components/LogoEtape";
-import IconeCompetence from "./components/IconeCompetence";
 import Poles from "./components/Poles";
 import { ETAPES } from "./lib/methode";
 
@@ -17,37 +16,7 @@ const SLIDES: SlideMeta[] = [
   { id: "accueil", label: "Accueil" },
   { id: "methode", label: "Méthode" },
   { id: "offre", label: "Programme" },
-  { id: "bonus", label: "Écosystème" },
   { id: "contact", label: "Contact" },
-];
-
-const bonuses = [
-  {
-    icone: "formation",
-    title: "Formations & logiciels",
-    text: "ASA & JDS en marketing digital, et des logiciels créés pour le business.",
-  },
-  {
-    icone: "acces",
-    title: "Accès privés & réductions",
-    text: "Réservés aux personnes accompagnées.",
-  },
-  {
-    icone: "groupe",
-    title: "Groupe privé d'entraide",
-    text: "Pour progresser entre entrepreneurs.",
-  },
-];
-
-/** Ce qui entoure la personne accompagnée. Le coach n'est pas un bonus : il
- *  est en tête, et hors du compte. */
-const ENTOURAGE = [
-  {
-    icone: "partenariat",
-    title: "Un coach à tes côtés",
-    text: "Disponible, du premier jour au projet debout.",
-  },
-  ...bonuses,
 ];
 
 export default function Home() {
@@ -148,33 +117,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4 — Les bonus */}
-        <section className="slide" id="bonus" aria-labelledby="bonus-titre">
-          <div className="slide-inner">
-            <div className="container">
-              <p className="section-label" style={r(0)} data-r>
-                L&apos;écosystème autour de toi
-              </p>
-              <h2 className="section-title" id="bonus-titre" style={r(1)} data-r>
-                Tu n&apos;avances
-                <br />
-                <span className="accent">jamais seul.</span>
-              </h2>
-
-              <ul className="bonus-cartes-accueil">
-                {ENTOURAGE.map((b, i) => (
-                  <li key={b.title} className="bonus-carte-accueil" style={r(2 + i)} data-r>
-                    <IconeCompetence nom={b.icone} />
-                    <strong>{b.title}</strong>
-                    <span>{b.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* 5 — Contact */}
+        {/* 4 — Contact */}
         <section
           className="slide slide--contact"
           id="contact"

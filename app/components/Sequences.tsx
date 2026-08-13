@@ -149,35 +149,6 @@ const PLANS: Record<string, Plan> = {
     );
   },
 
-  /* L'écosystème : quatre cartes qui basculent vers le lecteur, chacune avec
-     son pictogramme qui se dessine. */
-  bonus(el, tl) {
-    ouverture(el, tl);
-
-    const cartes = Array.from(
-      el.querySelectorAll<HTMLElement>(".bonus-carte-accueil")
-    );
-    tl.fromTo(
-      cartes,
-      { opacity: 0, y: 40, rotateX: -14, transformPerspective: 900 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.9,
-        stagger: 0.11,
-        ease: "back.out(1.4)",
-      },
-      0.7
-    );
-    dessinerIcones(
-      tl,
-      cartes.map((c) => c.querySelector<HTMLElement>(".comp-icone")!).filter(Boolean),
-      0.85,
-      0.11
-    );
-  },
-
   /* Le contact : tout converge vers un seul bouton. */
   contact(el, tl) {
     tl.fromTo(

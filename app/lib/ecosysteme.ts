@@ -6,7 +6,9 @@
  * Cinq appuis répartis tous les 72°, le premier au sommet.
  *
  * Les libellés sont volontairement courts — ce sont des repères sur un
- * schéma, pas des phrases. Le détail est raconté au chapitre « Écosystème ».
+ * schéma, pas des phrases. Ils portent seuls, désormais : le chapitre qui en
+ * racontait le détail a été retiré, ce schéma est tout ce que le site dit de
+ * l'écosystème.
  */
 export type Appui = {
   icone: string;

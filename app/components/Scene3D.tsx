@@ -50,11 +50,9 @@ const PLANS: Plan[] = [
      hors champ, et la ville derrière n'a jamais été vue. Il faut viser plus à
      gauche qu'on ne se tient, sans quoi on longe le mur au lieu de regarder
      à travers. La fenêtre se pose au bord gauche, le bureau au bord droit. */
-  { p: 0.25, pos: [0.2, 0.5, 7.6], cible: [-3.0, -0.35, -2.0], roulis: 0.012 },
+  { p: 0.34, pos: [0.2, 0.5, 7.6], cible: [-3.0, -0.35, -2.0], roulis: 0.012 },
   // Programme — au-dessus du plan de travail, en plongée douce
-  { p: 0.5, pos: [0.6, 1.5, 7.4], cible: [0.1, -0.9, -2.9], roulis: -0.01 },
-  // Écosystème — le côté droit : le lampadaire et le cadre au mur
-  { p: 0.75, pos: [3.1, 0.3, 8.2], cible: [2.0, -0.5, -3.2], roulis: -0.016 },
+  { p: 0.67, pos: [0.6, 1.5, 7.4], cible: [0.1, -0.9, -2.9], roulis: -0.01 },
   // Contact — on recule, la pièce entière
   { p: 1.0, pos: [0.3, 0.9, 11.2], cible: [0.2, -0.6, -2.2], roulis: 0 },
 ];
@@ -85,13 +83,11 @@ const POSES: Pose[] = [
   // Accueil : bas gauche, sous les deux boutons
   { p: 0.0, x: -0.74, y: -0.62, s: 0.42, o: 0.5 },
   // Méthode : haut droite, le titre tient la gauche et les cartes le bas
-  { p: 0.25, x: 0.72, y: 0.5, s: 0.4, o: 0.5 },
+  { p: 0.34, x: 0.72, y: 0.5, s: 0.4, o: 0.5 },
   /* Programme : le chapitre le plus chargé du deck — le 360° tient le centre
      et les compétences tout le bas. Il reste la marge gauche, à mi-hauteur ;
      le logo s'y range et s'y fait discret plutôt que d'en disparaître. */
-  { p: 0.5, x: -0.82, y: 0.3, s: 0.34, o: 0.32 },
-  // Écosystème : bas gauche, sous la rangée de cartes
-  { p: 0.75, x: -0.72, y: -0.62, s: 0.42, o: 0.5 },
+  { p: 0.67, x: -0.82, y: 0.3, s: 0.34, o: 0.32 },
   /* Dernier écran : le logo se couche derrière le wordmark. « Derrière » —
      à pleine opacité et à pleine taille, il passait devant et mangeait la
      moitié du mot. */

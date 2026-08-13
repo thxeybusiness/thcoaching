@@ -92,7 +92,7 @@ export default function Deck({
    * partage — va au chapitre demandé.
    *
    * Dans les deux cas le défilement du conteneur est remis à zéro : en
-   * arrivant sur « /#bonus », le navigateur le fait défiler lui-même pour
+   * arrivant sur « /#offre », le navigateur le fait défiler lui-même pour
    * amener l'ancre à l'écran, alors qu'il est en overflow hidden et
    * positionné par une transformation. Les deux décalages s'additionnaient
    * et on atterrissait sur un tout autre chapitre, forcément vide puisqu'il
