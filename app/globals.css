@@ -1504,6 +1504,96 @@ cliquable ---------- */
   color: rgba(255, 255, 255, 0.78);
 }
 
+/* L'invite : elle dit quoi faire, puis s'en va.
+   Un cercle avec cinq points dessus ne dit pas de lui-même qu'on peut le
+   manipuler. Une ligne le dit. Elle disparaît au premier geste — une invite
+   qui reste après avoir été comprise n'est plus une invite, c'est du bruit. */
+.orbite-invite {
+  margin-top: 10px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--orange) 34%, transparent);
+  background: rgba(10, 9, 8, 0.72);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--orange) 88%, #fff);
+  white-space: nowrap;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+/* Le geste dépend de l'appareil. On ne le détecte pas — un portable peut
+   avoir les deux — c'est la requête média qui tranche, au moment où elle est
+   évaluée. */
+.orbite-invite-doigt {
+  display: none;
+}
+
+@media (hover: none) {
+  .orbite-invite-souris {
+    display: none;
+  }
+  .orbite-invite-doigt {
+    display: inline;
+  }
+}
+
+/* Au premier geste, elle s'efface et cesse d'exister pour la souris. */
+.orbite:not([data-vierge]) .orbite-invite {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .orbite[data-vierge] .orbite-invite {
+    animation: invite-souffle 2.8s ease-in-out infinite;
+  }
+}
+
+@keyframes invite-souffle {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Et les pôles en veille battent, l'un après l'autre : c'est ce qui désigne
+   les cinq points comme étant les objets à manipuler. L'anneau d'appel est
+   posé sur une pseudo-élément, pour que la pastille elle-même ne bouge
+   pas — un repère qui saute ne se vise plus. */
+@media (prefers-reduced-motion: no-preference) {
+  .orbite[data-vierge] .orbite-contenu:not([data-actif="true"]) .orbite-pastille::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1.5px solid var(--orange);
+    pointer-events: none;
+    animation: pole-appel 2.9s ease-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.26s);
+  }
+}
+
+@keyframes pole-appel {
+  0% {
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0.6;
+  }
+  55%,
+  100% {
+    transform: translate(-50%, -50%) scale(2.2);
+    opacity: 0;
+  }
+}
+
 /* Le point occupe toute la boîte et pivote : son ancre se retrouve donc
    exactement sur l'anneau (r = 150 dans un viewBox de 400, soit 37,5 %),
    quelle que soit la taille de l'orbite. */
@@ -1587,12 +1677,22 @@ cliquable ---------- */
   color: #fff;
 }
 
+/* Le survol doit se voir tout de suite, sinon on ne comprend pas que le
+   passage de la souris est ce qui commande. La pastille grossit et
+   s'entoure, le libellé passe au blanc : la cause et l'effet sont sur le
+   même objet. */
 @media (hover: hover) {
   .orbite-contenu:hover .orbite-pastille {
-    opacity: 0.9;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.22);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--orange) 18%, transparent),
+      0 0 22px color-mix(in srgb, var(--orange) 55%, transparent);
   }
   .orbite-contenu:hover .orbite-nom {
-    color: rgba(255, 255, 255, 0.8);
+    color: #fff;
+  }
+  .orbite-contenu:hover .orbite-compte {
+    color: rgba(255, 255, 255, 0.72);
   }
 }
 
@@ -1896,6 +1996,23 @@ cliquable ---------- */
   height: 15px;
 }
 
+/* Le rond qui fait de la croix un bouton. Il n'apparaît que lorsque la tuile
+   est retournée — c'est le seul moment où il y a quelque chose à refermer. */
+.comp-signe::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--orange) 38%, transparent);
+  background: rgba(12, 10, 9, 0.6);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
 .comp-signe i {
   position: absolute;
   top: 50%;
@@ -1938,32 +2055,46 @@ cliquable ---------- */
   transform: none;
 }
 
+/* Le survol retourne la tuile — sauf si le visiteur vient de la refermer.
+   C'est le sens de `[data-ferme]`. Sans lui, refermer une tuile pendant que
+   la souris est encore dessus ne produisait rien à l'écran : l'état changeait
+   bien, mais le survol la rouvrait dans la foulée. On cliquait sur la croix,
+   il ne se passait rien. La marque reste fermée tant que la souris ne l'a pas
+   quittée ; en revenant dessus, elle se rouvre normalement. */
 @media (hover: hover) {
-  .competence:hover {
+  .competence:not([data-ferme]):hover {
     transform: translateY(-4px);
     border-color: color-mix(in srgb, var(--orange) 60%, transparent);
     box-shadow: 0 22px 50px -28px
       color-mix(in srgb, var(--orange) 70%, transparent);
   }
-  .competence:hover::before {
+  .competence:not([data-ferme]):hover::before {
     opacity: 1;
   }
-  .competence:hover .comp-face {
+  .competence:not([data-ferme]):hover .comp-face {
     opacity: 0;
     transform: translateY(-10px);
   }
-  .competence:hover .comp-dos {
+  .competence:not([data-ferme]):hover .comp-dos {
     opacity: 1;
     transform: none;
   }
-  .competence:hover .comp-signe i:first-child {
+  .competence:not([data-ferme]):hover .comp-signe i:first-child {
     transform: rotate(135deg);
   }
-  .competence:hover .comp-signe i:last-child {
+  .competence:not([data-ferme]):hover .comp-signe i:last-child {
     transform: rotate(45deg);
   }
-  .competence:hover .comp-index {
+  .competence:not([data-ferme]):hover .comp-index {
     color: color-mix(in srgb, var(--orange) 75%, transparent);
+  }
+
+  /* La croix se signale comme un bouton dès que la tuile est retournée : un
+     rond sous le signe, qui s'allume quand la souris passe dessus. Sans quoi
+     ce n'est qu'un dessin, et rien ne dit qu'on peut cliquer. */
+  .competence:not([data-ferme]):hover .comp-signe::before,
+  .competence[data-ouvert="true"] .comp-signe::before {
+    opacity: 1;
   }
 }
 
@@ -2057,33 +2188,45 @@ cliquable ---------- */
      changeant sa taille, on ne change pas sa géométrie interne — seulement la
      place qu'elle laisse aux fils de la couronne. */
   .orbite {
-    width: 50cqh;
+    /* Un peu plus large qu'avant, mais à peine : au-delà, les libellés des
+       pôles de flanc viennent buter dans la couronne. Ce qui gagne vraiment
+       en présence, c'est le noyau — il a du vide autour de lui, la couronne
+       n'en a pas. */
+    width: 53cqh;
     z-index: 2;
   }
 
   .orbite-pastille {
-    width: 2.65cqh;
-    height: 2.65cqh;
-    font-size: 1.12cqh;
+    width: 3cqh;
+    height: 3cqh;
+    font-size: 1.2cqh;
   }
 
+  /* Le « 360° » est le sujet du chapitre : il doit se voir comme tel. Il
+     grandit d'un bon quart, et il n'y a que du vide à prendre autour. */
   .orbite-noyau-valeur {
-    font-size: 5.15cqh;
+    font-size: 6.6cqh;
   }
 
   /* Comme pour les noms de compétences : la taille suit l'échelle de la
      scène, mais ne descend jamais sous un seuil lisible. À 6 px, ces libellés
      n'étaient plus que des traits gris. */
   .orbite-noyau-texte {
-    font-size: clamp(0.58rem, 1.06cqh, 0.75rem);
+    font-size: clamp(0.6rem, 1.18cqh, 0.84rem);
+  }
+
+  .orbite-invite {
+    font-size: clamp(0.54rem, 0.98cqh, 0.68rem);
+    margin-top: 1.2cqh;
+    padding: 0.55cqh 1.4cqh;
   }
 
   .orbite-nom {
-    font-size: clamp(0.62rem, 1.06cqh, 0.8rem);
+    font-size: clamp(0.66rem, 1.16cqh, 0.86rem);
   }
 
   .orbite-compte {
-    font-size: clamp(0.55rem, 0.95cqh, 0.7rem);
+    font-size: clamp(0.55rem, 0.98cqh, 0.72rem);
   }
 
   .piliers-panneaux {

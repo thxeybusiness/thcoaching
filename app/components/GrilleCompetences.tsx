@@ -45,12 +45,41 @@ export default function GrilleCompetences({
   actif: boolean;
 }) {
   const [ouvert, setOuvert] = useState<number | null>(null);
+  /* Deux états de plus, pour une seule raison : la tuile se retourne au
+     survol, et refermer une tuile sur laquelle la souris se trouve encore ne
+     produisait rien — le survol la rouvrait aussitôt. On cliquait sur la
+     croix, il ne se passait rien.
+
+     `survol` dit laquelle la souris couvre, donc laquelle est retournée même
+     sans avoir été ouverte. `ferme` retient celle que le visiteur vient de
+     refermer : elle le reste tant qu'il ne l'a pas quittée. */
+  const [survol, setSurvol] = useState<number | null>(null);
+  const [ferme, setFerme] = useState<number | null>(null);
   const zone = useRef<HTMLDivElement>(null);
   const fils = useRef<SVGSVGElement>(null);
 
+  /** Ce que le visiteur voit : le dos de la tuile est-il montré ? */
+  const retournee = (i: number) =>
+    ouvert === i || (survol === i && ferme !== i);
+
+  /** Un clic ferme ce qui est ouvert, et ouvre ce qui est fermé. */
+  const basculer = (i: number) => {
+    if (retournee(i)) {
+      setOuvert(null);
+      setFerme(i);
+    } else {
+      setOuvert(i);
+      setFerme(null);
+    }
+  };
+
   // On repart d'un mur fermé quand on quitte le pilier
   useEffect(() => {
-    if (!actif) setOuvert(null);
+    if (!actif) {
+      setOuvert(null);
+      setFerme(null);
+      setSurvol(null);
+    }
   }, [actif]);
 
   useEffect(() => {
@@ -237,9 +266,18 @@ export default function GrilleCompetences({
               type="button"
               className="competence"
               data-ouvert={ouvert === i}
-              aria-expanded={ouvert === i}
+              data-ferme={ferme === i || undefined}
+              aria-expanded={retournee(i)}
               aria-controls={`${cle}-${i}-detail`}
-              onClick={() => setOuvert(ouvert === i ? null : i)}
+              onMouseEnter={() => {
+                setSurvol(i);
+                setFerme(null);
+              }}
+              onMouseLeave={() => {
+                setSurvol((s) => (s === i ? null : s));
+                setFerme((f) => (f === i ? null : f));
+              }}
+              onClick={() => basculer(i)}
             >
               <span className="comp-index" aria-hidden="true">
                 {num}.{i + 1}

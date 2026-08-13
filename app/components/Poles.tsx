@@ -29,6 +29,11 @@ export default function Poles() {
      monter — pas de WebGL, écran étroit ou mouvement réduit, et il n'y en a
      pas. On n'efface donc les traits qu'une fois prévenu qu'il est là. */
   const [relief, setRelief] = useState(false);
+  /* Tant que le visiteur n'a rien touché, l'orbite se signale : les quatre
+     pôles en veille battent doucement et une invite s'affiche sous le 360°.
+     Dès le premier geste, tout ça s'éteint — définitivement. Une invite qui
+     reste après avoir été comprise n'est plus une invite, c'est du bruit. */
+  const [vierge, setVierge] = useState(true);
   const attente = useRef<number | null>(null);
 
   const annuler = () => {
@@ -45,12 +50,14 @@ export default function Poles() {
    */
   const survoler = (i: number) => {
     annuler();
+    setVierge(false);
     if (i === actif) return;
     attente.current = window.setTimeout(() => setActif(i), 110);
   };
 
   const choisir = (i: number) => {
     annuler();
+    setVierge(false);
     setActif(i);
   };
 
@@ -145,6 +152,7 @@ export default function Poles() {
         role="tablist"
         aria-label="Les cinq pôles du programme"
         data-relief={relief || undefined}
+        data-vierge={vierge || undefined}
         onKeyDown={auClavier}
       >
         <span className="orbite-halo" aria-hidden="true" />
@@ -160,6 +168,14 @@ export default function Poles() {
         <span className="orbite-noyau" aria-hidden="true">
           <span className="orbite-noyau-valeur">360°</span>
           <span className="orbite-noyau-texte">autour de toi</span>
+          {/* Dire comment s'en servir, puisque rien dans un cercle ne le dit.
+              Le geste n'est pas le même selon l'appareil : c'est le CSS qui
+              choisit lequel des deux s'affiche, sans détecter quoi que ce
+              soit — un même appareil peut avoir les deux. */}
+          <span className="orbite-invite">
+            <span className="orbite-invite-souris">Survole un pôle</span>
+            <span className="orbite-invite-doigt">Touche un pôle</span>
+          </span>
         </span>
 
         {POLES.map((p, i) => {
@@ -185,7 +201,7 @@ export default function Poles() {
             key={p.cle}
             className="orbite-point"
             data-flanc={flanc}
-            style={{ "--a": `${angle}deg` } as CSSProperties}
+            style={{ "--a": `${angle}deg`, "--i": i } as CSSProperties}
           >
             <span className="orbite-redresse">
               <button
